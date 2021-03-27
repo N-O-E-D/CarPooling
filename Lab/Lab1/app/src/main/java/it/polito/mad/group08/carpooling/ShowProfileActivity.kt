@@ -1,5 +1,6 @@
 package it.polito.mad.group08.carpooling
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -55,12 +56,20 @@ class ShowProfileActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.editButton -> {
-                fullNameTV.text = "Domenico Bini"
-                nicknameTV.text = "polyhedral artist"
-                emailTV.text = "domenicobini@gmail.com"
-                locationTV.text = "Aosta"
+//                fullNameTV.text = "Domenico Bini"
+//                nicknameTV.text = "polyhedral artist"
+//                emailTV.text = "domenicobini@gmail.com"
+//                locationTV.text = "Aosta"
+                val intent = Intent(this, EditProfileActivity::class.java)
+                        .also {
+                            it.putExtra("photoIV", R.drawable.photo_default)
+                            it.putExtra("fullNameTV", fullNameTV.text.toString())
+                            it.putExtra("nicknameTV", nicknameTV.text.toString())
+                            it.putExtra("emailTV", emailTV.text.toString())
+                            it.putExtra("locationTV", locationTV.text.toString())
+                        }
+                startActivityForResult(intent,1)
             }
-
         }
 
         return true
