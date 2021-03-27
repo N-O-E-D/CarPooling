@@ -11,14 +11,18 @@
         android:id="@+id/fullNameTV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:text="@string/fullName"
         android:textAppearance="@style/TextAppearance.AppCompat.Display2"
         android:textSize="36sp"
         app:layout_constraintBottom_toTopOf="@+id/nicknameTV"
-        app:layout_constraintEnd_toEndOf="@+id/photoImage"
-        app:layout_constraintStart_toStartOf="@+id/photoImage"
-        app:layout_constraintTop_toTopOf="@+id/horizontalGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
@@ -55,15 +59,16 @@
         android:text="@string/location"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/emailTV"
         app:layout_constraintStart_toStartOf="@+id/emailTV"
         app:layout_constraintTop_toBottomOf="@+id/emailTV" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontalGuideline"
+        android:id="@+id/guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         app:layout_constraintGuide_percent="0.33" />
 
     <ImageView
@@ -73,15 +78,16 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginBottom="16dp"
         android:contentDescription="@string/photo"
-        app:layout_constraintBottom_toTopOf="@+id/horizontalGuideline"
-        app:layout_constraintDimensionRatio="16:9"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/photo_default"
         tools:srcCompat="@drawable/photo_default" />
 
