@@ -1,13 +1,10 @@
 package it.polito.mad.group08.carpooling
 
+import android.app.Activity
 import android.content.Intent
-import android.database.Cursor
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.ContextMenu
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
@@ -37,6 +34,10 @@ class EditProfileActivity : AppCompatActivity() {
 
 
         //TODO a06widget - focus() on the fullName editText ?
+
+        //TODO set text instead of hint
+        //if(intent.getStringExtra("fullnameTV") != null)
+
         fullNameET.hint = intent.getStringExtra("fullNameTV")
         nicknameET.hint = intent.getStringExtra("nicknameTV")
         emailET.hint = intent.getStringExtra("emailTV")
@@ -68,5 +69,44 @@ class EditProfileActivity : AppCompatActivity() {
             }
             else -> super.onContextItemSelected(item)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.option_menu_save_edit, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.saveEdit -> {
+                saveAndReturn()
+                //TODO return true never done?
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun saveAndReturn(){
+        val intent = Intent()
+        // TODO seliazizzation?
+        //intent.putExtra("photoIV", photoIV. .toString())
+
+        //TODO is it necessary this check?
+        //if(fullNameET.text.toString() != "")
+            intent.putExtra("fullNameET", fullNameET.text.toString())
+
+        //if(nicknameET.text.toString() != "")
+            intent.putExtra("nicknameET", nicknameET.text.toString())
+
+        //if(emailET.text.toString() != "")
+            intent.putExtra("emailET", emailET.text.toString())
+
+        //if(locationET.text.toString() != "")
+            intent.putExtra("locationET", locationET.text.toString())
+
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
 }

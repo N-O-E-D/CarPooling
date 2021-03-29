@@ -1,5 +1,6 @@
 package it.polito.mad.group08.carpooling
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 
 class ShowProfileActivity : AppCompatActivity() {
     private lateinit var photoIV: ImageView
@@ -51,7 +53,7 @@ class ShowProfileActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_bar, menu)
+        menuInflater.inflate(R.menu.option_menu_edit_profile, menu)
         return true
     }
 
@@ -62,18 +64,50 @@ class ShowProfileActivity : AppCompatActivity() {
 //                nicknameTV.text = "polyhedral artist"
 //                emailTV.text = "domenicobini@gmail.com"
 //                locationTV.text = "Aosta"
-                val intent = Intent(this, EditProfileActivity::class.java)
-                        .also {
-                            it.putExtra("photoIV", R.drawable.photo_default)
-                            it.putExtra("fullNameTV", fullNameTV.text.toString())
-                            it.putExtra("nicknameTV", nicknameTV.text.toString())
-                            it.putExtra("emailTV", emailTV.text.toString())
-                            it.putExtra("locationTV", locationTV.text.toString())
-                        }
-                startActivityForResult(intent,1)
+                editProfile()
             }
         }
 
         return true
+    }
+
+    private fun editProfile(){
+//       TODO
+//        In order to reduce the risk of name clashes with existing keys, name your item out
+//        of your project package name, e.g. “groupXX.lab1.FULL_NAME”.
+        val intent = Intent(this, EditProfileActivity::class.java)
+                .also {
+                    //it.putExtra("photoIV", R.drawable.photo_default)
+                    it.putExtra("fullNameTV", fullNameTV.text.toString())
+                    it.putExtra("nicknameTV", nicknameTV.text.toString())
+                    it.putExtra("emailTV", emailTV.text.toString())
+                    it.putExtra("locationTV", locationTV.text.toString())
+                }
+        startActivityForResult(intent,1)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode==1){
+            if(resultCode == Activity.RESULT_OK && data != null){
+                updateTextView(data)
+            }else{
+                Toast.makeText(applicationContext, "Error in editing", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun updateTextView(data: Intent){
+        if(data.getStringExtra("fullNameET") != null )
+            fullNameTV.text = data.getStringExtra("fullNameET")
+
+        if(data.getStringExtra("nicknameET") != null)
+            nicknameTV.text = data.getStringExtra("nicknameET")
+
+        if(data.getStringExtra("emailET") != null)
+            emailTV.text = data.getStringExtra("emailET")
+
+        if(data.getStringExtra("locationET") != null)
+            locationTV.text = data.getStringExtra("locationET")
     }
 }

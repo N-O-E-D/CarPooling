@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name"></string>
+    <string name="app_name" />
     <string name="edit">Edit</string>
     <string name="photo">Photo</string>
     <string name="fullName">Full Name</string>
@@ -9,5 +9,6 @@
     <string name="imageChange">Change Image</string>
     <string name="phoneGallery">Select photo from phone gallery</string>
     <string name="phoneCamera">Make new photo</string>
+    <string name="saveEdit">Save</string>
 
 </resources>
