@@ -14,22 +14,24 @@ class ShowProfileActivity : AppCompatActivity() {
     private lateinit var nicknameTV : TextView
     private lateinit var emailTV : TextView
     private lateinit var locationTV : TextView
-
+    //TODO RatingBar for user status
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //TODO a06widget - ellipsize() replace exceeded text with ...
+        //TODO a06widget - autolink-email insert a link in the textView
         photoIV = findViewById<ImageView>(R.id.photoImage)
         fullNameTV = findViewById<TextView>(R.id.fullNameTV)
         nicknameTV = findViewById<TextView>(R.id.nicknameTV)
         emailTV = findViewById<TextView>(R.id.emailTV)
         locationTV = findViewById<TextView>(R.id.locationTV)
 
-        fullNameTV.text = "Full Name"
-        nicknameTV.text = "Nickname"
-        emailTV.text = "Email address"
-        locationTV.text = "Location"
+        fullNameTV.text = getString(R.string.fullName)
+        nicknameTV.text = getString(R.string.nickname)
+        emailTV.text = getString(R.string.email)
+        locationTV.text = getString(R.string.location)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -7,4 +7,7 @@
     <string name="email">Email</string>
     <string name="location">Location</string>
     <string name="imageChange">Change Image</string>
+    <string name="phoneGallery">Select photo from phone gallery</string>
+    <string name="phoneCamera">Make new photo</string>
+
 </resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item android:id="@+id/phoneGallery"
+            android:title="@string/phoneGallery" />
+        <item android:id="@+id/phoneCamera"
+            android:title="@string/phoneCamera" />
+    </group>
+</menu>

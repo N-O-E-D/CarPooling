@@ -1,12 +1,20 @@
 package it.polito.mad.group08.carpooling
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
+import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
+import android.provider.MediaStore
+import android.view.ContextMenu
+import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+
 
 class EditProfileActivity : AppCompatActivity() {
     private lateinit var photoIV: ImageView
@@ -28,10 +36,37 @@ class EditProfileActivity : AppCompatActivity() {
         locationET = findViewById<EditText>(R.id.locationET)
 
 
-        //TODO image + imageButton
+        //TODO a06widget - focus() on the fullName editText ?
         fullNameET.hint = intent.getStringExtra("fullNameTV")
         nicknameET.hint = intent.getStringExtra("nicknameTV")
         emailET.hint = intent.getStringExtra("emailTV")
         locationET.hint = intent.getStringExtra("locationTV")
+
+        changePhotoIB.setOnClickListener {
+            registerForContextMenu(it)
+        }
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        menuInflater.inflate(R.menu.floating_context_menu_edit, menu)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        super.onContextItemSelected(item)
+        //val info = item.menuInfo as AdapterView.AdapterContextMenuInfo
+        return when (item.itemId) {
+            R.id.phoneGallery -> {
+//                val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+//                startActivityForResult(pickPhoto, 0)
+                true
+            }
+            R.id.phoneCamera -> {
+//                val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//                startActivityForResult(takePicture, 1)
+                true
+            }
+            else -> super.onContextItemSelected(item)
+        }
     }
 }
