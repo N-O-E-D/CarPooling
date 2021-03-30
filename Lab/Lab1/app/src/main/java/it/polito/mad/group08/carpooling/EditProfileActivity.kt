@@ -32,16 +32,10 @@ class EditProfileActivity : AppCompatActivity() {
         emailET = findViewById<EditText>(R.id.emailET)
         locationET = findViewById<EditText>(R.id.locationET)
 
-
-        //TODO a06widget - focus() on the fullName editText ?
-
-        //TODO set text instead of hint
-        //if(intent.getStringExtra("fullnameTV") != null)
-
-        fullNameET.hint = intent.getStringExtra("fullNameTV")
-        nicknameET.hint = intent.getStringExtra("nicknameTV")
-        emailET.hint = intent.getStringExtra("emailTV")
-        locationET.hint = intent.getStringExtra("locationTV")
+        fullNameET.setText(intent.getStringExtra("fullNameTV"))
+        nicknameET.setText(intent.getStringExtra("nicknameTV"))
+        emailET.setText(intent.getStringExtra("emailTV"))
+        locationET.setText(intent.getStringExtra("locationTV"))
 
         changePhotoIB.setOnClickListener {
             registerForContextMenu(it)
