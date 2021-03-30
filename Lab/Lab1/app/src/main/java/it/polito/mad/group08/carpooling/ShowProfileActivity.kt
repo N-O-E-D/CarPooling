@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -90,24 +91,13 @@ class ShowProfileActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode==1){
             if(resultCode == Activity.RESULT_OK && data != null){
-                updateTextView(data)
+                fullNameTV.text = data.getStringExtra("fullNameET")
+                nicknameTV.text = data.getStringExtra("nicknameET")
+                emailTV.text = data.getStringExtra("emailET")
+                locationTV.text = data.getStringExtra("locationET")
             }else{
                 Toast.makeText(applicationContext, "Error in editing", Toast.LENGTH_LONG).show()
             }
         }
-    }
-
-    private fun updateTextView(data: Intent){
-        if(data.getStringExtra("fullNameET") != null )
-            fullNameTV.text = data.getStringExtra("fullNameET")
-
-        if(data.getStringExtra("nicknameET") != null)
-            nicknameTV.text = data.getStringExtra("nicknameET")
-
-        if(data.getStringExtra("emailET") != null)
-            emailTV.text = data.getStringExtra("emailET")
-
-        if(data.getStringExtra("locationET") != null)
-            locationTV.text = data.getStringExtra("locationET")
     }
 }

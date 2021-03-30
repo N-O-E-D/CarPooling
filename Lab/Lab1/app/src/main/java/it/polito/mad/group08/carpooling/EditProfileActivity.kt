@@ -3,6 +3,7 @@ package it.polito.mad.group08.carpooling
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
@@ -83,22 +84,14 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     private fun saveAndReturn(){
-        val intent = Intent()
-        // TODO seliazizzation?
-        //intent.putExtra("photoIV", photoIV. .toString())
-
-        //TODO is it necessary this check?
-        //if(fullNameET.text.toString() != "")
-            intent.putExtra("fullNameET", fullNameET.text.toString())
-
-        //if(nicknameET.text.toString() != "")
-            intent.putExtra("nicknameET", nicknameET.text.toString())
-
-        //if(emailET.text.toString() != "")
-            intent.putExtra("emailET", emailET.text.toString())
-
-        //if(locationET.text.toString() != "")
-            intent.putExtra("locationET", locationET.text.toString())
+        val intent = Intent().also {
+            // TODO seliazizzation?
+            //it.putExtra("photoIV", photoIV. .toString())
+            it.putExtra("fullNameET", fullNameET.text.toString())
+            it.putExtra("nicknameET", nicknameET.text.toString())
+            it.putExtra("emailET", emailET.text.toString())
+            it.putExtra("locationET", locationET.text.toString())
+        }
 
         setResult(Activity.RESULT_OK, intent)
         finish()
