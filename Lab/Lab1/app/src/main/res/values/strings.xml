@@ -6,4 +6,7 @@
     <string name="nickname">Nickname</string>
     <string name="email">Email</string>
     <string name="location">Location</string>
+    <string name="openGallery">Open gallery</string>
+    <string name="openCamera">Open camera</string>
+    <string name="save">Save</string>
 </resources>

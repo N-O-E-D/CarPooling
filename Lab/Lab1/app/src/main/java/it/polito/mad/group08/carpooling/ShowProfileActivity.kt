@@ -1,5 +1,7 @@
 package it.polito.mad.group08.carpooling
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -14,6 +16,15 @@ class ShowProfileActivity : AppCompatActivity() {
     private lateinit var emailTV : TextView
     private lateinit var locationTV : TextView
 
+    private fun editProfile(){
+        val intent = Intent(this, EditProfileActivity::class.java).also {
+            it.putExtra("group08.lab1.fullName", fullNameTV.text.toString())
+            it.putExtra("group08.lab1.nickname", nicknameTV.text.toString())
+            it.putExtra("group08.lab1.email", emailTV.text.toString())
+            it.putExtra("group08.lab1.location", locationTV.text.toString())
+        }
+        startActivityForResult(intent, 1)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,21 +59,28 @@ class ShowProfileActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_bar, menu)
+        menuInflater.inflate(R.menu.edit_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.editButton -> {
-                fullNameTV.text = "Domenico Bini"
-                nicknameTV.text = "polyhedral artist"
-                emailTV.text = "domenicobini@gmail.com"
-                locationTV.text = "Aosta"
+                editProfile()
             }
+        }
+        
+        return true
+    }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == 1 && resultCode == Activity.RESULT_OK){
+            fullNameTV.text = data?.getStringExtra("group08.lab1.fullName")
+            nicknameTV.text = data?.getStringExtra("group08.lab1.nickname")
+            emailTV.text = data?.getStringExtra("group08.lab1.email")
+            locationTV.text = data?.getStringExtra("group08.lab1.location")
         }
 
-        return true
     }
 }
