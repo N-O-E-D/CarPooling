@@ -19,6 +19,8 @@ class ShowProfileActivity : AppCompatActivity() {
     private lateinit var locationTV : TextView
     //TODO RatingBar for user status
 
+    val REQUEST_CODE_EDIT_ACTIVITY = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -84,12 +86,12 @@ class ShowProfileActivity : AppCompatActivity() {
                     it.putExtra("emailTV", emailTV.text.toString())
                     it.putExtra("locationTV", locationTV.text.toString())
                 }
-        startActivityForResult(intent,1)
+        startActivityForResult(intent,REQUEST_CODE_EDIT_ACTIVITY)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==1){
+        if(requestCode==REQUEST_CODE_EDIT_ACTIVITY){
             if(resultCode == Activity.RESULT_OK && data != null){
                 fullNameTV.text = data.getStringExtra("fullNameET")
                 nicknameTV.text = data.getStringExtra("nicknameET")

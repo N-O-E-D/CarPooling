@@ -8,7 +8,7 @@
     <string name="location">Location</string>
     <string name="imageChange">Change Image</string>
     <string name="phoneGallery">Select photo from phone gallery</string>
-    <string name="phoneCamera">Make new photo</string>
+    <string name="phoneCamera">Take new photo</string>
     <string name="saveEdit">Save</string>
 
 </resources>
