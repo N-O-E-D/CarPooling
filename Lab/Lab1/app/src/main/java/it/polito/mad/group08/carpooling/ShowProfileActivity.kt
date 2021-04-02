@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 
 class ShowProfileActivity : AppCompatActivity() {
     private lateinit var photoIV: ImageView
@@ -80,6 +81,9 @@ class ShowProfileActivity : AppCompatActivity() {
             nicknameTV.text = data?.getStringExtra("group08.lab1.nickname")
             emailTV.text = data?.getStringExtra("group08.lab1.email")
             locationTV.text = data?.getStringExtra("group08.lab1.location")
+        }
+        else{
+            Toast.makeText(this, "asfsafa", Toast.LENGTH_LONG).show()
         }
 
     }

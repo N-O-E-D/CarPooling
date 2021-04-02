@@ -36,7 +36,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="textAutoCorrect|textPersonName|textCapWords"
         app:layout_constraintBottom_toTopOf="@+id/nicknameET"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
@@ -44,12 +44,25 @@
         app:layout_constraintVertical_chainStyle="packed" />
 
     <EditText
+        android:id="@+id/nicknameET"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/emailET"
+        app:layout_constraintEnd_toEndOf="@+id/fullNameET"
+        app:layout_constraintStart_toStartOf="@+id/fullNameET"
+        app:layout_constraintTop_toBottomOf="@+id/fullNameET" />
+
+
+    <EditText
         android:id="@+id/emailET"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:inputType="textEmailAddress"
+        android:inputType="textWebEmailAddress|textEmailAddress"
         app:layout_constraintBottom_toTopOf="@+id/locationET"
         app:layout_constraintEnd_toEndOf="@+id/nicknameET"
         app:layout_constraintStart_toStartOf="@+id/nicknameET"
@@ -61,23 +74,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:inputType="textShortMessage"
+        android:inputType="text|textPostalAddress"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/emailET"
         app:layout_constraintStart_toStartOf="@+id/emailET"
         app:layout_constraintTop_toBottomOf="@+id/emailET" />
 
-    <EditText
-        android:id="@+id/nicknameET"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/emailET"
-        app:layout_constraintEnd_toEndOf="@+id/fullNameET"
-        app:layout_constraintStart_toStartOf="@+id/fullNameET"
-        app:layout_constraintTop_toBottomOf="@+id/fullNameET" />
+
 
     <ImageButton
         android:id="@+id/changeImageButton"
