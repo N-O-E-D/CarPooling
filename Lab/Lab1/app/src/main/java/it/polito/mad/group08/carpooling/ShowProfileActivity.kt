@@ -1,14 +1,20 @@
 package it.polito.mad.group08.carpooling
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import org.json.JSONObject
+
 
 class ShowProfileActivity : AppCompatActivity() {
     private lateinit var photoIV: ImageView
@@ -16,7 +22,7 @@ class ShowProfileActivity : AppCompatActivity() {
     private lateinit var nicknameTV : TextView
     private lateinit var emailTV : TextView
     private lateinit var locationTV : TextView
-
+    private lateinit var sharedPref : SharedPreferences
     private fun editProfile(){
         val intent = Intent(this, EditProfileActivity::class.java).also {
             it.putExtra("group08.lab1.fullName", fullNameTV.text.toString())
@@ -37,10 +43,25 @@ class ShowProfileActivity : AppCompatActivity() {
         emailTV = findViewById<TextView>(R.id.emailTV)
         locationTV = findViewById<TextView>(R.id.locationTV)
 
-        fullNameTV.text = "Full Name"
-        nicknameTV.text = "Nickname"
-        emailTV.text = "Email address"
-        locationTV.text = "Location"
+        sharedPref = this?.getPreferences(Context.MODE_PRIVATE) ?: return
+
+        val userInfoString: String? = sharedPref.getString("userInfo", null)
+        if(userInfoString != null){
+            val userInfoJSON : JSONObject = JSONObject(userInfoString)
+            fullNameTV.text = userInfoJSON.getString(getString(R.string.fullName))
+            nicknameTV.text = userInfoJSON.getString(getString(R.string.nickname))
+            emailTV.text = userInfoJSON.getString(getString(R.string.email))
+            locationTV.text = userInfoJSON.getString(getString(R.string.location))
+        }
+        else{
+            fullNameTV.text = "Full Name"
+            nicknameTV.text = "Nickname"
+            emailTV.text = "Email address"
+            locationTV.text = "Location"
+        }
+
+
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -74,6 +95,7 @@ class ShowProfileActivity : AppCompatActivity() {
         return true
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == 1 && resultCode == Activity.RESULT_OK){
@@ -81,6 +103,16 @@ class ShowProfileActivity : AppCompatActivity() {
             nicknameTV.text = data?.getStringExtra("group08.lab1.nickname")
             emailTV.text = data?.getStringExtra("group08.lab1.email")
             locationTV.text = data?.getStringExtra("group08.lab1.location")
+
+            val jsonObj: JSONObject = JSONObject().put(getString(R.string.fullName), fullNameTV.text.toString()).
+            put(getString(R.string.nickname), nicknameTV.text.toString()).
+            put(getString(R.string.email), emailTV.text.toString()).
+            put(getString(R.string.location), locationTV.text.toString())
+
+            with (sharedPref.edit()) {
+                putString("userInfo", jsonObj.toString())
+                apply()
+            }
         }
         else{
             Toast.makeText(this, "asfsafa", Toast.LENGTH_LONG).show()

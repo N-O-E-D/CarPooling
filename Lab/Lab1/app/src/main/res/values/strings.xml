@@ -9,4 +9,5 @@
     <string name="openGallery">Open gallery</string>
     <string name="openCamera">Open camera</string>
     <string name="save">Save</string>
+    <string name="PREFERENCE_FILE_KEY">t.polito.mad.group08.carpooling.PREFERENCE_FILE_KEY</string>
 </resources>
