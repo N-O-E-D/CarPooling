@@ -1,13 +1,12 @@
 package it.polito.mad.group08.carpooling
 
-import android.R.attr.bitmap
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -37,8 +36,8 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var locationET : EditText
 
     //Take new photo
-    val REQUEST_IMAGE_CAPTURE = 1
-    lateinit var currentPhotoPath: String
+    private val REQUEST_IMAGE_CAPTURE = 1
+    private lateinit var currentPhotoPath: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,14 +50,38 @@ class EditProfileActivity : AppCompatActivity() {
         emailET = findViewById<EditText>(R.id.emailET)
         locationET = findViewById<EditText>(R.id.locationET)
 
-        fullNameET.setText(intent.getStringExtra("fullNameTV"))
-        nicknameET.setText(intent.getStringExtra("nicknameTV"))
-        emailET.setText(intent.getStringExtra("emailTV"))
-        locationET.setText(intent.getStringExtra("locationTV"))
+        fullNameET.setText(intent.getStringExtra("group08.lab1.fullName"))
+        nicknameET.setText(intent.getStringExtra("group08.lab1.nickname"))
+        emailET.setText(intent.getStringExtra("group08.lab1.email"))
+        locationET.setText(intent.getStringExtra("group08.lab1.location"))
 
-        changePhotoIB.setOnClickListener {
-            registerForContextMenu(it)
-        }
+        currentPhotoPath = ""
+        registerForContextMenu(changePhotoIB)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d("TEST", "onSave")
+        outState.putString("group08.lab1.currentPhotoPath", currentPhotoPath)
+//        outState.putString("group08.lab1.fullName", fullNameET.text.toString())
+//        outState.putString("group08.lab1.nickname", nicknameET.text.toString())
+//        outState.putString("group08.lab1.email", emailET.text.toString())
+//        outState.putString("group08.lab1.location", locationET.text.toString())
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        Log.d("TEST", "onRestoreInstanceState")
+        currentPhotoPath = savedInstanceState.getString("group08.lab1.currentPhotoPath").toString()
+        //Log.d("TEST", "currentPhotoPath-after:  ${currentPhotoPath}")
+
+//        photoIV.setImageBitmap(BitmapFactory.decodeFile(
+//                savedInstanceState.getString(currentPhotoPath))
+//        )
+//        fullNameET.setText(savedInstanceState.getString("group08.lab1.fullName"))
+//        nicknameET.setText(savedInstanceState.getString("group08.lab1.nickname"))
+//        emailET.setText( savedInstanceState.getString("group08.lab1.email"))
+//        locationET.setText(savedInstanceState.getString("group08.lab1.location"))
     }
 
     //Context Menu is the "change image" button
@@ -72,7 +95,7 @@ class EditProfileActivity : AppCompatActivity() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         super.onContextItemSelected(item)
-        //val info = item.menuInfo as AdapterView.AdapterContextMenuInfo
+
         return when (item.itemId) {
             R.id.phoneGallery -> {
 //                val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -80,24 +103,7 @@ class EditProfileActivity : AppCompatActivity() {
                 true
             }
             R.id.phoneCamera -> {
-                Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-                    takePictureIntent.resolveActivity(packageManager)?.also {
-                        val photoFile: File? = try {
-                            createImageFile()
-                        } catch (ex: IOException) {
-                            Toast.makeText(applicationContext, "Error in creating Image File", Toast.LENGTH_LONG).show()
-                            null
-                        }
-
-                        //if null not continue
-                        photoFile?.also {
-                            val photoURI: Uri = FileProvider.getUriForFile(this,
-                                    "it.polito.mad.group08.carpooling", it)
-                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-                        }
-                    }
-                }
+                dispatchTakePictureIntent()
                 true
             }
             else -> super.onContextItemSelected(item)
@@ -119,40 +125,85 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
-    //return from "change image" Intent
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        Log.d("TEST", "onActivityResult")
-        if(requestCode==REQUEST_IMAGE_CAPTURE && resultCode== RESULT_OK && data != null){
-            val ei = ExifInterface(currentPhotoPath)
-            val orientation: Int = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_UNDEFINED)
+    private fun dispatchTakePictureIntent() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            takePictureIntent.resolveActivity(packageManager)?.also {
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    Toast.makeText(applicationContext, "Error in creating Image File", Toast.LENGTH_LONG).show()
+                    null
+                }
 
-            //TODO understand why this line is bugged
-            val imageBitmap = data.extras?.get("data") as Bitmap
-            Log.d("TEST", imageBitmap.toString())
-            val rotatedBitmap: Bitmap? = when (orientation) {
-                ExifInterface.ORIENTATION_ROTATE_90 -> rotateImage(imageBitmap, 90)
-                ExifInterface.ORIENTATION_ROTATE_180 -> rotateImage(imageBitmap, 180)
-                ExifInterface.ORIENTATION_ROTATE_270 -> rotateImage(imageBitmap, 270)
-                ExifInterface.ORIENTATION_NORMAL -> imageBitmap
-                else -> imageBitmap
+                //if null not continue
+                photoFile?.also {
+                    val photoURI = FileProvider.getUriForFile(this,
+                            "it.polito.mad.group08.carpooling", it)
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                }
             }
-
-            photoIV.setImageBitmap(rotatedBitmap)
         }
     }
 
-    private fun rotateImage(source: Bitmap, angle: Int): Bitmap? {
+
+    //return from "change image" Intent
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null){
+            rotateAndSet(rescalePic())
+        }
+    }
+
+    private fun rotateAndSet(imageBitmap: Bitmap){
+        val ei = ExifInterface(currentPhotoPath)
+        val orientation: Int = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_UNDEFINED)
+
+        val rotatedBitmap: Bitmap = when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> rotateImage(imageBitmap, 90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> rotateImage(imageBitmap, 180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> rotateImage(imageBitmap, 270f)
+            ExifInterface.ORIENTATION_NORMAL -> imageBitmap
+            else -> imageBitmap
+        }
+        photoIV.setImageBitmap(rotatedBitmap)
+    }
+
+    private fun rotateImage(source: Bitmap, angle: Float): Bitmap {
         val matrix = Matrix()
-        matrix.postRotate(angle.toFloat())
+        matrix.postRotate(angle)
         return Bitmap.createBitmap(source, 0, 0, source.width, source.height,
                 matrix, true)
     }
 
+    private fun rescalePic() : Bitmap {
+        // Get the dimensions of the View
+        val targetW: Int = photoIV.width
+        val targetH: Int = photoIV.height
+
+        val bmOptions = BitmapFactory.Options().apply {
+            // Get the dimensions of the bitmap
+            inJustDecodeBounds = true
+
+            //BitmapFactory.decodeFile(currentPhotoPath, this)
+
+            val photoW: Int = outWidth
+            val photoH: Int = outHeight
+
+            // Determine how much to scale down the image
+            val scaleFactor: Int = 1.coerceAtLeast((photoW / targetW).coerceAtMost(photoH / targetH))
+
+            // Decode the image file into a Bitmap sized to fill the View
+            inJustDecodeBounds = false
+            inSampleSize = scaleFactor
+        }
+        return BitmapFactory.decodeFile(currentPhotoPath, bmOptions)
+    }
+
+
     //Option Menu is the "save" button
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.option_menu_save_edit, menu)
         return true
     }
@@ -161,7 +212,6 @@ class EditProfileActivity : AppCompatActivity() {
         return when(item.itemId){
             R.id.saveEdit -> {
                 saveAndReturn()
-                //TODO return true never done?
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -172,10 +222,10 @@ class EditProfileActivity : AppCompatActivity() {
         val intent = Intent().also {
             // TODO seliazizzation?
             //it.putExtra("photoIV", photoIV. .toString())
-            it.putExtra("fullNameET", fullNameET.text.toString())
-            it.putExtra("nicknameET", nicknameET.text.toString())
-            it.putExtra("emailET", emailET.text.toString())
-            it.putExtra("locationET", locationET.text.toString())
+            it.putExtra("group08.lab1.fullName", fullNameET.text.toString())
+            it.putExtra("group08.lab1.nickname", nicknameET.text.toString())
+            it.putExtra("group08.lab1.email", emailET.text.toString())
+            it.putExtra("group08.lab1.location", locationET.text.toString())
         }
 
         setResult(Activity.RESULT_OK, intent)

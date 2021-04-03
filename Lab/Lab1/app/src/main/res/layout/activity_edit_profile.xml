@@ -45,7 +45,7 @@
         android:autofillHints=""
         android:ems="10"
         android:hint="@string/email"
-        android:inputType="textWebEmailAddress|textEmailAddress"
+        android:inputType="textEmailAddress"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintBottom_toTopOf="@+id/locationET"
         app:layout_constraintEnd_toEndOf="@+id/nicknameET"

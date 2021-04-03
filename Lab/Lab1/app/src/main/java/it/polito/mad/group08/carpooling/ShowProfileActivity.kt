@@ -1,15 +1,18 @@
 package it.polito.mad.group08.carpooling
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import org.json.JSONObject
 
 class ShowProfileActivity : AppCompatActivity() {
     private lateinit var photoIV: ImageView
@@ -18,6 +21,8 @@ class ShowProfileActivity : AppCompatActivity() {
     private lateinit var emailTV : TextView
     private lateinit var locationTV : TextView
     //TODO RatingBar for user status
+
+    private lateinit var sharedPref : SharedPreferences
 
     val REQUEST_CODE_EDIT_ACTIVITY = 1
 
@@ -33,26 +38,38 @@ class ShowProfileActivity : AppCompatActivity() {
         emailTV = findViewById<TextView>(R.id.emailTV)
         locationTV = findViewById<TextView>(R.id.locationTV)
 
-        fullNameTV.text = getString(R.string.fullName)
-        nicknameTV.text = getString(R.string.nickname)
-        emailTV.text = getString(R.string.email)
-        locationTV.text = getString(R.string.location)
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+
+        val jsonObjectDefault = JSONObject()
+        jsonObjectDefault.put("fullName", getString(R.string.fullName))
+        jsonObjectDefault.put("nickname", getString(R.string.nickname))
+        jsonObjectDefault.put("email", getString(R.string.email))
+        jsonObjectDefault.put("location", getString(R.string.location))
+
+        val jsonObject = sharedPref.getString("userInfo", jsonObjectDefault.toString())
+
+        val deserializedJSON = JSONObject(jsonObject)
+
+        fullNameTV.text = deserializedJSON.getString("fullName")
+        nicknameTV.text = deserializedJSON.getString("nickname")
+        emailTV.text = deserializedJSON.getString("email")
+        locationTV.text = deserializedJSON.getString("location")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("fullNameTV", fullNameTV.text.toString())
-        outState.putString("nicknameTV", nicknameTV.text.toString())
-        outState.putString("emailTV", emailTV.text.toString())
-        outState.putString("locationTV", locationTV.text.toString())
+        outState.putString("group08.lab1.fullName", fullNameTV.text.toString())
+        outState.putString("group08.lab1.nickname", nicknameTV.text.toString())
+        outState.putString("group08.lab1.email", emailTV.text.toString())
+        outState.putString("group08.lab1.location", locationTV.text.toString())
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        fullNameTV.text = savedInstanceState.getString("fullNameTV")
-        nicknameTV.text = savedInstanceState.getString("nicknameTV")
-        emailTV.text = savedInstanceState.getString("emailTV")
-        locationTV.text = savedInstanceState.getString("locationTV")
+        fullNameTV.text = savedInstanceState.getString("group08.lab1.fullName")
+        nicknameTV.text = savedInstanceState.getString("group08.lab1.nickname")
+        emailTV.text = savedInstanceState.getString("group08.lab1.email")
+        locationTV.text = savedInstanceState.getString("group08.lab1.location")
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -63,10 +80,6 @@ class ShowProfileActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.editButton -> {
-//                fullNameTV.text = "Domenico Bini"
-//                nicknameTV.text = "polyhedral artist"
-//                emailTV.text = "domenicobini@gmail.com"
-//                locationTV.text = "Aosta"
                 editProfile()
             }
         }
@@ -75,16 +88,13 @@ class ShowProfileActivity : AppCompatActivity() {
     }
 
     private fun editProfile(){
-//       TODO
-//        In order to reduce the risk of name clashes with existing keys, name your item out
-//        of your project package name, e.g. “groupXX.lab1.FULL_NAME”.
         val intent = Intent(this, EditProfileActivity::class.java)
                 .also {
-                    //it.putExtra("photoIV", R.drawable.photo_default)
-                    it.putExtra("fullNameTV", fullNameTV.text.toString())
-                    it.putExtra("nicknameTV", nicknameTV.text.toString())
-                    it.putExtra("emailTV", emailTV.text.toString())
-                    it.putExtra("locationTV", locationTV.text.toString())
+                    //it.putExtra("group08.lab1.currentPhotoPath", R.drawable.photo_default)
+                    it.putExtra("group08.lab1.fullName", fullNameTV.text.toString())
+                    it.putExtra("group08.lab1.nickname", nicknameTV.text.toString())
+                    it.putExtra("group08.lab1.email", emailTV.text.toString())
+                    it.putExtra("group08.lab1.location", locationTV.text.toString())
                 }
         startActivityForResult(intent,REQUEST_CODE_EDIT_ACTIVITY)
     }
@@ -93,10 +103,24 @@ class ShowProfileActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode==REQUEST_CODE_EDIT_ACTIVITY){
             if(resultCode == Activity.RESULT_OK && data != null){
-                fullNameTV.text = data.getStringExtra("fullNameET")
-                nicknameTV.text = data.getStringExtra("nicknameET")
-                emailTV.text = data.getStringExtra("emailET")
-                locationTV.text = data.getStringExtra("locationET")
+                fullNameTV.text = data.getStringExtra("group08.lab1.fullName")
+                nicknameTV.text = data.getStringExtra("group08.lab1.nickname")
+                emailTV.text = data.getStringExtra("group08.lab1.email")
+                locationTV.text = data.getStringExtra("group08.lab1.location")
+
+                sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+                with (sharedPref.edit()) {
+                    val jsonObject = JSONObject()
+                    jsonObject.put("fullName", fullNameTV.text)
+                    jsonObject.put("nickname", nicknameTV.text)
+                    jsonObject.put("email", emailTV.text)
+                    jsonObject.put("location", locationTV.text)
+
+
+                    Log.d("TEST", "OBJECT: ${jsonObject.toString()}")
+                    putString("userInfo", jsonObject.toString())
+                    apply()
+                }
             }else{
                 Toast.makeText(applicationContext, "Error in editing", Toast.LENGTH_LONG).show()
             }
