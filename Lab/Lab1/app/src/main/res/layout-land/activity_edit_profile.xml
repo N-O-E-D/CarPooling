@@ -21,28 +21,12 @@
         android:hint="@string/fullName"
         android:inputType="textAutoCorrect|textPersonName|textCapWords"
         android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+        android:textSize="36sp"
         app:layout_constraintBottom_toTopOf="@+id/nicknameET"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
-
-    <EditText
-        android:id="@+id/nicknameET"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:autofillHints=""
-        android:ems="10"
-        android:hint="@string/nickname"
-        android:inputType="text"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        app:layout_constraintBottom_toTopOf="@+id/emailET"
-        app:layout_constraintEnd_toEndOf="@+id/fullnameET"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/fullnameET"
-        app:layout_constraintTop_toBottomOf="@+id/fullnameET" />
 
     <EditText
         android:id="@+id/emailET"
@@ -54,9 +38,9 @@
         android:hint="@string/email"
         android:inputType="textEmailAddress"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/locationET"
         app:layout_constraintEnd_toEndOf="@+id/nicknameET"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/nicknameET"
         app:layout_constraintTop_toBottomOf="@+id/nicknameET" />
 
@@ -70,11 +54,27 @@
         android:hint="@string/location"
         android:inputType="text|textPostalAddress"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/emailET"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/emailET"
         app:layout_constraintTop_toBottomOf="@+id/emailET" />
+
+    <EditText
+        android:id="@+id/nicknameET"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/nickname"
+        android:inputType="text"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/emailET"
+        app:layout_constraintEnd_toEndOf="@+id/fullnameET"
+        app:layout_constraintStart_toStartOf="@+id/fullnameET"
+        app:layout_constraintTop_toBottomOf="@+id/fullnameET" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"

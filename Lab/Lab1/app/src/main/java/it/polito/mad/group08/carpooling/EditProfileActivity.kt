@@ -1,16 +1,18 @@
 package it.polito.mad.group08.carpooling
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.graphics.Matrix
 import android.media.ExifInterface
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
@@ -19,9 +21,11 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -38,6 +42,9 @@ class EditProfileActivity : AppCompatActivity() {
     //Take new photo
     private val REQUEST_IMAGE_CAPTURE = 1
     private lateinit var currentPhotoPath: String
+
+    //Pick from galley
+    private val REQUEST_IMAGE_GALLERY = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,13 +63,32 @@ class EditProfileActivity : AppCompatActivity() {
         locationET.setText(intent.getStringExtra("group08.lab1.location"))
 
         currentPhotoPath = ""
-        registerForContextMenu(changePhotoIB)
+
+        changePhotoIB.setOnClickListener {
+            registerForContextMenu(it);
+            openContextMenu(it);
+            unregisterForContextMenu(it);
+        }
+
+        retriveUserImage()
+    }
+
+    private fun retriveUserImage(){
+        try {
+            applicationContext.openFileInput("image_from_camera").use {
+                val imageBitmap = BitmapFactory.decodeStream(it)
+                if (imageBitmap != null)
+                    photoIV.setImageBitmap(imageBitmap)
+            }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+            // the application can continue without image. It will continue with default image
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Log.d("TEST", "onSave")
-        outState.putString("group08.lab1.currentPhotoPath", currentPhotoPath)
+//        outState.putString("group08.lab1.currentPhotoPath", currentPhotoPath)
 //        outState.putString("group08.lab1.fullName", fullNameET.text.toString())
 //        outState.putString("group08.lab1.nickname", nicknameET.text.toString())
 //        outState.putString("group08.lab1.email", emailET.text.toString())
@@ -71,13 +97,7 @@ class EditProfileActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        Log.d("TEST", "onRestoreInstanceState")
-        currentPhotoPath = savedInstanceState.getString("group08.lab1.currentPhotoPath").toString()
-        //Log.d("TEST", "currentPhotoPath-after:  ${currentPhotoPath}")
-
-//        photoIV.setImageBitmap(BitmapFactory.decodeFile(
-//                savedInstanceState.getString(currentPhotoPath))
-//        )
+//        currentPhotoPath = savedInstanceState.getString("group08.lab1.currentPhotoPath").toString()
 //        fullNameET.setText(savedInstanceState.getString("group08.lab1.fullName"))
 //        nicknameET.setText(savedInstanceState.getString("group08.lab1.nickname"))
 //        emailET.setText( savedInstanceState.getString("group08.lab1.email"))
@@ -94,12 +114,10 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        super.onContextItemSelected(item)
-
         return when (item.itemId) {
             R.id.phoneGallery -> {
-//                val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-//                startActivityForResult(pickPhoto, 0)
+                val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+                startActivityForResult(gallery, REQUEST_IMAGE_GALLERY)
                 true
             }
             R.id.phoneCamera -> {
@@ -148,10 +166,55 @@ class EditProfileActivity : AppCompatActivity() {
 
 
     //return from "change image" Intent
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null){
-            rotateAndSet(rescalePic())
+
+        when(requestCode){
+            REQUEST_IMAGE_CAPTURE -> {
+                if (resultCode == RESULT_OK) {
+                    val imageBitmap = BitmapFactory.decodeFile(currentPhotoPath)
+
+                    //savePersistent
+                    try {
+                        applicationContext.openFileOutput("image_from_camera", Context.MODE_PRIVATE).use {
+                            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+                        }
+
+                        //set in EditProfile
+                        rotateAndSet(imageBitmap)
+                    } catch (e: IOException) {
+                        Toast.makeText(applicationContext, "Not enough space for save the image", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+            REQUEST_IMAGE_GALLERY -> {
+                if (resultCode == RESULT_OK) {
+                    val imageUri = data?.data!!
+
+                    val imageBitmap = when {
+                        Build.VERSION.SDK_INT < 28 -> MediaStore.Images.Media.getBitmap(
+                                this.contentResolver,
+                                imageUri
+                        )
+                        else -> {
+                            val source = ImageDecoder.createSource(this.contentResolver, imageUri)
+                            ImageDecoder.decodeBitmap(source)
+                        }
+                    }
+
+                    try{
+                        applicationContext.openFileOutput("image_from_camera", Context.MODE_PRIVATE)
+                                .use{
+                                    imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+                                }
+
+                        photoIV.setImageURI(imageUri)
+                    }catch (e: IOException){
+                        Toast.makeText(this, "Not enough space for save the image", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
     }
 
@@ -177,31 +240,6 @@ class EditProfileActivity : AppCompatActivity() {
                 matrix, true)
     }
 
-    private fun rescalePic() : Bitmap {
-        // Get the dimensions of the View
-        val targetW: Int = photoIV.width
-        val targetH: Int = photoIV.height
-
-        val bmOptions = BitmapFactory.Options().apply {
-            // Get the dimensions of the bitmap
-            inJustDecodeBounds = true
-
-            //BitmapFactory.decodeFile(currentPhotoPath, this)
-
-            val photoW: Int = outWidth
-            val photoH: Int = outHeight
-
-            // Determine how much to scale down the image
-            val scaleFactor: Int = 1.coerceAtLeast((photoW / targetW).coerceAtMost(photoH / targetH))
-
-            // Decode the image file into a Bitmap sized to fill the View
-            inJustDecodeBounds = false
-            inSampleSize = scaleFactor
-        }
-        return BitmapFactory.decodeFile(currentPhotoPath, bmOptions)
-    }
-
-
     //Option Menu is the "save" button
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.option_menu_save_edit, menu)
@@ -220,8 +258,6 @@ class EditProfileActivity : AppCompatActivity() {
 
     private fun saveAndReturn(){
         val intent = Intent().also {
-            // TODO seliazizzation?
-            //it.putExtra("photoIV", photoIV. .toString())
             it.putExtra("group08.lab1.fullName", fullNameET.text.toString())
             it.putExtra("group08.lab1.nickname", nicknameET.text.toString())
             it.putExtra("group08.lab1.email", emailET.text.toString())

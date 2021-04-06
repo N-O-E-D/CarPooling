@@ -4,15 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import org.json.JSONObject
+import java.io.FileNotFoundException
 
 class ShowProfileActivity : AppCompatActivity() {
     private lateinit var photoIV: ImageView
@@ -24,7 +24,7 @@ class ShowProfileActivity : AppCompatActivity() {
 
     private lateinit var sharedPref : SharedPreferences
 
-    val REQUEST_CODE_EDIT_ACTIVITY = 1
+    private val REQUEST_CODE_EDIT_ACTIVITY = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +46,7 @@ class ShowProfileActivity : AppCompatActivity() {
         jsonObjectDefault.put("email", getString(R.string.email))
         jsonObjectDefault.put("location", getString(R.string.location))
 
-        val jsonObject = sharedPref.getString("userInfo", jsonObjectDefault.toString())
+        val jsonObject = sharedPref.getString("profile", jsonObjectDefault.toString())
 
         val deserializedJSON = JSONObject(jsonObject)
 
@@ -54,6 +54,8 @@ class ShowProfileActivity : AppCompatActivity() {
         nicknameTV.text = deserializedJSON.getString("nickname")
         emailTV.text = deserializedJSON.getString("email")
         locationTV.text = deserializedJSON.getString("location")
+
+        retriveUserImage()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -78,13 +80,13 @@ class ShowProfileActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        return when(item.itemId){
             R.id.editButton -> {
                 editProfile()
+                true
             }
+            else -> super.onOptionsItemSelected(item)
         }
-
-        return true
     }
 
     private fun editProfile(){
@@ -108,7 +110,6 @@ class ShowProfileActivity : AppCompatActivity() {
                 emailTV.text = data.getStringExtra("group08.lab1.email")
                 locationTV.text = data.getStringExtra("group08.lab1.location")
 
-                sharedPref = this.getPreferences(Context.MODE_PRIVATE)
                 with (sharedPref.edit()) {
                     val jsonObject = JSONObject()
                     jsonObject.put("fullName", fullNameTV.text)
@@ -116,14 +117,25 @@ class ShowProfileActivity : AppCompatActivity() {
                     jsonObject.put("email", emailTV.text)
                     jsonObject.put("location", locationTV.text)
 
-
-                    Log.d("TEST", "OBJECT: ${jsonObject.toString()}")
-                    putString("userInfo", jsonObject.toString())
+                    putString("profile", jsonObject.toString())
                     apply()
                 }
-            }else{
-                Toast.makeText(applicationContext, "Error in editing", Toast.LENGTH_LONG).show()
+
+                retriveUserImage()
             }
+        }
+    }
+
+    private fun retriveUserImage(){
+        try {
+            applicationContext.openFileInput("image_from_camera").use {
+                val imageBitmap = BitmapFactory.decodeStream(it)
+                if (imageBitmap != null)
+                    photoIV.setImageBitmap(imageBitmap)
+            }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+            // the application can continue without image. It will continue with default image
         }
     }
 }
