@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name"></string>
+    <string name="app_name" />
     <string name="edit">Edit</string>
     <string name="photo">Photo</string>
+    <string name="change_photo">Change photo</string>
     <string name="fullName">Full Name</string>
     <string name="nickname">Nickname</string>
     <string name="email">Email</string>
@@ -9,5 +10,4 @@
     <string name="openGallery">Open gallery</string>
     <string name="openCamera">Open camera</string>
     <string name="save">Save</string>
-    <string name="PREFERENCE_FILE_KEY">t.polito.mad.group08.carpooling.PREFERENCE_FILE_KEY</string>
 </resources>

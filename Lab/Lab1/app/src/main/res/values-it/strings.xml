@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" />
+    <string name="edit">Modifica</string>
+    <string name="photo">Foto</string>
+    <string name="change_photo">Cambia Foto</string>
+    <string name="fullName">Nome Completo</string>
+    <string name="nickname">Nickname</string>
+    <string name="email">Email</string>
+    <string name="location">Posizione</string>
+    <string name="openGallery">Apri galleria</string>
+    <string name="openCamera">Apri fotocamera</string>
+    <string name="save">Salva</string>
+</resources>
