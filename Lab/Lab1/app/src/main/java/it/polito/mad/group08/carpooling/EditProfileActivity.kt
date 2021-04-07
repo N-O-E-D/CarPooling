@@ -41,7 +41,7 @@ class EditProfileActivity : AppCompatActivity() {
     private var currentPhotoPath: String = ""
     private val OPEN_CAMERA_REQUEST_CODE = 1
     private val OPEN_GALLERY_REQUEST_CODE = 2
-    private lateinit var bitmap: Bitmap
+    private var bitmap: Bitmap? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,6 +113,16 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("path", currentPhotoPath)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        currentPhotoPath = savedInstanceState.getString("path").toString()
+
+    }
     // It retrieve the user image from the internal storage
     private fun retrieveUserImage(){
         try{
@@ -171,16 +181,19 @@ class EditProfileActivity : AppCompatActivity() {
                     it.putExtra("group08.lab1.location", locationET.text.toString())
                 }
 
-                // it saves the bitmap into the internal storage
-                try{
-                    applicationContext.openFileOutput("userProfileImage", Context.MODE_PRIVATE).use{
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
-                    }
+                if(bitmap != null){
+                    // it saves the bitmap into the internal storage
+                    try{
+                        applicationContext.openFileOutput("userProfileImage", Context.MODE_PRIVATE).use{
+                            bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, it)
+                        }
 
+                    }
+                    catch(e: IOException){
+                        Toast.makeText(this, "Not enough space to store the photo!", Toast.LENGTH_LONG).show()
+                    }
                 }
-                catch(e: IOException){
-                    Toast.makeText(this, "Not enough space to store the photo!", Toast.LENGTH_LONG).show()
-                }
+
 
                 setResult(Activity.RESULT_OK, intent)
                 finish()
@@ -223,7 +236,7 @@ class EditProfileActivity : AppCompatActivity() {
             // it retrieves the bitmap from currentPhotoPath. If needed it rotates the bitmap and set it in the imageview.
 
             bitmap = BitmapFactory.decodeFile(currentPhotoPath)
-            rotateAndSet(bitmap)
+            rotateAndSet(bitmap!!)
 
         }
         else if (requestCode == OPEN_GALLERY_REQUEST_CODE && resultCode == RESULT_OK){

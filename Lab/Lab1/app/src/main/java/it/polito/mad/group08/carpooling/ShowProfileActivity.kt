@@ -120,10 +120,16 @@ class ShowProfileActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == EDIT_PROFILE_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null){
-            fullNameTV.text = data.getStringExtra("group08.lab1.fullName")
-            nicknameTV.text = data.getStringExtra("group08.lab1.nickname")
-            emailTV.text = data.getStringExtra("group08.lab1.email")
-            locationTV.text = data.getStringExtra("group08.lab1.location")
+            val fullNameString = data.getStringExtra("group08.lab1.fullName")
+            val nicknameString = data.getStringExtra("group08.lab1.nickname")
+            val emailString = data.getStringExtra("group08.lab1.email")
+            val locationString = data.getStringExtra("group08.lab1.location")
+
+
+            fullNameTV.text =  if(fullNameString.isNullOrBlank()) getString(R.string.fullName) else fullNameString
+            nicknameTV.text = if(nicknameString.isNullOrBlank()) getString(R.string.nickname) else nicknameString
+            emailTV.text = if(emailString.isNullOrBlank()) getString(R.string.email) else emailString
+            locationTV.text = if(locationString.isNullOrBlank()) getString(R.string.location) else locationString
 
             with (sharedPref.edit()) {
                 val jsonObject = JSONObject()
