@@ -46,7 +46,7 @@ class ShowProfileActivity : AppCompatActivity() {
         jsonObjectDefault.put("email", getString(R.string.email))
         jsonObjectDefault.put("location", getString(R.string.location))
 
-        val jsonObject = sharedPref.getString("profile", jsonObjectDefault.toString())
+        val jsonObject = sharedPref.getString("profile", jsonObjectDefault.toString())!!
 
         val deserializedJSON = JSONObject(jsonObject)
 
@@ -55,7 +55,7 @@ class ShowProfileActivity : AppCompatActivity() {
         emailTV.text = deserializedJSON.getString("email")
         locationTV.text = deserializedJSON.getString("location")
 
-        retriveUserImage()
+        retrieveUserImage()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -121,12 +121,12 @@ class ShowProfileActivity : AppCompatActivity() {
                     apply()
                 }
 
-                retriveUserImage()
+                retrieveUserImage()
             }
         }
     }
 
-    private fun retriveUserImage(){
+    private fun retrieveUserImage(){
         try {
             applicationContext.openFileInput("image_from_camera").use {
                 val imageBitmap = BitmapFactory.decodeStream(it)
