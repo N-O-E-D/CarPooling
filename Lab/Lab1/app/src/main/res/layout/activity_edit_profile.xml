@@ -16,8 +16,8 @@
 
     <ImageView
         android:id="@+id/photoImage"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
@@ -30,18 +30,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:srcCompat="@drawable/photo_default"
+        tools:srcCompat="@drawable/photo_default" />
 
     <EditText
         android:id="@+id/fullNameET"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:ems="10"
         android:inputType="textAutoCorrect|textPersonName|textCapWords"
+        android:hint="@string/fullName"
+        android:autofillHints=""
         app:layout_constraintBottom_toTopOf="@+id/nicknameET"
-        app:layout_constraintEnd_toEndOf="@+id/photoImage"
-        app:layout_constraintStart_toStartOf="@+id/photoImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/horizontalGuideline"
         app:layout_constraintVertical_chainStyle="packed" />
 
@@ -52,6 +59,8 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="text"
+        android:hint="@string/nickname"
+        android:autofillHints=""
         app:layout_constraintBottom_toTopOf="@+id/emailET"
         app:layout_constraintEnd_toEndOf="@+id/fullNameET"
         app:layout_constraintStart_toStartOf="@+id/fullNameET"
@@ -64,6 +73,8 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="textEmailAddress"
+        android:hint="@string/email"
+        android:autofillHints=""
         app:layout_constraintBottom_toTopOf="@+id/locationET"
         app:layout_constraintEnd_toEndOf="@+id/nicknameET"
         app:layout_constraintStart_toStartOf="@+id/nicknameET"
@@ -76,6 +87,8 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="text|textPostalAddress"
+        android:hint="@string/location"
+        android:autofillHints=""
         app:layout_constraintEnd_toEndOf="@+id/emailET"
         app:layout_constraintStart_toStartOf="@+id/emailET"
         app:layout_constraintTop_toBottomOf="@+id/emailET" />
