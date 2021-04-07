@@ -101,7 +101,6 @@ class EditProfileActivity : AppCompatActivity() {
 
                 // Continue only if the File was successfully created
                 photoFile?.also {
-
                     photoURI = FileProvider.getUriForFile(
                             this,
                             "it.polito.mad.group08.carpooling",
