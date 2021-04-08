@@ -2,13 +2,12 @@
     <string name="app_name" />
     <string name="edit">Edit</string>
     <string name="photo">Photo</string>
+    <string name="change_photo">Change photo</string>
     <string name="fullName">Full Name</string>
     <string name="nickname">Nickname</string>
     <string name="email">Email</string>
     <string name="location">Location</string>
-    <string name="imageChange">Change Image</string>
-    <string name="phoneGallery">Select photo from phone gallery</string>
-    <string name="phoneCamera">Take new photo</string>
-    <string name="saveEdit">Save</string>
-
+    <string name="openGallery">Open gallery</string>
+    <string name="openCamera">Open camera</string>
+    <string name="save">Save</string>
 </resources>

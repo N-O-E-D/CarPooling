@@ -4,15 +4,18 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
 import java.io.FileNotFoundException
+
 
 class ShowProfileActivity : AppCompatActivity() {
     private lateinit var photoIV: ImageView
@@ -20,11 +23,8 @@ class ShowProfileActivity : AppCompatActivity() {
     private lateinit var nicknameTV : TextView
     private lateinit var emailTV : TextView
     private lateinit var locationTV : TextView
-    //TODO RatingBar for user status
-
     private lateinit var sharedPref : SharedPreferences
-
-    private val REQUEST_CODE_EDIT_ACTIVITY = 1
+    private val EDIT_PROFILE_REQUEST_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,82 +60,94 @@ class ShowProfileActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("group08.lab1.fullName", fullNameTV.text.toString())
-        outState.putString("group08.lab1.nickname", nicknameTV.text.toString())
-        outState.putString("group08.lab1.email", emailTV.text.toString())
-        outState.putString("group08.lab1.location", locationTV.text.toString())
+        outState.putString("fullNameTV", fullNameTV.text.toString())
+        outState.putString("nicknameTV", nicknameTV.text.toString())
+        outState.putString("emailTV", emailTV.text.toString())
+        outState.putString("locationTV", locationTV.text.toString())
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        fullNameTV.text = savedInstanceState.getString("group08.lab1.fullName")
-        nicknameTV.text = savedInstanceState.getString("group08.lab1.nickname")
-        emailTV.text = savedInstanceState.getString("group08.lab1.email")
-        locationTV.text = savedInstanceState.getString("group08.lab1.location")
+        fullNameTV.text = savedInstanceState.getString("fullNameTV")
+        nicknameTV.text = savedInstanceState.getString("nicknameTV")
+        emailTV.text = savedInstanceState.getString("emailTV")
+        locationTV.text = savedInstanceState.getString("locationTV")
     }
 
+    // starts the EditProfileActivity putting extras in the intent
+    private fun editProfile(){
+        val intent = Intent(this, EditProfileActivity::class.java).also {
+            it.putExtra("group08.lab1.fullName", fullNameTV.text.toString())
+            it.putExtra("group08.lab1.nickname", nicknameTV.text.toString())
+            it.putExtra("group08.lab1.email", emailTV.text.toString())
+            it.putExtra("group08.lab1.location", locationTV.text.toString())
+        }
+        startActivityForResult(intent, EDIT_PROFILE_REQUEST_CODE)
+    }
+
+
+    private fun retrieveUserImage(){
+        try{
+            applicationContext.openFileInput("userProfileImage").use{
+                val bitmap: Bitmap? = BitmapFactory.decodeStream(it)
+                if(bitmap != null){
+                    photoIV.setImageBitmap(bitmap)
+                }
+            }
+        }
+        catch(e: FileNotFoundException){
+            e.printStackTrace()
+        }
+    }
+
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.option_menu_edit_profile, menu)
+        menuInflater.inflate(R.menu.edit_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
+        when(item.itemId){
             R.id.editButton -> {
                 editProfile()
-                true
             }
-            else -> super.onOptionsItemSelected(item)
         }
+        
+        return true
     }
 
-    private fun editProfile(){
-        val intent = Intent(this, EditProfileActivity::class.java)
-                .also {
-                    //it.putExtra("group08.lab1.currentPhotoPath", R.drawable.photo_default)
-                    it.putExtra("group08.lab1.fullName", fullNameTV.text.toString())
-                    it.putExtra("group08.lab1.nickname", nicknameTV.text.toString())
-                    it.putExtra("group08.lab1.email", emailTV.text.toString())
-                    it.putExtra("group08.lab1.location", locationTV.text.toString())
-                }
-        startActivityForResult(intent,REQUEST_CODE_EDIT_ACTIVITY)
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==REQUEST_CODE_EDIT_ACTIVITY){
-            if(resultCode == Activity.RESULT_OK && data != null){
-                fullNameTV.text = data.getStringExtra("group08.lab1.fullName")
-                nicknameTV.text = data.getStringExtra("group08.lab1.nickname")
-                emailTV.text = data.getStringExtra("group08.lab1.email")
-                locationTV.text = data.getStringExtra("group08.lab1.location")
+        if(requestCode == EDIT_PROFILE_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null){
+            val fullNameString = data.getStringExtra("group08.lab1.fullName")
+            val nicknameString = data.getStringExtra("group08.lab1.nickname")
+            val emailString = data.getStringExtra("group08.lab1.email")
+            val locationString = data.getStringExtra("group08.lab1.location")
 
-                with (sharedPref.edit()) {
-                    val jsonObject = JSONObject()
-                    jsonObject.put("fullName", fullNameTV.text)
-                    jsonObject.put("nickname", nicknameTV.text)
-                    jsonObject.put("email", emailTV.text)
-                    jsonObject.put("location", locationTV.text)
 
-                    putString("profile", jsonObject.toString())
-                    apply()
-                }
+            fullNameTV.text =  if(fullNameString.isNullOrBlank()) getString(R.string.fullName) else fullNameString
+            nicknameTV.text = if(nicknameString.isNullOrBlank()) getString(R.string.nickname) else nicknameString
+            emailTV.text = if(emailString.isNullOrBlank()) getString(R.string.email) else emailString
+            locationTV.text = if(locationString.isNullOrBlank()) getString(R.string.location) else locationString
 
-                retrieveUserImage()
+            with (sharedPref.edit()) {
+                val jsonObject = JSONObject()
+                jsonObject.put("fullName", fullNameTV.text)
+                jsonObject.put("nickname", nicknameTV.text)
+                jsonObject.put("email", emailTV.text)
+                jsonObject.put("location", locationTV.text)
+
+                putString("profile", jsonObject.toString())
+                apply()
             }
+
+            retrieveUserImage()
+
+
         }
-    }
-
-    private fun retrieveUserImage(){
-        try {
-            applicationContext.openFileInput("image_from_camera").use {
-                val imageBitmap = BitmapFactory.decodeStream(it)
-                if (imageBitmap != null)
-                    photoIV.setImageBitmap(imageBitmap)
-            }
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-            // the application can continue without image. It will continue with default image
+        else if(requestCode == EDIT_PROFILE_REQUEST_CODE && resultCode != Activity.RESULT_CANCELED){
+            Toast.makeText(this, "Error detected!", Toast.LENGTH_LONG).show()
         }
     }
 }
