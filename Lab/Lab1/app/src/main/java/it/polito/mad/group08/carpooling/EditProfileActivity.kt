@@ -72,7 +72,7 @@ class EditProfileActivity : AppCompatActivity() {
     @Throws(IOException::class)
     private fun createImageFile(): File {
         // Create an image file name
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
         val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(
                 "JPEG_${timeStamp}_", /* prefix */
@@ -116,12 +116,13 @@ class EditProfileActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("path", currentPhotoPath)
+        //Note: Here the EditText are automatically saved
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         currentPhotoPath = savedInstanceState.getString("path").toString()
-
+        //Note: Here the EditText are automatically restored
     }
     // It retrieve the user image from the internal storage
     private fun retrieveUserImage(){
