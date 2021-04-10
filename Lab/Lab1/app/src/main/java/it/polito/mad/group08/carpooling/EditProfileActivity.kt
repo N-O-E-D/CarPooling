@@ -69,6 +69,20 @@ class EditProfileActivity : AppCompatActivity() {
         retrieveUserImage()
     }
 
+    override fun onResume() {
+        super.onResume()
+        listOf(fullNameET, nicknameET, emailET, locationET).map{
+            it.setOnFocusChangeListener { v , hasFocus ->
+                if(hasFocus){
+                    v.setBackgroundResource(R.drawable.focus_border_style)
+                }
+                else{
+                    v.setBackgroundResource(R.drawable.lost_focus_style)
+                }
+            }
+        }
+
+    }
     // Creates a temp file in which will be stored a new picture
     @Throws(IOException::class)
     private fun createImageFile(): File {

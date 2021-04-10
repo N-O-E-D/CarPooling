@@ -6,22 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".ShowProfileActivity">
 
+    <View
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:background="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/verticalGuideline"
+        app:layout_constraintStart_toStartOf="@+id/verticalGuideline"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/photoImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="16dp"
+        android:background="#DCDCDC"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:autofillHints=""
         android:contentDescription="@string/photo"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintEnd_toStartOf="@+id/verticalGuideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/photo_default"
@@ -31,8 +35,8 @@
         android:id="@+id/fullNameET"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
@@ -40,9 +44,10 @@
         android:inputType="textAutoCorrect|textPersonName|textCapWords"
         android:autofillHints=""
         android:hint="@string/fullName"
+        android:background="@drawable/lost_focus_style"
         app:layout_constraintBottom_toTopOf="@+id/nicknameET"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/verticalGuideline"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
@@ -55,6 +60,7 @@
         android:inputType="text"
         android:autofillHints=""
         android:hint="@string/nickname"
+        android:background="@drawable/lost_focus_style"
         app:layout_constraintBottom_toTopOf="@+id/emailET"
         app:layout_constraintEnd_toEndOf="@+id/fullNameET"
         app:layout_constraintStart_toStartOf="@+id/fullNameET"
@@ -70,6 +76,7 @@
         android:inputType="textEmailAddress"
         android:autofillHints=""
         android:hint="@string/email"
+        android:background="@drawable/lost_focus_style"
         app:layout_constraintBottom_toTopOf="@+id/locationET"
         app:layout_constraintEnd_toEndOf="@+id/nicknameET"
         app:layout_constraintStart_toStartOf="@+id/nicknameET"
@@ -84,6 +91,7 @@
         android:inputType="text|textPostalAddress"
         android:autofillHints=""
         android:hint="@string/location"
+        android:background="@drawable/lost_focus_style"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/emailET"
         app:layout_constraintStart_toStartOf="@+id/emailET"
@@ -106,7 +114,7 @@
         android:contentDescription="@string/change_photo" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
+        android:id="@+id/verticalGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
