@@ -22,6 +22,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -116,21 +117,28 @@ class EditProfileActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("path", currentPhotoPath)
-        //Note: Here the EditText are automatically saved
+        val stream = ByteArrayOutputStream()
+        bitmap?.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        val image = stream.toByteArray()
+        outState.putByteArray("bitmap", image)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         currentPhotoPath = savedInstanceState.getString("path").toString()
-        //Note: Here the EditText are automatically restored
+        val byteArray: ByteArray? = savedInstanceState.getByteArray("bitmap")
+        val bitmapRetrieved = BitmapFactory.decodeByteArray(byteArray, 0, byteArray?.size!!)
+        bitmap = bitmapRetrieved
+        photoIV.setImageBitmap(bitmap)
     }
+
     // It retrieve the user image from the internal storage
     private fun retrieveUserImage(){
         try{
             applicationContext.openFileInput("userProfileImage").use{
-                val imageBitmap: Bitmap? = BitmapFactory.decodeStream(it)
-                if(imageBitmap != null){
-                    photoIV.setImageBitmap(imageBitmap)
+                bitmap = BitmapFactory.decodeStream(it)
+                if(bitmap != null){
+                    photoIV.setImageBitmap(bitmap)
                 }
             }
         }
