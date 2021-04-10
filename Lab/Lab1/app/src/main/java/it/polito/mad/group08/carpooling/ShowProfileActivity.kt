@@ -82,6 +82,7 @@ class ShowProfileActivity : AppCompatActivity() {
             it.putExtra("group08.lab1.email", emailTV.text.toString())
             it.putExtra("group08.lab1.location", locationTV.text.toString())
         }
+        // it calls onPause()
         startActivityForResult(intent, EDIT_PROFILE_REQUEST_CODE)
     }
 
@@ -102,18 +103,19 @@ class ShowProfileActivity : AppCompatActivity() {
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.edit_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        return when(item.itemId){
             R.id.editButton -> {
                 editProfile()
+                true
             }
+            else -> super.onOptionsItemSelected(item)
         }
-        
-        return true
     }
 
 
@@ -124,7 +126,6 @@ class ShowProfileActivity : AppCompatActivity() {
             val nicknameString = data.getStringExtra("group08.lab1.nickname")
             val emailString = data.getStringExtra("group08.lab1.email")
             val locationString = data.getStringExtra("group08.lab1.location")
-
 
             fullNameTV.text =  if(fullNameString.isNullOrBlank()) getString(R.string.fullName) else fullNameString
             nicknameTV.text = if(nicknameString.isNullOrBlank()) getString(R.string.nickname) else nicknameString
@@ -143,8 +144,6 @@ class ShowProfileActivity : AppCompatActivity() {
             }
 
             retrieveUserImage()
-
-
         }
         else if(requestCode == EDIT_PROFILE_REQUEST_CODE && resultCode != Activity.RESULT_CANCELED){
             Toast.makeText(this, "Error detected!", Toast.LENGTH_LONG).show()

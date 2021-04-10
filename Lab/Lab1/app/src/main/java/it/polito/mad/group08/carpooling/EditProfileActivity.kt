@@ -141,38 +141,41 @@ class EditProfileActivity : AppCompatActivity() {
     // creates the floating context menu in order to select or take picture
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.floating_menu, menu)
+        menuInflater.inflate(R.menu.floating_menu, menu)
     }
 
     // listeners for floating context menu options
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        return when(item.itemId){
             R.id.openCameraOption -> {
                 if(packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
                     dispatchTakePictureIntent()
+                    true
                 }
                 else{
                     Toast.makeText(this, "Camera not available", Toast.LENGTH_LONG).show()
+                    true
                 }
             }
             R.id.openGalleryOption -> {
                 val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
                 startActivityForResult(gallery, OPEN_GALLERY_REQUEST_CODE)
+                true
             }
+            else -> super.onContextItemSelected(item)
         }
-        return true
     }
 
     // creates option menu in order to save changes
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.save_menu, menu)
         return true
     }
 
     // listeners for the save button
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        return when(item.itemId){
             R.id.saveButton -> {
                 val intent = Intent().also {
                     it.putExtra("group08.lab1.fullName", fullNameET.text.toString())
@@ -196,10 +199,13 @@ class EditProfileActivity : AppCompatActivity() {
 
 
                 setResult(Activity.RESULT_OK, intent)
+
+                //calls onDestroy()
                 finish()
+                true
             }
+            else -> super.onOptionsItemSelected(item)
         }
-        return true
     }
 
 

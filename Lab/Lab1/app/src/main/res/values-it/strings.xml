@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" />
+    <string name="app_name">Trasportami</string>
     <string name="edit">Modifica</string>
     <string name="photo">Foto</string>
     <string name="change_photo">Cambia Foto</string>
