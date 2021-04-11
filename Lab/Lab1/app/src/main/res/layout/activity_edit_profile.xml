@@ -15,6 +15,7 @@
         app:layout_constraintGuide_percent="0.33" />
 
     <View
+        android:id="@+id/view"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
         android:background="#000000"
@@ -41,7 +42,6 @@
 
     <EditText
         android:id="@+id/fullNameET"
-        android:textSize="@dimen/secondary_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -55,9 +55,10 @@
         android:hint="@string/fullName"
         android:inputType="textAutoCorrect|textPersonName|textCapWords"
         android:padding="4dp"
+        android:textSize="@dimen/secondary_text"
         app:layout_constraintBottom_toTopOf="@+id/nicknameET"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/fullnameIcon"
         app:layout_constraintTop_toTopOf="@+id/horizontalGuideline"
         app:layout_constraintVertical_chainStyle="packed" />
 
@@ -125,5 +126,56 @@
         app:layout_constraintTop_toTopOf="@+id/photoImage"
         app:layout_constraintWidth_percent="0.4"
         app:srcCompat="@android:drawable/ic_menu_camera" />
+
+    <ImageView
+        android:id="@+id/fullnameIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:contentDescription="@string/fullName"
+        app:layout_constraintBottom_toBottomOf="@+id/fullNameET"
+        app:layout_constraintEnd_toStartOf="@+id/fullNameET"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/fullNameET"
+        app:layout_constraintVertical_bias="0.47"
+        app:srcCompat="@drawable/ic_baseline_face_24"
+        tools:ignore="VectorDrawableCompat" />
+
+    <ImageView
+        android:id="@+id/nicknameIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/nickname"
+        app:layout_constraintBottom_toBottomOf="@+id/nicknameET"
+        app:layout_constraintEnd_toEndOf="@+id/fullnameIcon"
+        app:layout_constraintStart_toStartOf="@+id/fullnameIcon"
+        app:layout_constraintTop_toTopOf="@+id/nicknameET"
+        app:srcCompat="@drawable/ic_baseline_face_retouching_natural_24"
+        tools:ignore="VectorDrawableCompat" />
+
+    <ImageView
+        android:id="@+id/emailIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/email"
+        app:layout_constraintBottom_toBottomOf="@+id/emailET"
+        app:layout_constraintEnd_toEndOf="@+id/nicknameIcon"
+        app:layout_constraintStart_toStartOf="@+id/nicknameIcon"
+        app:layout_constraintTop_toTopOf="@+id/emailET"
+        app:srcCompat="@drawable/ic_baseline_email_24"
+        tools:ignore="VectorDrawableCompat" />
+
+    <ImageView
+        android:id="@+id/locationIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/location"
+        app:layout_constraintBottom_toBottomOf="@+id/locationET"
+        app:layout_constraintEnd_toEndOf="@+id/emailIcon"
+        app:layout_constraintStart_toStartOf="@+id/emailIcon"
+        app:layout_constraintTop_toTopOf="@+id/locationET"
+        app:srcCompat="@drawable/ic_baseline_location_on_24"
+        tools:ignore="VectorDrawableCompat" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
