@@ -27,12 +27,14 @@
 
     <ImageView
         android:id="@+id/photoImage"
-        android:background="#DCDCDC"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="#DCDCDC"
         android:contentDescription="@string/photo"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
         app:layout_constraintBottom_toTopOf="@+id/horizontalGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -129,7 +131,7 @@
 
     <ImageView
         android:id="@+id/fullnameIcon"
-        android:layout_width="wrap_content"
+        android:layout_width="28dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
@@ -139,43 +141,43 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/fullNameET"
         app:layout_constraintVertical_bias="0.47"
-        app:srcCompat="@drawable/ic_baseline_face_24"
+        app:srcCompat="@drawable/face_neutral"
         tools:ignore="VectorDrawableCompat" />
 
     <ImageView
         android:id="@+id/nicknameIcon"
-        android:layout_width="wrap_content"
+        android:layout_width="28dp"
         android:layout_height="wrap_content"
         android:contentDescription="@string/nickname"
         app:layout_constraintBottom_toBottomOf="@+id/nicknameET"
         app:layout_constraintEnd_toEndOf="@+id/fullnameIcon"
         app:layout_constraintStart_toStartOf="@+id/fullnameIcon"
         app:layout_constraintTop_toTopOf="@+id/nicknameET"
-        app:srcCompat="@drawable/ic_baseline_face_retouching_natural_24"
+        app:srcCompat="@drawable/nickname"
         tools:ignore="VectorDrawableCompat" />
 
     <ImageView
         android:id="@+id/emailIcon"
-        android:layout_width="wrap_content"
+        android:layout_width="28dp"
         android:layout_height="wrap_content"
         android:contentDescription="@string/email"
         app:layout_constraintBottom_toBottomOf="@+id/emailET"
         app:layout_constraintEnd_toEndOf="@+id/nicknameIcon"
         app:layout_constraintStart_toStartOf="@+id/nicknameIcon"
         app:layout_constraintTop_toTopOf="@+id/emailET"
-        app:srcCompat="@drawable/ic_baseline_email_24"
+        app:srcCompat="@drawable/email"
         tools:ignore="VectorDrawableCompat" />
 
     <ImageView
         android:id="@+id/locationIcon"
-        android:layout_width="wrap_content"
+        android:layout_width="28dp"
         android:layout_height="wrap_content"
         android:contentDescription="@string/location"
         app:layout_constraintBottom_toBottomOf="@+id/locationET"
         app:layout_constraintEnd_toEndOf="@+id/emailIcon"
         app:layout_constraintStart_toStartOf="@+id/emailIcon"
         app:layout_constraintTop_toTopOf="@+id/locationET"
-        app:srcCompat="@drawable/ic_baseline_location_on_24"
+        app:srcCompat="@drawable/location"
         tools:ignore="VectorDrawableCompat" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
