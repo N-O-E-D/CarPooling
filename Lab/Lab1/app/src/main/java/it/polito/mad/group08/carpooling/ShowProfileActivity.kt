@@ -30,8 +30,6 @@ class ShowProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //TODO a06widget - ellipsize() replace exceeded text with ...
-        //TODO a06widget - autolink-email insert a link in the textView
         photoIV = findViewById<ImageView>(R.id.photoImage)
         fullNameTV = findViewById<TextView>(R.id.fullNameTV)
         nicknameTV = findViewById<TextView>(R.id.nicknameTV)
