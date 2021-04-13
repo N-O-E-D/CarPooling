@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ShowProfileActivity"
-    android:background="#F5F5F5">
+    android:background="@color/constraintLayoutBackground">
 
     <View
         android:id="@+id/view2"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
-        android:background="#000000"
+        android:background="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/horizontalGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -82,7 +82,7 @@
 
     <ImageView
         android:id="@+id/photoImage"
-        android:background="#DCDCDC"
+        android:background="@color/imageViewBackground"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:paddingLeft="16dp"
@@ -108,8 +108,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
 
-        android:progressTint="#f8d568"
-        android:secondaryProgressTint="#f8d568"
+        android:progressTint="@color/ratingBar"
+        android:secondaryProgressTint="@color/ratingBar"
         />
 
     <ImageView

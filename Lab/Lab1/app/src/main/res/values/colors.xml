@@ -11,4 +11,11 @@
     <!-- Base application theme. -->
     <color name="colorPrimary">#388E3C</color>
     <color name="colorPrimaryVariant">#388E3C</color>
+
+    <!-- Activity main  -->
+    <color name="ratingBar">#f8d568</color>
+    <color name="constraintLayoutBackground">#F5F5F5</color>
+    <color name="imageViewBackground">#DCDCDC</color>
+    <color name="imageButtonBackground">#00FFFFFF</color>
+
 </resources>

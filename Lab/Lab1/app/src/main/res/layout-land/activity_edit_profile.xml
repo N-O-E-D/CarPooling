@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ShowProfileActivity"
-    android:background="#F5F5F5">
+    android:background="@color/constraintLayoutBackground">
 
     <View
         android:id="@+id/view4"
         android:layout_width="1dp"
         android:layout_height="wrap_content"
-        android:background="#000000"
+        android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/verticalGuideline"
         app:layout_constraintStart_toStartOf="@+id/verticalGuideline"
@@ -21,7 +21,7 @@
         android:id="@+id/photoImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#DCDCDC"
+        android:background="@color/imageViewBackground"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:autofillHints=""
@@ -108,7 +108,7 @@
         android:id="@+id/changeImageButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#00FFFFFF"
+        android:background="@color/imageButtonBackground"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="@+id/photoImage"
         app:layout_constraintEnd_toEndOf="@id/photoImage"

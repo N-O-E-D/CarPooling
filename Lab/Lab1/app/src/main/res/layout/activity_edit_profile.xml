@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ShowProfileActivity"
-    android:background="#F5F5F5">
+    android:background="@color/constraintLayoutBackground">
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -19,7 +19,7 @@
         android:id="@+id/view"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
-        android:background="#000000"
+        android:background="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/horizontalGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +30,7 @@
         android:id="@+id/photoImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#DCDCDC"
+        android:background="@color/imageViewBackground"
         android:contentDescription="@string/photo"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
@@ -119,7 +119,7 @@
         android:id="@+id/changeImageButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#00FFFFFF"
+        android:background="@color/imageButtonBackground"
         android:contentDescription="@string/change_photo"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="@+id/photoImage"
