@@ -34,8 +34,10 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //val fab: FloatingActionButton? = view.findViewById(R.id.fab)
         val button = view.findViewById<Button>(R.id.button)
         button.setOnClickListener {
+            //fab?.hide()
             findNavController().navigate(R.id.action_nav_home_to_tripDetailsFragment)
         }
     }
