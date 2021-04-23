@@ -39,6 +39,23 @@ class TripDetailsFragment : Fragment(R.layout.fragment_trip_details) {
     }
 
 // Note: onCreateView() is not needed since the layout is passed in the constructor
+    //TODO Menu
+    /*
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState)
+    {
+        View v = inflater.inflate(R.layout.library_fragment, parent, false);
+        setHasOptionsMenu(true);
+        return v;
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+       inflater.inflate(R.menu.your_menu_xml, menu);
+       super.onCreateOptionsMenu(menu, inflater);
+    }
+     */
 
 // Note: companion object{} should not be needed since no one will instantiate TripDetailsFragment
 
@@ -53,15 +70,15 @@ class TripDetailsFragment : Fragment(R.layout.fragment_trip_details) {
         driverName = view.findViewById<TextView>(R.id.driverName)
         driverName.text = "Pino Guidatutto"
 
-        val departureItem = DepartureItem("Via XXXXXXXXXY, 32", "08:00")
-        val intermediateItem = IntermediateItem("Via YYY, 23", "09:00")
-        val arrivalItem = ArrivalItem("Via ZZZ, 33", "10:00")
+        val departureItem = DepartureItem("Torino, Via Roma, 32", "08:00")
+        val intermediateItem = IntermediateItem("Firenze, Via Milano, 23", "11:00")
+        val intermediateItem2 = IntermediateItem("Roma, Via Torino, 44", "17:30")
+        val arrivalItem = ArrivalItem("Napoli, Via Firenze, 33", "19:00")
 
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        val trip = listOf(departureItem, intermediateItem, arrivalItem)
+        val trip = listOf(departureItem, intermediateItem, intermediateItem2, arrivalItem)
         recyclerView.adapter = ItemAdapter(trip)
-
 
         availableSeats = view.findViewById<TextView>(R.id.availableSeats)
         availableSeats.text = "Available Seats: 3"
@@ -73,6 +90,8 @@ class TripDetailsFragment : Fragment(R.layout.fragment_trip_details) {
         description.text = "In this Trip you will travel with a young driver which has" +
                 " a good sense of humor. You have the possibility to take no more than 1 " +
                 " trolley and 1 small bag because of the small space. See you soon."
+
+
     }
 }
 
@@ -137,7 +156,6 @@ class ItemAdapter(private val items: List<Item>): RecyclerView.Adapter<ItemAdapt
             }
             else -> super.getItemViewType(position)
         }
-
     }
 }
 

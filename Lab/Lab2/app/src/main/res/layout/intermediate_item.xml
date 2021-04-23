@@ -24,12 +24,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:text="mid Address"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="@dimen/secondary_text"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toEndOf="@+id/startLocationImage"
         app:layout_constraintTop_toTopOf="parent" />
@@ -50,13 +50,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:text="Time"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="@dimen/secondary_text"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/clockImage"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -68,24 +69,10 @@
         app:layout_constraintGuide_percent="0.7" />
 
     <ImageView
-        android:id="@+id/southArrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/startLocationImage"
-        app:layout_constraintEnd_toEndOf="@+id/startLocationImage"
-        app:layout_constraintStart_toStartOf="@+id/startLocationImage"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_south_24"
-        tools:ignore="VectorDrawableCompat" />
-
-    <ImageView
         android:id="@+id/southArrowDown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/startLocationImage"
         app:layout_constraintStart_toStartOf="@+id/startLocationImage"
