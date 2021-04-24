@@ -2,6 +2,7 @@ package it.polito.mad.group08.carpooling
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import android.widget.ImageView
 import android.widget.TextView
@@ -41,7 +42,6 @@ class TripDetailsFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         val v = inflater.inflate(R.layout.fragment_trip_details, container, false);
 
-        //TODO only the owner has edit option
         setHasOptionsMenu(true);
         return v;
     }
@@ -82,8 +82,9 @@ class TripDetailsFragment : Fragment() {
 
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        val trip = listOf(departureItem, intermediateItem, intermediateItem2, arrivalItem)
-        recyclerView.adapter = ItemAdapter(trip)
+        val trip1 = mutableListOf(departureItem, intermediateItem, intermediateItem2, arrivalItem)
+        val trip2 = mutableListOf(departureItem, arrivalItem)
+        recyclerView.adapter = ItemAdapter(trip2)
 
         availableSeats = view.findViewById<TextView>(R.id.availableSeats)
         availableSeats.text = "Available Seats: 3"
@@ -96,7 +97,15 @@ class TripDetailsFragment : Fragment() {
                 " a good sense of humor. You have the possibility to take no more than 1 " +
                 " trolley and 1 small bag because of the small space. See you soon."
 
-
+        val button = view.findViewById<Button>(R.id.button2)
+        var i = 0
+        button.setOnClickListener {
+            if(i%2 == 0)
+                recyclerView.adapter = ItemAdapter(trip1)
+            else
+                recyclerView.adapter = ItemAdapter(trip2)
+            i++
+        }
     }
 }
 
