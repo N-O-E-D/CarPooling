@@ -1,10 +1,8 @@
 package it.polito.mad.group08.carpooling
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,7 +14,7 @@ import java.sql.Timestamp
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-class TripDetailsFragment : Fragment(R.layout.fragment_trip_details) {
+class TripDetailsFragment : Fragment() {
     private lateinit var carPhoto: ImageView
     private lateinit var carName: TextView
     private lateinit var driverName: TextView
@@ -39,23 +37,30 @@ class TripDetailsFragment : Fragment(R.layout.fragment_trip_details) {
     }
 
 // Note: onCreateView() is not needed since the layout is passed in the constructor
-    //TODO Menu
-    /*
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState)
-    {
-        View v = inflater.inflate(R.layout.library_fragment, parent, false);
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        val v = inflater.inflate(R.layout.fragment_trip_details, container, false);
+
+        //TODO only the owner has edit option
         setHasOptionsMenu(true);
         return v;
     }
 
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-       inflater.inflate(R.menu.your_menu_xml, menu);
-       super.onCreateOptionsMenu(menu, inflater);
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.edit_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
-     */
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.editButton -> {
+                //findNavController().navigate(R.id.action_nav_home_to_tripDetailsFragment)
+                println("Hello EditFragment")
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
 // Note: companion object{} should not be needed since no one will instantiate TripDetailsFragment
 
