@@ -23,7 +23,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/car_photo"
-        tools:srcCompat="@drawable/car_photo" />
+        tools:srcCompat="@drawable/car_photo"
+        android:contentDescription="@string/car_photo" />
 
     <TextView
         android:id="@+id/carName"
@@ -31,12 +32,11 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:gravity="center"
-        android:text="Car Name"
+        android:text="@string/car_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="@dimen/secondary_text"
         app:layout_constraintBottom_toTopOf="@+id/driverName"
         app:layout_constraintEnd_toEndOf="@+id/carPhoto"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/carPhoto" />
 
     <TextView
@@ -44,14 +44,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Driver Name"
+        android:text="@string/driver_name"
         android:textSize="@dimen/secondary_text"
-        app:layout_constraintBottom_toTopOf="@+id/ratingBar2"
+        app:layout_constraintBottom_toTopOf="@+id/driverRate"
         app:layout_constraintEnd_toEndOf="@+id/carName"
         app:layout_constraintStart_toStartOf="@+id/carName" />
 
     <RatingBar
-        android:id="@+id/ratingBar2"
+        android:id="@+id/driverRate"
         style="?android:attr/ratingBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -63,59 +63,11 @@
         android:stepSize="0.5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/driverName"
-        app:layout_constraintStart_toStartOf="@+id/driverName" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerGuideline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/carGuideline"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/seatPrice"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:gravity="right"
-        android:text="Seat Price"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        android:textSize="@dimen/secondary_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/carGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/availableSeats" />
-
-    <TextView
-        android:id="@+id/availableSeats"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:gravity="right"
-        android:text="Available Seats"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="@dimen/secondary_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/carGuideline"
-        app:layout_constraintTop_toTopOf="@+id/recyclerGuideline" />
+        app:layout_constraintStart_toStartOf="@+id/driverName"
+        tools:targetApi="lollipop" />
 
     <ScrollView
-        android:id="@+id/scrollView2"
+        android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
@@ -123,31 +75,88 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/carGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/seatPrice">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/show_hide"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/show_hide"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/recyclerView"
+                app:layout_constraintTop_toBottomOf="@+id/recyclerView"
+                app:strokeColor="#4CAF50"
+                app:strokeWidth="2dp" />
+
+            <TextView
+                android:id="@+id/estimatedDuration"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/estimated_duration"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="@dimen/secondary_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/show_hide" />
+
+            <TextView
+                android:id="@+id/availableSeats"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="end"
+                android:text="@string/available_seats"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="@dimen/secondary_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/estimatedDuration" />
+
+            <TextView
+                android:id="@+id/seatPrice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="end"
+                android:text="@string/seat_price"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="@dimen/secondary_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/availableSeats" />
 
             <TextView
                 android:id="@+id/tripDescription"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
 
-                android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="Trip Description"
-                android:textSize="@dimen/secondary_text" />
-        </LinearLayout>
+                android:text="@string/trip_description"
+                android:textSize="@dimen/secondary_text"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/seatPrice" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
     <androidx.constraintlayout.widget.Guideline
@@ -156,12 +165,5 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.3" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/recyclerGuideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.45" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

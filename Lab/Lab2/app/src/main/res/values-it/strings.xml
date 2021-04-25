@@ -22,4 +22,12 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Galleria</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="car_photo">Foto Macchina</string>
+    <string name="car_name">Nome Macchina</string>
+    <string name="driver_name">Nome Guidatore</string>
+    <string name="show_hide">Mostra Nascondi</string>
+    <string name="estimated_duration">Stima della durata</string>
+    <string name="trip_description">Descrizione del viaggio</string>
+    <string name="seat_price">Costo posto</string>
+    <string name="available_seats">Posti disponibili</string>
 </resources>

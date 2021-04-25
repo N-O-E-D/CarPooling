@@ -9,7 +9,7 @@
 
 
     <ScrollView
-        android:id="@+id/scrollView2"
+        android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -17,30 +17,15 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/carName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:gravity="center"
-                android:text="Car Name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                android:textSize="@dimen/secondary_text"
-                app:layout_constraintBottom_toTopOf="@+id/carGuideline"
-                app:layout_constraintEnd_toEndOf="@+id/carPhoto"
-                app:layout_constraintStart_toStartOf="@+id/carPhoto" />
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/carPhoto"
@@ -49,13 +34,26 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
-                android:visibility="visible"
                 app:layout_constraintBottom_toTopOf="@+id/carName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/car_photo"
-                tools:srcCompat="@drawable/car_photo" />
+                tools:srcCompat="@drawable/car_photo"
+                android:contentDescription="@string/car_photo" />
+
+            <TextView
+                android:id="@+id/carName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:gravity="center"
+                android:text="@string/car_name"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="@dimen/secondary_text"
+                app:layout_constraintBottom_toTopOf="@+id/carGuideline"
+                app:layout_constraintEnd_toEndOf="@+id/carPhoto"
+                app:layout_constraintStart_toStartOf="@+id/carPhoto" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/carGuideline"
@@ -69,14 +67,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Driver Name"
+                android:text="@string/driver_name"
                 android:textSize="@dimen/secondary_text"
-                app:layout_constraintEnd_toStartOf="@+id/ratingBar2"
+                app:layout_constraintEnd_toStartOf="@+id/driverRate"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/carGuideline" />
 
             <RatingBar
-                android:id="@+id/ratingBar2"
+                android:id="@+id/driverRate"
                 style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -89,31 +87,44 @@
                 android:stepSize="0.5"
                 app:layout_constraintBottom_toBottomOf="@+id/driverName"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/driverName" />
+                app:layout_constraintTop_toTopOf="@+id/driverName"
+                tools:targetApi="lollipop" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/driverName" />
 
             <Button
-                android:id="@+id/button2"
-                android:layout_width="match_parent"
+                android:id="@+id/show_hide"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:text="Button"
+                android:text="@string/show_hide"
+                app:layout_constraintEnd_toEndOf="@+id/recyclerView"
+                app:layout_constraintStart_toStartOf="@+id/recyclerView"
+                app:layout_constraintTop_toBottomOf="@+id/recyclerView"
+                app:strokeColor="#4CAF50"
+                app:strokeWidth="2dp" />
+
+            <TextView
+                android:id="@+id/estimatedDuration"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/estimated_duration"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="@dimen/secondary_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+                app:layout_constraintTop_toBottomOf="@+id/show_hide" />
 
             <TextView
                 android:id="@+id/availableSeats"
@@ -122,14 +133,13 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:gravity="right"
-                android:text="Available Seats"
+                android:gravity="end"
+                android:text="@string/available_seats"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textSize="@dimen/secondary_text"
-                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/button2" />
+                app:layout_constraintTop_toBottomOf="@+id/estimatedDuration" />
 
             <TextView
                 android:id="@+id/seatPrice"
@@ -138,8 +148,8 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:gravity="right"
-                android:text="Seat Price"
+                android:gravity="end"
+                android:text="@string/seat_price"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:textSize="@dimen/secondary_text"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -154,7 +164,7 @@
 
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:text="Trip Description"
+                android:text="@string/trip_description"
                 android:textSize="@dimen/secondary_text"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
