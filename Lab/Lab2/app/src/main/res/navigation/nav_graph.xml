@@ -31,10 +31,26 @@
         <action
             android:id="@+id/action_tripListFragment_to_tripDetailsFragment"
             app:destination="@id/tripDetailsFragment" />
+        <action
+            android:id="@+id/action_tripListFragment_to_tripEditFragment"
+            app:destination="@id/tripEditFragment" />
     </fragment>
     <fragment
         android:id="@+id/tripDetailsFragment"
         android:name="it.polito.mad.group08.carpooling.TripDetailsFragment"
         android:label="fragment_trip_details"
-        tools:layout="@layout/fragment_trip_details" />
+        tools:layout="@layout/fragment_trip_details" >
+        <action
+            android:id="@+id/action_tripDetailsFragment_to_tripEditFragment"
+            app:destination="@id/tripEditFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tripEditFragment"
+        android:name="it.polito.mad.group08.carpooling.TripEditFragment"
+        android:label="fragment_trip_edit"
+        tools:layout="@layout/fragment_trip_edit" >
+        <action
+            android:id="@+id/action_tripEditFragment_to_tripListFragment"
+            app:destination="@id/tripListFragment" />
+    </fragment>
 </navigation>
