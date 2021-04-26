@@ -27,5 +27,14 @@
         android:id="@+id/tripListFragment"
         android:name="it.polito.mad.group08.carpooling.TripListFragment"
         android:label="fragment_trip_list"
-        tools:layout="@layout/fragment_trip_list" />
+        tools:layout="@layout/fragment_trip_list" >
+        <action
+            android:id="@+id/action_tripListFragment_to_tripDetailsFragment"
+            app:destination="@id/tripDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tripDetailsFragment"
+        android:name="it.polito.mad.group08.carpooling.TripDetailsFragment"
+        android:label="fragment_trip_details"
+        tools:layout="@layout/fragment_trip_details" />
 </navigation>

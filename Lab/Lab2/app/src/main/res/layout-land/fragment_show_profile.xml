@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ShowProfileActivity"
+    tools:context=".ShowProfileFragment"
     android:background="@color/constraintLayoutBackground">
 
     <View
@@ -70,9 +70,23 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textSize="@dimen/secondary_text"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/phonenumberTV"
         app:layout_constraintEnd_toEndOf="@+id/emailTV"
         app:layout_constraintStart_toStartOf="@+id/emailTV"
         app:layout_constraintTop_toBottomOf="@+id/emailTV" />
+
+    <TextView
+        android:id="@+id/phonenumberTV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/phone_number"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textSize="@dimen/secondary_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/locationTV"
+        app:layout_constraintStart_toStartOf="@+id/locationTV"
+        app:layout_constraintTop_toBottomOf="@+id/locationTV" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/verticalGuideline"
@@ -95,6 +109,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/photo_default"
         tools:srcCompat="@drawable/photo_default" />
+    <!--android:scaleType="centerCrop"  for full-extended image-->
+
+
 
     <RatingBar
         android:id="@+id/ratingBar"
@@ -107,6 +124,7 @@
         android:rating="4.5"
         android:secondaryProgressTint="@color/ratingBar"
         android:stepSize="0.1"
+        android:isIndicator="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -158,6 +176,18 @@
         app:layout_constraintStart_toStartOf="@+id/emailIcon"
         app:layout_constraintTop_toTopOf="@+id/locationTV"
         app:srcCompat="@drawable/location"
+        tools:ignore="VectorDrawableCompat" />
+
+    <ImageView
+        android:id="@+id/phonenumberIcon"
+        android:layout_width="28dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/phone_number"
+        app:layout_constraintBottom_toBottomOf="@+id/phonenumberTV"
+        app:layout_constraintEnd_toEndOf="@+id/locationIcon"
+        app:layout_constraintStart_toStartOf="@+id/locationIcon"
+        app:layout_constraintTop_toTopOf="@+id/phonenumberTV"
+        app:srcCompat="@drawable/phone"
         tools:ignore="VectorDrawableCompat" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
