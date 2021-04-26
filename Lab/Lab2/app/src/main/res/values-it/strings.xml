@@ -21,4 +21,9 @@
     <string name="trip_description">Descrizione del viaggio</string>
     <string name="seat_price">Costo posto</string>
     <string name="available_seats">Posti disponibili</string>
+    <string name="show_intermediate_stops">Mostra tappe intermedie</string>
+    <string name="hide_intermediate_stops">Nascondi tappe intermedie</string>
+    <string name="estimated_duration_msg">Stima della durata: %1$s</string>
+    <string name="available_seats_msg">"Posti disponibili: %1$d</string>
+    <string name="seat_price_msg">"Costo unitario: €%1$s</string>
 </resources>
