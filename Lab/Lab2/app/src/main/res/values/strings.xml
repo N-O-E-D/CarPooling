@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Move-me</string>
+    <string name="edit">Edit</string>
+    <string name="photo">Photo</string>
+    <string name="change_photo">Change photo</string>
+    <string name="fullName">Full Name</string>
+    <string name="nickname">Nickname</string>
+    <string name="email">Email</string>
+    <string name="location">Location</string>
+    <string name="openGallery">Open gallery</string>
+    <string name="openCamera">Open camera</string>
+    <string name="save">Save</string>
+    <string name="phone_number">Phone Number</string>
+
+    <string name="car_photo">Car Photo</string>
+    <string name="car_name">Car Name</string>
+    <string name="driver_name">Driver Name</string>
+    <string name="show_hide">Show Hide</string>
+    <string name="estimated_duration">Estimated Duration</string>
+    <string name="trip_description">Trip Description</string>
+    <string name="seat_price">Seat Price</string>
+    <string name="available_seats">Available Seats</string>
+</resources>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/constraintLayoutBackground"
+    tools:context=".EditProfileFragment">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontalGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.33" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/horizontalGuideline" />
+
+
+    <ImageView
+        android:id="@+id/photoImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/imageViewBackground"
+        android:contentDescription="@string/photo"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/photo_default"
+        tools:srcCompat="@drawable/photo_default" />
+    <!--android:scaleType="centerCrop"  for full-extended image-->
+
+    <ImageButton
+        android:id="@+id/changeImageButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/imageButtonBackground"
+        android:contentDescription="@string/change_photo"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/photoImage"
+        app:layout_constraintEnd_toEndOf="@+id/photoImage"
+        app:layout_constraintHeight_percent="0.2"
+        app:layout_constraintStart_toStartOf="@+id/photoImage"
+        app:layout_constraintTop_toTopOf="@+id/photoImage"
+        app:layout_constraintWidth_percent="0.4"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/fullNameET_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="@string/fullName"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view"
+        app:startIconContentDescription="@string/fullName"
+        app:startIconDrawable="@drawable/face_neutral_v24">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/fullNameET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textAutoCorrect|textPersonName|textCapWords"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/nicknameET_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/nickname"
+        app:endIconMode="clear_text"
+        app:layout_constraintBottom_toTopOf="@+id/emailET_layout"
+        app:layout_constraintEnd_toEndOf="@+id/fullNameET_layout"
+        app:layout_constraintStart_toStartOf="@+id/fullNameET_layout"
+        app:layout_constraintTop_toBottomOf="@+id/fullNameET_layout"
+        app:startIconContentDescription="@string/nickname"
+        app:startIconDrawable="@drawable/nickname_v24">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/nicknameET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/emailET_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/email"
+        app:endIconMode="clear_text"
+        app:layout_constraintBottom_toTopOf="@+id/locationET_layout"
+        app:layout_constraintEnd_toEndOf="@+id/nicknameET_layout"
+        app:layout_constraintStart_toStartOf="@+id/nicknameET_layout"
+        app:layout_constraintTop_toBottomOf="@+id/nicknameET_layout"
+        app:startIconContentDescription="@string/email"
+        app:startIconDrawable="@drawable/email_v24">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/emailET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/locationET_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/location"
+        app:endIconMode="clear_text"
+        app:layout_constraintBottom_toTopOf="@id/phonenumberET_layout"
+        app:layout_constraintEnd_toEndOf="@+id/emailET_layout"
+        app:layout_constraintStart_toStartOf="@+id/emailET_layout"
+        app:layout_constraintTop_toBottomOf="@+id/emailET_layout"
+        app:startIconContentDescription="@string/location"
+        app:startIconDrawable="@drawable/location_v24">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/locationET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text|textPostalAddress"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/phonenumberET_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/phone_number"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="@+id/locationET_layout"
+        app:layout_constraintStart_toStartOf="@+id/locationET_layout"
+        app:layout_constraintTop_toBottomOf="@+id/locationET_layout"
+        app:startIconContentDescription="@string/phone_number"
+        app:startIconDrawable="@drawable/phone_v24">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/phonenumberET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
