@@ -10,4 +10,6 @@
     <string name="openGallery">Open gallery</string>
     <string name="openCamera">Open camera</string>
     <string name="save">Save</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="phone_number">Phone Number</string>
 </resources>

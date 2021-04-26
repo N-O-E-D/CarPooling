@@ -11,4 +11,5 @@
     <string name="openGallery">Apri galleria</string>
     <string name="openCamera">Apri fotocamera</string>
     <string name="save">Salva</string>
+    <string name="phone_number">Cellulare</string>
 </resources>
