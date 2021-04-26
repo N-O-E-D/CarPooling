@@ -16,31 +16,6 @@ import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 import java.math.BigDecimal
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-data class Trip(
-    val carPhotoPath: String,
-    val carDescription: String,
-
-    val driverName: String,
-    val driverRate: Float,
-
-    //List[0] = departure; list[0+i] = intermediateStops; List[N] = arrival
-    val checkPoints: List<CheckPoint>,
-
-    val estimatedDuration: String,//  (hh:mm)
-
-    val availableSeats: Int,
-    val seatPrice: BigDecimal,
-    val description: String
-)
-
-data class CheckPoint(val location: String, val timestamp: String)
-// location: String (Via AAA 32, Torino),
-// timestamp: String (hh:mm, dd/mm/yyyy),
 
 class TripDetailsFragment : Fragment() {
     private lateinit var carPhotoPath: ImageView
@@ -49,7 +24,7 @@ class TripDetailsFragment : Fragment() {
     private lateinit var driverRate: RatingBar
 
     //List[0] = departure; list[0+i] = intermediateStops; List[N-1] = arrival
-    private lateinit var checkPoints: List<CheckPoint>
+    private lateinit var checkPoints: List<TripListFragment.CheckPoint>
 
     private lateinit var showHideButton: Button
 
@@ -59,11 +34,12 @@ class TripDetailsFragment : Fragment() {
     private lateinit var seatPrice: TextView
     private lateinit var description: TextView
 
-    private lateinit var trip: Trip
+    private lateinit var trip: TripListFragment.Trip
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setUpResultListener()
 //        arguments?.let {
 //            param1 = it.getString(ARG_PARAM1)
 //            param2 = it.getString(ARG_PARAM2)
@@ -80,12 +56,35 @@ class TripDetailsFragment : Fragment() {
 //            }
 //        }
 
-        trip = Trip("carPhotoPath", "Toyota Le mans 3000 Diesel",
-            "Pino Guidatutto", 4.2f, listOf(), "22h30m",
-            3, BigDecimal(35.50),
-            "In this Trip you will travel with a young driver which has" +
-                    " a good sense of humor. You have the possibility to take no more than 1 " +
-                    " trolley and 1 small bag because of the small space. See you soon.")
+        /*trip = TripListFragment.Trip("carPhotoPath", "Toyota Le mans 3000 Diesel",
+                "Pino Guidatutto", 4.2f, listOf(), "22h30m",
+                3, BigDecimal(35.50),
+                "In this Trip you will travel with a young driver which has" +
+                        " a good sense of humor. You have the possibility to take no more than 1 " +
+                        " trolley and 1 small bag because of the small space. See you soon.")*/
+    }
+
+
+    private fun setUpResultListener() {
+        setFragmentResultListener("tripDetails") { requestKey, bundle ->
+            onFragmentResult(requestKey, bundle)
+        }
+    }
+
+    private fun onFragmentResult(requestKey: String, bundle: Bundle) {
+        if (requestKey === "tripDetails") {
+            val tripJSON = bundle.getString("trip")
+            val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
+            trip = GsonBuilder().create().fromJson(tripJSON, type)
+            println(trip)
+            carDescription.text = trip.carDescription
+            driverName.text = trip.driverName
+            driverRate.rating = trip.driverRate
+            estimatedDuration.text = "Estimated duration: ${trip.estimatedDuration}"
+            availableSeats.text = "Available Seats: ${trip.availableSeats}"
+            seatPrice.text = "Price/Person: €${trip.seatPrice}"
+            description.text = trip.description
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -103,13 +102,13 @@ class TripDetailsFragment : Fragment() {
         //carPhotoPath.setImageURI()
 
         carDescription = view.findViewById(R.id.carName)
-        carDescription.text = trip.carDescription
+
 
         driverName = view.findViewById(R.id.driverName)
-        driverName.text = trip.driverName
+
 
         driverRate = view.findViewById(R.id.driverRate)
-        driverRate.rating = trip.driverRate
+
 
         val departureItem = DepartureItem("Via Roma 32, Torino", "2021-04-25\n08:00")
         val intermediateItem = IntermediateItem("Via Milano 23, Firenze", "2021-04-25\n11:00")
@@ -123,26 +122,25 @@ class TripDetailsFragment : Fragment() {
         recyclerView.adapter = ItemAdapter(trip2)
 
         estimatedDuration = view.findViewById(R.id.estimatedDuration)
-        estimatedDuration.text = "Estimated duration: ${trip.estimatedDuration}"
+
 
         availableSeats = view.findViewById(R.id.availableSeats)
-        availableSeats.text = "Available Seats: ${trip.availableSeats}"
+
 
         seatPrice = view.findViewById(R.id.seatPrice)
-        seatPrice.text = "Price/Person: €${trip.seatPrice}"
+
 
         description = view.findViewById(R.id.tripDescription)
-        description.text = trip.description
+
 
         showHideButton = view.findViewById<Button>(R.id.show_hide)
         showHideButton.text = "Show Intermediate Stops"
         var i = 0
         showHideButton.setOnClickListener {
-            if(i%2 == 0){
+            if (i % 2 == 0) {
                 showHideButton.text = "Hide Intermediate Stops"
                 recyclerView.adapter = ItemAdapter(trip1)
-            }
-            else{
+            } else {
                 showHideButton.text = "Show Intermediate Stops"
                 recyclerView.adapter = ItemAdapter(trip2)
             }
@@ -156,7 +154,7 @@ class TripDetailsFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
+        return when (item.itemId) {
             R.id.editButton -> {
 //                val bundle = bundleOf("trip" to Gson().toJson(Trip))
 //                setFragmentResult("KeyFragment", bundle)
@@ -171,29 +169,28 @@ class TripDetailsFragment : Fragment() {
 
 open class Item(val location: String, val timestamp: String)
 
-class DepartureItem(location: String, timestamp: String): Item(location, timestamp)
+class DepartureItem(location: String, timestamp: String) : Item(location, timestamp)
 
-class IntermediateItem(location: String, timestamp: String): Item(location, timestamp)
+class IntermediateItem(location: String, timestamp: String) : Item(location, timestamp)
 
-class ArrivalItem(location: String, timestamp: String): Item(location, timestamp)
+class ArrivalItem(location: String, timestamp: String) : Item(location, timestamp)
 
-class ItemAdapter(private val items: List<Item>): RecyclerView.Adapter<ItemAdapter.ItemViewHolder>(){
+class ItemAdapter(private val items: List<Item>) : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
-    class ItemViewHolder(v: View): RecyclerView.ViewHolder(v){
+    class ItemViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val location = v.findViewById<TextView>(R.id.itemDetailsLocation)
         private val timestamp = v.findViewById<TextView>(R.id.itemDetailsTimestamp)
 
-        fun bind(i: Item){
+        fun bind(i: Item) {
             location.text = i.location
             timestamp.text = i.timestamp
         }
     }
 
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val layout = when(viewType){
+        val layout = when (viewType) {
             R.layout.departure_item -> {
                 layoutInflater.inflate(R.layout.departure_item, parent, false)
             }
@@ -215,7 +212,7 @@ class ItemAdapter(private val items: List<Item>): RecyclerView.Adapter<ItemAdapt
     override fun getItemCount() = items.size
 
     override fun getItemViewType(position: Int): Int {
-        return when(items[position]){
+        return when (items[position]) {
             is DepartureItem -> {
                 return R.layout.departure_item
             }

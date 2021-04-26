@@ -62,6 +62,19 @@ class TripListFragment : Fragment() {
         val tripsJSON = sharedPref.getString("trips", Gson().toJson(mutableListOf<Trip>()).toString())
         val type: Type = object : TypeToken<List<Trip?>?>() {}.type
         trips = GsonBuilder().create().fromJson(tripsJSON, type)
+        val checkpoints = listOf(
+                CheckPoint("Via Roma 32, Torino", "2021-04-25\n08:00"),
+                CheckPoint("Via Milano 23, Firenze", "2021-04-25\n11:00"),
+                CheckPoint("Via Torino 44, Roma", "2021-04-25\n17:30"),
+                CheckPoint("Via Firenze 33, Napoli", "25/03/2021\n19:00")
+        )
+
+        val trip = Trip("carPhotoPath", "Toyota Le mans 3000 Diesel",
+                "Pino Pino", 4.2f, checkpoints, "01h30m",
+                3, BigDecimal(35.50),
+                "In this Trip have th small space. See you soon.")
+        trips.add(trip)
+        trips.add(trip)
 
         setFragmentResultListener("tripEdited") { requestKey, bundle ->
             if (requestKey == "tripEdited") {
@@ -146,6 +159,8 @@ class TripListFragment : Fragment() {
 
     data class Trip(var carPhotoPath: String?,
                     var carDescription: String,
+                    var driverName: String,
+                    var driverRate: Float,
                     var checkPoints: List<CheckPoint>,
                     var estimatedDuration: String,
                     var availableSeats: Int,

@@ -94,12 +94,15 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         val cacheFile = File.createTempFile("cacheImage",null,context?.cacheDir)
         bitmap?.compress(Bitmap.CompressFormat.PNG, 100, cacheFile.outputStream())
         outState.putString("cacheFilePath",cacheFile.name)
+        outState.putString("photoPath", currentPhotoPath)
     }
 
     //called after onViewCreated
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         if(savedInstanceState!=null){
+            currentPhotoPath = savedInstanceState.getString("photoPath")!!
             val cacheFile = File(context?.cacheDir, savedInstanceState.getString("cacheFilePath"))
             bitmap = BitmapFactory.decodeFile(cacheFile.path)
             if(bitmap!=null)
