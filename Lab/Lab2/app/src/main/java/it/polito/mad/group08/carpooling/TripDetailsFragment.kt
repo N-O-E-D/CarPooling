@@ -8,9 +8,13 @@ import androidx.fragment.app.Fragment
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
@@ -40,10 +44,6 @@ class TripDetailsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setUpResultListener()
-//        arguments?.let {
-//            param1 = it.getString(ARG_PARAM1)
-//            param2 = it.getString(ARG_PARAM2)
-//        }
 
 
         //TODO it doesn't work because it's asynchronous
@@ -156,9 +156,9 @@ class TripDetailsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.editButton -> {
-//                val bundle = bundleOf("trip" to Gson().toJson(Trip))
-//                setFragmentResult("KeyFragment", bundle)
-                //findNavController().navigate(R.id.action_nav_home_to_tripDetailsFragment)
+                val bundle = bundleOf("trip" to Gson().toJson(trip))
+                setFragmentResult("fromDetailsToEdit", bundle)
+                findNavController().navigate(R.id.action_tripDetailsFragment_to_tripEditFragment)
                 println("Hello EditFragment")
                 true
             }

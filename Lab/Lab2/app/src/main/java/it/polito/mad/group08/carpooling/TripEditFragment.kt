@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -115,6 +116,15 @@ class TripEditFragment : Fragment() {
         }
 
         takeImageLauncher = registerForActivityResult(takeImageContract, takeImageCallback)
+
+        setFragmentResultListener("fromDetailsToEdit") { requestKey, bundle ->
+            if (requestKey == "fromDetailsToEdit") {
+                val tripJSON = bundle.getString("trip")
+                val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
+                trip = GsonBuilder().create().fromJson(tripJSON, type)
+                println(trip)
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
