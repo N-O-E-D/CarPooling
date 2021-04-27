@@ -26,4 +26,6 @@
     <string name="estimated_duration_msg">Stima della durata: %1$s</string>
     <string name="available_seats_msg">"Posti disponibili: %1$d</string>
     <string name="seat_price_msg">"Costo unitario: €%1$s</string>
+
+    <string name="changes_applied_successfully">Modifiche applicate correttamente</string>
 </resources>

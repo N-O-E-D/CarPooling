@@ -25,4 +25,6 @@
     <string name="estimated_duration_msg">"Estimated duration: %1$s</string>
     <string name="available_seats_msg">"Available Seats: %1$d</string>
     <string name="seat_price_msg">"Price/Person: €%1$s</string>
+
+    <string name="changes_applied_successfully">Changes applied successfully</string>
 </resources>
