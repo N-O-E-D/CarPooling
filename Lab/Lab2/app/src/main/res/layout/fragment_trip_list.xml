@@ -20,9 +20,10 @@
         android:id="@+id/emptyTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="No trips available!"
-        android:textColor="#FF001A"
-        />
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="#FF001A" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_fab"

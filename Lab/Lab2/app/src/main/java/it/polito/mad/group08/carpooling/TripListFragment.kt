@@ -2,6 +2,7 @@ package it.polito.mad.group08.carpooling
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -17,12 +18,14 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import org.w3c.dom.Text
 import java.lang.reflect.Type
 import java.math.BigDecimal
 
@@ -35,6 +38,7 @@ class TripListFragment : Fragment() {
     private lateinit var adapter: TripAdapter
     private lateinit var trips: MutableList<Trip>
     private lateinit var sharedPref: SharedPreferences
+    private lateinit var emptyTextView: TextView
 
     private fun navigationClickListener(mode: Int, trip: Trip?, position: Int?) {
         val navController = findNavController()
@@ -44,7 +48,7 @@ class TripListFragment : Fragment() {
             navController.navigate(R.id.action_tripListFragment_to_tripEditFragment)
             //Toast.makeText(context, "EDIT: From ${trip.departureLocation} to ${trip.arrivalLocation}!", Toast.LENGTH_SHORT).show()
         } else if (mode == CARD_CLICKED && trip != null) {
-            val bundle = bundleOf("trip" to Gson().toJson(trip))
+            val bundle = bundleOf("pos" to position, "trip" to Gson().toJson(trip))
             setFragmentResult("tripDetails", bundle)
             navController.navigate(R.id.action_tripListFragment_to_tripDetailsFragment)
             //Toast.makeText(context, "DETAILS: From ${trip.departureLocation} to ${trip.arrivalLocation}!", Toast.LENGTH_SHORT).show()
@@ -58,10 +62,7 @@ class TripListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)!!
-        val tripsJSON = sharedPref.getString("trips", Gson().toJson(mutableListOf<Trip>()).toString())
-        val type: Type = object : TypeToken<List<Trip?>?>() {}.type
-        trips = GsonBuilder().create().fromJson(tripsJSON, type)
+        loadFromPreferences()
 
         setFragmentResultListener("tripEditedAdded"){ requestKey, bundle ->
             if(requestKey == "tripEditedAdded"){
@@ -80,31 +81,33 @@ class TripListFragment : Fragment() {
                 saveInPreferences()
             }
         }
-        /*
-        setFragmentResultListener("tripEdited") { requestKey, bundle ->
-            if (requestKey == "tripEdited") {
-                val position = bundle.getInt("pos")
-                val tripEditedJSON = bundle.getString("trip")
-                val type: Type = object : TypeToken<Trip?>() {}.type
-                val tripEdited: Trip = GsonBuilder().create().fromJson(tripEditedJSON, type)
+    }
 
-                adapter.onItemChange(tripEdited, position)
-                saveInPreferences()
-            }
+    private fun saveInPreferences() {
+        with(sharedPref.edit()) {
+            val tripsJSON = Gson().toJson(trips)
+            putString("trips", tripsJSON)
+            apply()
         }
+    }
 
-        setFragmentResultListener("tripAdded") { requestKey, bundle ->
-            if (requestKey == "tripAdded") {
-                val tripAddedJSON = bundle.getString("trip")
-                val type: Type = object : TypeToken<Trip?>() {}.type
-                val tripAdded: Trip = GsonBuilder().create().fromJson(tripAddedJSON, type)
-                println("CALLBACK")
-                adapter.onItemAdded(tripAdded)
-                saveInPreferences()
-            }
+    private fun loadFromPreferences(){
+        sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)!!
+        val tripsJSON = sharedPref.getString("trips", Gson().toJson(mutableListOf<Trip>()).toString())
+        val type: Type = object : TypeToken<List<Trip?>?>() {}.type
+        trips = GsonBuilder().create().fromJson(tripsJSON, type)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(trips.size == 0){
+            recyclerView.visibility = View.GONE
+            emptyTextView.visibility = View.VISIBLE
         }
-        */
-
+        else{
+            recyclerView.visibility = View.VISIBLE
+            emptyTextView.visibility = View.GONE
+        }
     }
 
     override fun onCreateView(
@@ -113,18 +116,18 @@ class TripListFragment : Fragment() {
     ): View? {
         //TODO if sharedPref empty message on the screen
         val view = inflater.inflate(R.layout.fragment_trip_list, container, false)
-        val emptyTextView: TextView = view.findViewById(R.id.emptyTextView)
+        emptyTextView = view.findViewById(R.id.emptyTextView)
         recyclerView = view.findViewById(R.id.tripListRecyclerView)
 
-        /*if(trips.size == 0){
-            recyclerView.visibility = View.GONE
-            emptyTextView.visibility = View.VISIBLE
+        when(resources.configuration.orientation){
+            Configuration.ORIENTATION_PORTRAIT -> {
+                recyclerView.layoutManager = LinearLayoutManager(context)
+            }
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                recyclerView.layoutManager = GridLayoutManager(context, 3)
+            }
         }
-        else{
-            recyclerView.visibility = View.VISIBLE
-            emptyTextView.visibility = View.GONE
-        }*/
-        recyclerView.layoutManager = LinearLayoutManager(context)
+
         adapter = TripAdapter(trips) { mode: Int, tripItem: Trip, position: Int? -> navigationClickListener(mode, tripItem, position) }
         recyclerView.adapter = adapter
         return view
@@ -152,14 +155,6 @@ class TripListFragment : Fragment() {
         }
     }
 
-    private fun saveInPreferences() {
-        with(sharedPref.edit()) {
-            val tripsJSON = Gson().toJson(trips)
-            putString("trips", tripsJSON)
-            apply()
-        }
-    }
-
     data class CheckPoint(var location: String, var timestamp: String)
 
     data class Trip(var carPhotoPath: String?,
@@ -179,6 +174,8 @@ class TripListFragment : Fragment() {
         class TripViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             private val departureLocation: TextView = itemView.findViewById(R.id.departureLocation)
             private val arrivalLocation: TextView = itemView.findViewById(R.id.arrivalLocation)
+            private val departureTimestamp: TextView = itemView.findViewById(R.id.departureTimestamp)
+            private val arrivalTimestamp: TextView = itemView.findViewById(R.id.arrivalTimestamp)
             private val editButton: Button = itemView.findViewById(R.id.editButton)
             private val card: CardView = itemView.findViewById(R.id.card)
 
@@ -186,8 +183,10 @@ class TripListFragment : Fragment() {
             fun bind(trip: Trip, clickListener: (Int, Trip, Int?) -> Unit) {
                 departureLocation.text = trip.checkPoints[0].location
                 arrivalLocation.text = trip.checkPoints[trip.checkPoints.size - 1].location
+                departureTimestamp.text = trip.checkPoints[0].timestamp
+                arrivalTimestamp.text = trip.checkPoints[trip.checkPoints.size-1].timestamp
                 card.setOnClickListener {
-                    clickListener(CARD_CLICKED, trip, null)
+                    clickListener(CARD_CLICKED, trip, bindingAdapterPosition)
                 }
                 editButton.setOnClickListener {
                     clickListener(EDIT_BUTTON_CLICKED, trip, bindingAdapterPosition)

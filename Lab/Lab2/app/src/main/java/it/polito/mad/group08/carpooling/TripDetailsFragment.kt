@@ -24,7 +24,7 @@ class TripDetailsFragment : Fragment() {
     private lateinit var carDescription: TextView
     private lateinit var driverName: TextView
     private lateinit var driverRate: RatingBar
-
+    private var position: Int = -1
     private lateinit var recyclerView: RecyclerView
     private lateinit var showHideButton: Button
 
@@ -52,6 +52,7 @@ class TripDetailsFragment : Fragment() {
 
     private fun onFragmentResult(requestKey: String, bundle: Bundle) {
         if (requestKey === "tripDetails") {
+            position = bundle.getInt("pos")
             val tripJSON = bundle.getString("trip")
             val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
             trip = GsonBuilder().create().fromJson(tripJSON, type)
@@ -150,7 +151,7 @@ class TripDetailsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.editButton -> {
-                val bundle = bundleOf("trip" to Gson().toJson(trip))
+                val bundle = bundleOf("pos" to position, "trip" to Gson().toJson(trip))
                 setFragmentResult("fromDetailsToEdit", bundle)
                 findNavController().navigate(R.id.action_tripDetailsFragment_to_tripEditFragment)
                 println("Hello EditFragment")
