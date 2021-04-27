@@ -133,6 +133,7 @@ class TripEditFragment : Fragment() {
         setFragmentResultListener("fromDetailsToEdit") { requestKey, bundle ->
             if (requestKey == "fromDetailsToEdit") {
                 val tripJSON = bundle.getString("trip")
+                position = bundle.getInt("pos")
                 val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
                 trip = GsonBuilder().create().fromJson(tripJSON, type)
                 carNameET.setText(trip.carDescription)
@@ -366,7 +367,7 @@ class ItemEditAdapter(private val items: MutableList<TripListFragment.CheckPoint
         private fun updateTimeInView(timestamp: EditText, cal: Calendar) {
             val myFormat = "HH:mm" // mention the format you need
             val sdf = SimpleDateFormat(myFormat, Locale.US)
-            timestamp.setText(timestamp.text.toString() + "\n" + sdf.format(cal.time))
+            timestamp.setText(timestamp.text.toString() + " " + sdf.format(cal.time))
         }
     }
 
