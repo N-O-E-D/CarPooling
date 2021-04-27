@@ -181,6 +181,19 @@ class TripEditFragment : Fragment() {
         adapter.onItemEditDeleted(position)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("tripSaved", Gson().toJson(trip))
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if(savedInstanceState!=null){
+            val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
+            trip = GsonBuilder().create().fromJson(savedInstanceState.getString("tripSaved"), type)
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -206,21 +219,6 @@ class TripEditFragment : Fragment() {
         button_stop = view.findViewById(R.id.new_stop)
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
-//        recyclerView.adapter = ItemEditAdapter(trip.checkPoints)  { position: Int -> trip.checkPoints.removeAt(position) }
-
-        /*val showHideButton = view.findViewById<Button>(R.id.show_hide)
-        showHideButton.text = "Show Intermediate Stops"
-        var i = 0
-        showHideButton.setOnClickListener {
-            if (i % 2 == 0) {
-                showHideButton.text = "Hide Intermediate Stops"
-                recyclerView.adapter = ItemAdapter(trip1)
-            } else {
-                showHideButton.text = "Show Intermediate Stops"
-                recyclerView.adapter = ItemAdapter(trip2)
-            }
-            i++
-        }*/
 
         button_stop.setOnClickListener{
             trip.checkPoints.add(TripListFragment.CheckPoint("", ""))
@@ -245,6 +243,11 @@ class TripEditFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.saveButton -> {
+                if(carNameET.text.toString() == "" || driverNameET.text.toString() == "" ||
+                        availableSeatsET.text.toString() == "" || seatPriceET.text.toString() == "") {
+                    Toast.makeText(activity?.applicationContext, "Please fill all the fields before saving!", Toast.LENGTH_SHORT).show()
+                    return true
+                }
                 trip.carPhotoPath = filename
                 trip.carDescription = carNameET.text.toString()
                 trip.driverName = driverNameET.text.toString()

@@ -62,7 +62,7 @@
                     android:id="@+id/carNameET"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textAutoCorrect|textPersonName|textCapWords"/>
+                    android:inputType="textAutoCorrect" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -170,7 +170,7 @@
                     android:id="@+id/availableSeatsET"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textAutoCorrect|textPersonName|textCapWords"/>
+                    android:inputType="number" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -194,7 +194,7 @@
                     android:id="@+id/seatPriceET"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textAutoCorrect|textPersonName|textCapWords"/>
+                    android:inputType="numberDecimal" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -219,7 +219,7 @@
                     android:id="@+id/tripDescriptionET"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textAutoCorrect|textMultiLine|textPersonName|textCapWords" />
+                    android:inputType="textAutoCorrect|textMultiLine" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
