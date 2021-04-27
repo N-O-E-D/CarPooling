@@ -28,4 +28,12 @@
     <string name="seat_price_msg">"Costo unitario: €%1$s</string>
 
     <string name="changes_applied_successfully">Modifiche applicate correttamente</string>
+
+    <!--Nav header sctrings-->
+    <string name="navigation_drawer_open">Apri menu</string>
+    <string name="navigation_drawer_close">Chiudi menu</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="menu_profile">Profilo</string>
+    <string name="menu_trips">Viaggi</string>
 </resources>
