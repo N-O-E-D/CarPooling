@@ -1,7 +1,14 @@
 package it.polito.mad.group08.carpooling
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -10,8 +17,16 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
-class MainActivity : AppCompatActivity() {
+import org.json.JSONObject
+import java.io.FileNotFoundException
+
+class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager {
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var headerMainInfo: TextView
+    private lateinit var headerSecInfo: TextView
+    private lateinit var headerProfilePhoto: ImageView
+    private lateinit var sharedPref : SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -24,9 +39,45 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
+
+        headerMainInfo = navigationView.getHeaderView(0).findViewById(R.id.nav_main_info)
+        headerSecInfo = navigationView.getHeaderView(0).findViewById(R.id.nav_sec_info)
+        headerProfilePhoto = navigationView.getHeaderView(0).findViewById(R.id.nav_profile_photo)
+        sharedPref = getPreferences(Context.MODE_PRIVATE)!!
+
+        val jsonObject = sharedPref.getString("profile",null)
+        if(jsonObject!=null){
+            val deserializedJSON = JSONObject(jsonObject)
+            updateTexts(deserializedJSON.getString("fullName"),deserializedJSON.getString("email"))
+
+        }
+        retrieveUserImage()
     }
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun updateTexts(main: String, secondary: String) {
+        headerMainInfo.text = main
+        headerSecInfo.text = secondary
+    }
+
+    override fun updatePhoto(bitmap: Bitmap) {
+        headerProfilePhoto.setImageBitmap(bitmap)
+    }
+
+    private fun retrieveUserImage(){
+        try{
+            applicationContext.openFileInput("userProfileImage").use{
+                val bitmap: Bitmap? = BitmapFactory.decodeStream(it)
+                if(bitmap != null){
+                    headerProfilePhoto.setImageBitmap(bitmap)
+                }
+            }
+        }
+        catch(e: FileNotFoundException){
+            e.printStackTrace()
+        }
     }
 }

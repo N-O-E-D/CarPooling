@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.navigation.NavigationView
 import org.json.JSONObject
 import java.io.FileNotFoundException
 
@@ -24,6 +25,11 @@ class ShowProfileFragment : Fragment(R.layout.fragment_show_profile) {
     private lateinit var phonenumberTV : TextView
     private lateinit var sharedPref : SharedPreferences
     private val EDIT_PROFILE_REQUEST_CODE = 1
+
+    interface InfoManager{
+        fun updateTexts(main: String, secondary: String)
+        fun updatePhoto(bitmap: Bitmap)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +88,8 @@ class ShowProfileFragment : Fragment(R.layout.fragment_show_profile) {
         emailTV.text = deserializedJSON.getString("email")
         locationTV.text = deserializedJSON.getString("location")
         phonenumberTV.text = deserializedJSON.getString("phonenumber")
-
+        
+        (activity as? InfoManager)?.updateTexts(fullNameTV.text.toString(),emailTV.text.toString())
         retrieveUserImage()
     }
 
@@ -112,6 +119,7 @@ class ShowProfileFragment : Fragment(R.layout.fragment_show_profile) {
                 val bitmap: Bitmap? = BitmapFactory.decodeStream(it)
                 if(bitmap != null){
                     photoIV.setImageBitmap(bitmap)
+                    (activity as? InfoManager)?.updatePhoto(bitmap)
                 }
             }
         }
