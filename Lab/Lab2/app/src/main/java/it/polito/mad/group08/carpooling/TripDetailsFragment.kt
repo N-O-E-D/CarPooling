@@ -65,8 +65,8 @@ class TripDetailsFragment : Fragment() {
             val arrivalCheckpoint = trip.checkPoints.last()
 
             //TODO handle timestamp
-            val departureItem = DepartureItem(departureCheckpoint.location, "2021-04-25\n08:00")
-            val arrivalItem = ArrivalItem(arrivalCheckpoint.location, "25/03/2021\n19:00")
+            val departureItem = DepartureItem(departureCheckpoint.location, departureCheckpoint.timestamp)
+            val arrivalItem = ArrivalItem(arrivalCheckpoint.location, arrivalCheckpoint.timestamp)
 
             val startEndCheckpoints = listOf(departureItem, arrivalItem)
             val allCheckpoints: MutableList<Item> = mutableListOf()
@@ -75,21 +75,24 @@ class TripDetailsFragment : Fragment() {
                     when(index){
                         0 -> {
                             allCheckpoints.add(
-                                DepartureItem(checkPoint.location, "2021-04-25\n08:00")
+                                DepartureItem(checkPoint.location, checkPoint.timestamp)
                             )
                         }
                         trip.checkPoints.size-1 -> {
                             allCheckpoints.add(
-                                ArrivalItem(checkPoint.location, "2021-04-25\n19:00")
+                                ArrivalItem(checkPoint.location, checkPoint.timestamp)
                             )
                         }
                         else -> {
                             allCheckpoints.add(
-                                IntermediateItem(checkPoint.location, "2021-04-25\n11:00")
+                                IntermediateItem(checkPoint.location, checkPoint.timestamp)
                             )
                         }
                     }
                 }
+            }
+            else{
+                showHideButton.visibility = View.GONE
             }
 
             recyclerView.adapter = ItemAdapter(startEndCheckpoints)

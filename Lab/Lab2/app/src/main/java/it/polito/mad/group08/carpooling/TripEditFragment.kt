@@ -52,8 +52,7 @@ class TripEditFragment : Fragment() {
     var filename: String? = null
     lateinit var trip: TripListFragment.Trip
     lateinit var button_stop: Button
-    lateinit var mode: String
-    var position: Int? = null
+    var position: Int = -1
     private lateinit var pickImageContract: ActivityResultContract<Uri, Uri?>
     private lateinit var pickImageCallback: ActivityResultCallback<Uri?>
     private lateinit var pickImageLauncher: ActivityResultLauncher<Uri>
@@ -150,7 +149,6 @@ class TripEditFragment : Fragment() {
 
         setFragmentResultListener("tripEdit") { requestKey, bundle ->
             if (requestKey == "tripEdit") {
-                mode = bundle.getString("mode")!!
                 val tripJSON = bundle.getString("trip")
                 val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
                 trip = GsonBuilder().create().fromJson(tripJSON, type)
@@ -169,9 +167,10 @@ class TripEditFragment : Fragment() {
 
         setFragmentResultListener("tripAdd") { requestKey, bundle ->
             if (requestKey == "tripAdd") {
-                mode = bundle.getString("mode")!!
                 trip = TripListFragment.Trip(null, "", "", 4.5f,
                         mutableListOf(), "", 0, 0.toBigDecimal(), "")
+                adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
+                recyclerView.adapter = adapter
             }
         }
     }
@@ -243,35 +242,25 @@ class TripEditFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        trip.carPhotoPath = filename
-        trip.carDescription = carNameET.text.toString()
-        trip.driverName = driverNameET.text.toString()
-        trip.availableSeats = availableSeatsET.text.toString().toInt()
-        trip.seatPrice = seatPriceET.text.toString().toBigDecimal()
-        trip.description = informationsET.text.toString()
+        return when(item.itemId){
+            R.id.saveButton -> {
+                trip.carPhotoPath = filename
+                trip.carDescription = carNameET.text.toString()
+                trip.driverName = driverNameET.text.toString()
+                trip.availableSeats = availableSeatsET.text.toString().toInt()
+                trip.seatPrice = seatPriceET.text.toString().toBigDecimal()
+                trip.description = informationsET.text.toString()
 
 
-        Log.d("Trip-prova", trip.toString())
+                Log.d("Trip-prova", trip.toString())
 
-        val bundle = bundleOf("mode" to mode)
-        setFragmentResult("tripModifiedAdd", bundle)
-        findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
-        /*if (arguments?.getString("type") == "add") {
-            findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment,
-                bundleOf("trip" to Gson().toJson(
-                    TripListFragment.Trip(
-
-                    )
-                ), "type" to "add"))
-        } else if (arguments?.getString("type") == "modify") {
-            findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment,
-                bundleOf("trip" to Gson().toJson(
-                    TripListFragment.Trip(
-
-                    )
-                ), "type" to "modify", "position" to position))
-        }*/
-        return super.onOptionsItemSelected(item)
+                val bundle = bundleOf("pos" to position, "trip" to Gson().toJson(trip))
+                setFragmentResult("tripEditedAdded", bundle)
+                findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun takeSavedPhoto(name: String?, imageView: ImageView) {

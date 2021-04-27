@@ -39,7 +39,7 @@ class TripListFragment : Fragment() {
     private fun navigationClickListener(mode: Int, trip: Trip?, position: Int?) {
         val navController = findNavController()
         if (mode == EDIT_BUTTON_CLICKED && position != null && trip != null) {
-            val bundle = bundleOf("mode" to EDIT_BUTTON_CLICKED, "pos" to position, "trip" to Gson().toJson(trip))
+            val bundle = bundleOf("pos" to position, "trip" to Gson().toJson(trip))
             setFragmentResult("tripEdit", bundle)
             navController.navigate(R.id.action_tripListFragment_to_tripEditFragment)
             //Toast.makeText(context, "EDIT: From ${trip.departureLocation} to ${trip.arrivalLocation}!", Toast.LENGTH_SHORT).show()
@@ -49,7 +49,7 @@ class TripListFragment : Fragment() {
             navController.navigate(R.id.action_tripListFragment_to_tripDetailsFragment)
             //Toast.makeText(context, "DETAILS: From ${trip.departureLocation} to ${trip.arrivalLocation}!", Toast.LENGTH_SHORT).show()
         } else if (mode == FAB_CLICKED) {
-            val bundle = bundleOf("mode" to FAB_CLICKED)
+            val bundle = bundleOf()
             setFragmentResult("tripAdd", bundle)
             navController.navigate(R.id.action_tripListFragment_to_tripEditFragment)
         }
@@ -62,20 +62,25 @@ class TripListFragment : Fragment() {
         val tripsJSON = sharedPref.getString("trips", Gson().toJson(mutableListOf<Trip>()).toString())
         val type: Type = object : TypeToken<List<Trip?>?>() {}.type
         trips = GsonBuilder().create().fromJson(tripsJSON, type)
-        val checkpoints = listOf(
-                CheckPoint("Via Roma 32, Torino", "2021-04-25\n08:00"),
-                CheckPoint("Via Milano 23, Firenze", "2021-04-25\n11:00"),
-                CheckPoint("Via Torino 44, Roma", "2021-04-25\n17:30"),
-                CheckPoint("Via Firenze 33, Napoli", "25/03/2021\n19:00")
-        ).toMutableList()
 
-        val trip = Trip("carPhotoPath", "Toyota Le mans 3000 Diesel",
-                "Pino Pino", 4.2f, checkpoints, "01h30m",
-                3, BigDecimal(35.50),
-                "In this Trip have th small space. See you soon.")
-        trips.add(trip)
-        trips.add(trip)
+        setFragmentResultListener("tripEditedAdded"){ requestKey, bundle ->
+            if(requestKey == "tripEditedAdded"){
+                val position = bundle.getInt("pos")
+                println(position)
+                val tripFromEditJSON = bundle.getString("trip")
+                val type: Type = object : TypeToken<Trip?>() {}.type
+                val tripFromEdit: Trip = GsonBuilder().create().fromJson(tripFromEditJSON, type)
+                if(position != -1){
+                    adapter.onItemChange(tripFromEdit, position)
+                }
+                else{
+                    adapter.onItemAdded(tripFromEdit)
+                }
 
+                saveInPreferences()
+            }
+        }
+        /*
         setFragmentResultListener("tripEdited") { requestKey, bundle ->
             if (requestKey == "tripEdited") {
                 val position = bundle.getInt("pos")
@@ -98,7 +103,7 @@ class TripListFragment : Fragment() {
                 saveInPreferences()
             }
         }
-
+        */
 
     }
 
