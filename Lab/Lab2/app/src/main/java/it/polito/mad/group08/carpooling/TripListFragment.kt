@@ -3,7 +3,9 @@ package it.polito.mad.group08.carpooling
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -180,7 +182,6 @@ class TripListFragment : Fragment() {
             private val departureTimestamp: TextView = itemView.findViewById(R.id.departureTimestamp)
             private val arrivalTimestamp: TextView = itemView.findViewById(R.id.arrivalTimestamp)
             private val editButton: Button = itemView.findViewById(R.id.editButton)
-            private val carPhoto: ImageView = itemView.findViewById(R.id.carPhoto)
             private val card: CardView = itemView.findViewById(R.id.card)
 
 
@@ -190,7 +191,16 @@ class TripListFragment : Fragment() {
                 arrivalLocation.text = trip.checkPoints[trip.checkPoints.size - 1].location
                 departureTimestamp.text = trip.checkPoints[0].timestamp
                 arrivalTimestamp.text = trip.checkPoints[trip.checkPoints.size-1].timestamp
-                takeSavedPhoto(trip.carPhotoPath, carPhoto, itemView)
+                var bitmap: Bitmap? = null
+                bitmap = takeSavedPhoto(trip.carPhotoPath, itemView)
+                when(itemView.context.resources.configuration.orientation){
+                    Configuration.ORIENTATION_PORTRAIT -> {
+                        if(bitmap != null){
+                            itemView.findViewById<ImageView>(R.id.carPhoto).setImageBitmap(bitmap)
+                        }
+                    }
+                }
+
 
                 card.setOnClickListener {
                     clickListener(CARD_CLICKED, trip, bindingAdapterPosition)
@@ -205,7 +215,7 @@ class TripListFragment : Fragment() {
                 editButton.setOnClickListener { null }
             }
 
-            private fun takeSavedPhoto(name: String?, imageView: ImageView, v: View) {
+            /*private fun takeSavedPhoto(name: String?, imageView: ImageView, v: View) {
                 try {
                     if(name != null) {
                         v.context.applicationContext?.openFileInput(name).use {
@@ -217,6 +227,20 @@ class TripListFragment : Fragment() {
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace()
                 }
+            }*/
+
+            private fun takeSavedPhoto(name: String?, v: View): Bitmap? {
+                var imageBitmap: Bitmap? = null
+                try {
+                    if(name != null) {
+                        v.context.applicationContext?.openFileInput(name).use {
+                            imageBitmap = BitmapFactory.decodeStream(it)
+                        }
+                    }
+                } catch (e: FileNotFoundException) {
+                    e.printStackTrace()
+                }
+                return imageBitmap
             }
         }
 
