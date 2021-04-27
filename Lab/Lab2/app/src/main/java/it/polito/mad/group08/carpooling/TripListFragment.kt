@@ -3,6 +3,7 @@ package it.polito.mad.group08.carpooling
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.graphics.BitmapFactory
 import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,6 +13,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.os.bundleOf
@@ -26,6 +28,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import org.w3c.dom.Text
+import java.io.FileNotFoundException
 import java.lang.reflect.Type
 import java.math.BigDecimal
 
@@ -177,7 +180,9 @@ class TripListFragment : Fragment() {
             private val departureTimestamp: TextView = itemView.findViewById(R.id.departureTimestamp)
             private val arrivalTimestamp: TextView = itemView.findViewById(R.id.arrivalTimestamp)
             private val editButton: Button = itemView.findViewById(R.id.editButton)
+            private val carPhoto: ImageView = itemView.findViewById(R.id.carPhoto)
             private val card: CardView = itemView.findViewById(R.id.card)
+
 
 
             fun bind(trip: Trip, clickListener: (Int, Trip, Int?) -> Unit) {
@@ -185,6 +190,8 @@ class TripListFragment : Fragment() {
                 arrivalLocation.text = trip.checkPoints[trip.checkPoints.size - 1].location
                 departureTimestamp.text = trip.checkPoints[0].timestamp
                 arrivalTimestamp.text = trip.checkPoints[trip.checkPoints.size-1].timestamp
+                takeSavedPhoto(trip.carPhotoPath, carPhoto, itemView)
+
                 card.setOnClickListener {
                     clickListener(CARD_CLICKED, trip, bindingAdapterPosition)
                 }
@@ -196,6 +203,20 @@ class TripListFragment : Fragment() {
             fun unbind() {
                 card.setOnClickListener { null }
                 editButton.setOnClickListener { null }
+            }
+
+            private fun takeSavedPhoto(name: String?, imageView: ImageView, v: View) {
+                try {
+                    if(name != null) {
+                        v.context.applicationContext?.openFileInput(name).use {
+                            val imageBitmap = BitmapFactory.decodeStream(it)
+                            if (imageBitmap != null)
+                                imageView.setImageBitmap(imageBitmap)
+                        }
+                    }
+                } catch (e: FileNotFoundException) {
+                    e.printStackTrace()
+                }
             }
         }
 
