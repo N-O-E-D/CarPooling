@@ -12,7 +12,11 @@
         tools:layout="@layout/fragment_show_profile" >
         <action
             android:id="@+id/action_showProfileFragment_to_editProfileFragment"
-            app:destination="@id/editProfileFragment" />
+            app:destination="@id/editProfileFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
@@ -21,7 +25,11 @@
         tools:layout="@layout/fragment_edit_profile" >
         <action
             android:id="@+id/action_editProfileFragment_to_showProfileFragment"
-            app:destination="@id/showProfileFragment" />
+            app:destination="@id/showProfileFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/tripListFragment"
@@ -31,10 +39,26 @@
         <action
             android:id="@+id/action_tripListFragment_to_tripDetailsFragment"
             app:destination="@id/tripDetailsFragment" />
+        <action
+            android:id="@+id/action_tripListFragment_to_tripEditFragment"
+            app:destination="@id/tripEditFragment" />
     </fragment>
     <fragment
         android:id="@+id/tripDetailsFragment"
         android:name="it.polito.mad.group08.carpooling.TripDetailsFragment"
         android:label="fragment_trip_details"
-        tools:layout="@layout/fragment_trip_details" />
+        tools:layout="@layout/fragment_trip_details" >
+        <action
+            android:id="@+id/action_tripDetailsFragment_to_tripEditFragment"
+            app:destination="@id/tripEditFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tripEditFragment"
+        android:name="it.polito.mad.group08.carpooling.TripEditFragment"
+        android:label="fragment_trip_edit"
+        tools:layout="@layout/fragment_trip_edit" >
+        <action
+            android:id="@+id/action_tripEditFragment_to_tripListFragment"
+            app:destination="@id/tripListFragment" />
+    </fragment>
 </navigation>

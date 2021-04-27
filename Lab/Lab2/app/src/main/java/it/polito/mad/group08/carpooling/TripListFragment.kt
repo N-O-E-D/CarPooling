@@ -41,7 +41,7 @@ class TripListFragment : Fragment() {
         if (mode == EDIT_BUTTON_CLICKED && position != null && trip != null) {
             val bundle = bundleOf("mode" to EDIT_BUTTON_CLICKED, "pos" to position, "trip" to Gson().toJson(trip))
             setFragmentResult("tripEdit", bundle)
-            //navController.navigate(R.id.action_tripListFragment_to_tripEditFragment)
+            navController.navigate(R.id.action_tripListFragment_to_tripEditFragment)
             //Toast.makeText(context, "EDIT: From ${trip.departureLocation} to ${trip.arrivalLocation}!", Toast.LENGTH_SHORT).show()
         } else if (mode == CARD_CLICKED && trip != null) {
             val bundle = bundleOf("trip" to Gson().toJson(trip))
@@ -51,7 +51,7 @@ class TripListFragment : Fragment() {
         } else if (mode == FAB_CLICKED) {
             val bundle = bundleOf("mode" to FAB_CLICKED)
             setFragmentResult("tripAdd", bundle)
-            //navController.navigate(R.id.action_tripListFragment_to_tripEditFragment)
+            navController.navigate(R.id.action_tripListFragment_to_tripEditFragment)
         }
     }
 

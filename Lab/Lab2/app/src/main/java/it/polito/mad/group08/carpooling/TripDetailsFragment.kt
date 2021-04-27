@@ -1,20 +1,22 @@
 package it.polito.mad.group08.carpooling
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
-import java.math.BigDecimal
 
 
 class TripDetailsFragment : Fragment() {
@@ -23,45 +25,22 @@ class TripDetailsFragment : Fragment() {
     private lateinit var driverName: TextView
     private lateinit var driverRate: RatingBar
 
-    //List[0] = departure; list[0+i] = intermediateStops; List[N-1] = arrival
-    private lateinit var checkPoints: List<TripListFragment.CheckPoint>
-
+    private lateinit var recyclerView: RecyclerView
     private lateinit var showHideButton: Button
 
     private lateinit var estimatedDuration: TextView
-
     private lateinit var availableSeats: TextView
     private lateinit var seatPrice: TextView
+
     private lateinit var description: TextView
 
+    //List[0] = departure; list[0+i] = intermediateStops; List[N-1] = arrival
     private lateinit var trip: TripListFragment.Trip
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setUpResultListener()
-//        arguments?.let {
-//            param1 = it.getString(ARG_PARAM1)
-//            param2 = it.getString(ARG_PARAM2)
-//        }
-
-
-        //TODO it doesn't work because it's asynchronous
-//        setFragmentResultListener("keyFragment"){requestKey, bundle ->
-//            if(requestKey == "keyFragment"){
-//                val jsonObj = bundle.getString("trip")
-//                val type: Type = object : TypeToken<Trip?>() {}.type
-//                trip = GsonBuilder().create().fromJson(jsonObj, type)
-//                Log.d("AAA", trip.toString())
-//            }
-//        }
-
-        /*trip = TripListFragment.Trip("carPhotoPath", "Toyota Le mans 3000 Diesel",
-                "Pino Guidatutto", 4.2f, listOf(), "22h30m",
-                3, BigDecimal(35.50),
-                "In this Trip you will travel with a young driver which has" +
-                        " a good sense of humor. You have the possibility to take no more than 1 " +
-                        " trolley and 1 small bag because of the small space. See you soon.")*/
     }
 
 
@@ -77,75 +56,87 @@ class TripDetailsFragment : Fragment() {
             val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
             trip = GsonBuilder().create().fromJson(tripJSON, type)
             println(trip)
+            //TODO carPhotoPath.setImageURI()
             carDescription.text = trip.carDescription
             driverName.text = trip.driverName
             driverRate.rating = trip.driverRate
-            estimatedDuration.text = "Estimated duration: ${trip.estimatedDuration}"
-            availableSeats.text = "Available Seats: ${trip.availableSeats}"
-            seatPrice.text = "Price/Person: €${trip.seatPrice}"
+
+            val departureCheckpoint = trip.checkPoints.first()
+            val arrivalCheckpoint = trip.checkPoints.last()
+
+            //TODO handle timestamp
+            val departureItem = DepartureItem(departureCheckpoint.location, "2021-04-25\n08:00")
+            val arrivalItem = ArrivalItem(arrivalCheckpoint.location, "25/03/2021\n19:00")
+
+            val startEndCheckpoints = listOf(departureItem, arrivalItem)
+            val allCheckpoints: MutableList<Item> = mutableListOf()
+            if(trip.checkPoints.size > 2){
+                trip.checkPoints.forEachIndexed { index, checkPoint ->
+                    when(index){
+                        0 -> {
+                            allCheckpoints.add(
+                                DepartureItem(checkPoint.location, "2021-04-25\n08:00")
+                            )
+                        }
+                        trip.checkPoints.size-1 -> {
+                            allCheckpoints.add(
+                                ArrivalItem(checkPoint.location, "2021-04-25\n19:00")
+                            )
+                        }
+                        else -> {
+                            allCheckpoints.add(
+                                IntermediateItem(checkPoint.location, "2021-04-25\n11:00")
+                            )
+                        }
+                    }
+                }
+            }
+
+            recyclerView.adapter = ItemAdapter(startEndCheckpoints)
+
+            var i = 0
+            showHideButton.setOnClickListener {
+                if (i % 2 == 0) {
+                    showHideButton.text = getString(R.string.hide_intermediate_stops)
+                    recyclerView.adapter = ItemAdapter(allCheckpoints)
+                } else {
+                    showHideButton.text = getString(R.string.show_intermediate_stops)
+                    recyclerView.adapter = ItemAdapter(startEndCheckpoints)
+                }
+                i++
+            }
+
+            estimatedDuration.text = getString(R.string.estimated_duration_msg, trip.estimatedDuration)
+            availableSeats.text = getString(R.string.available_seats_msg, trip.availableSeats)
+            seatPrice.text = getString(R.string.seat_price_msg, trip.seatPrice.toString())
             description.text = trip.description
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        val v = inflater.inflate(R.layout.fragment_trip_details, container, false);
+        val v = inflater.inflate(R.layout.fragment_trip_details, container, false)
 
-        setHasOptionsMenu(true);
-        return v;
+        setHasOptionsMenu(true)
+        return v
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         carPhotoPath = view.findViewById(R.id.carPhoto)
-        //carPhotoPath.setImageURI()
-
         carDescription = view.findViewById(R.id.carName)
-
-
         driverName = view.findViewById(R.id.driverName)
-
-
         driverRate = view.findViewById(R.id.driverRate)
-
-
-        val departureItem = DepartureItem("Via Roma 32, Torino", "2021-04-25\n08:00")
-        val intermediateItem = IntermediateItem("Via Milano 23, Firenze", "2021-04-25\n11:00")
-        val intermediateItem2 = IntermediateItem("Via Torino 44, Roma", "2021-04-25\n17:30")
-        val arrivalItem = ArrivalItem("Via Firenze 33, Napoli", "25/03/2021\n19:00")
-
-        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
+        recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        val trip1 = mutableListOf(departureItem, intermediateItem, intermediateItem2, arrivalItem)
-        val trip2 = mutableListOf(departureItem, arrivalItem)
-        recyclerView.adapter = ItemAdapter(trip2)
-
         estimatedDuration = view.findViewById(R.id.estimatedDuration)
-
-
         availableSeats = view.findViewById(R.id.availableSeats)
-
-
         seatPrice = view.findViewById(R.id.seatPrice)
-
-
         description = view.findViewById(R.id.tripDescription)
 
-
         showHideButton = view.findViewById<Button>(R.id.show_hide)
-        showHideButton.text = "Show Intermediate Stops"
-        var i = 0
-        showHideButton.setOnClickListener {
-            if (i % 2 == 0) {
-                showHideButton.text = "Hide Intermediate Stops"
-                recyclerView.adapter = ItemAdapter(trip1)
-            } else {
-                showHideButton.text = "Show Intermediate Stops"
-                recyclerView.adapter = ItemAdapter(trip2)
-            }
-            i++
-        }
+        showHideButton.text = getString(R.string.show_intermediate_stops)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -156,9 +147,9 @@ class TripDetailsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.editButton -> {
-//                val bundle = bundleOf("trip" to Gson().toJson(Trip))
-//                setFragmentResult("KeyFragment", bundle)
-                //findNavController().navigate(R.id.action_nav_home_to_tripDetailsFragment)
+                val bundle = bundleOf("trip" to Gson().toJson(trip))
+                setFragmentResult("fromDetailsToEdit", bundle)
+                findNavController().navigate(R.id.action_tripDetailsFragment_to_tripEditFragment)
                 println("Hello EditFragment")
                 true
             }

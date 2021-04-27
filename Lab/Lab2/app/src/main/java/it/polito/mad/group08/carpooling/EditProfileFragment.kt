@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -103,7 +104,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
         if(savedInstanceState!=null){
             currentPhotoPath = savedInstanceState.getString("photoPath")!!
-            val cacheFile = File(context?.cacheDir, savedInstanceState.getString("cacheFilePath"))
+            val cacheFile = File(context?.cacheDir, savedInstanceState.getString("cacheFilePath")!!)
             bitmap = BitmapFactory.decodeFile(cacheFile.path)
             if(bitmap!=null)
                 photoIV.setImageBitmap(bitmap)
@@ -184,6 +185,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                     }
                 }
                 findNavController().navigate(R.id.action_editProfileFragment_to_showProfileFragment,bundle)
+                Snackbar.make(view?.findViewById(R.id.fullNameET)!!,R.string.changes_applied_successfully,Snackbar.LENGTH_SHORT).show()
                 true
             }
             else -> super.onOptionsItemSelected(item)
