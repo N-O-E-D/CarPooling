@@ -1,5 +1,6 @@
 package it.polito.mad.group08.carpooling
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.*
 import android.widget.Button
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import java.io.FileNotFoundException
 import java.lang.reflect.Type
 
 
@@ -50,70 +52,103 @@ class TripDetailsFragment : Fragment() {
         }
     }
 
+    private fun takeSavedPhoto(name: String?) {
+        try {
+            if(name != null) {
+                view?.context?.applicationContext?.openFileInput(name).use {
+                    val imageBitmap = BitmapFactory.decodeStream(it)
+                    if (imageBitmap != null)
+                        carPhotoPath.setImageBitmap(imageBitmap)
+                }
+            }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("trip", Gson().toJson(trip))
+    }
+
+    //called after onViewCreated
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if(savedInstanceState!=null){
+            val tripJSON = savedInstanceState.getString("trip")
+            val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
+            trip = GsonBuilder().create().fromJson(tripJSON, type)
+            setTripInformation(trip)
+        }
+    }
+
+    private fun setTripInformation(trip: TripListFragment.Trip){
+        takeSavedPhoto(trip.carPhotoPath)
+        carDescription.text = trip.carDescription
+        driverName.text = trip.driverName
+        driverRate.rating = trip.driverRate
+
+        val departureCheckpoint = trip.checkPoints.first()
+        val arrivalCheckpoint = trip.checkPoints.last()
+
+        val departureItem = DepartureItem(departureCheckpoint.location, departureCheckpoint.timestamp)
+        val arrivalItem = ArrivalItem(arrivalCheckpoint.location, arrivalCheckpoint.timestamp)
+
+        val startEndCheckpoints = listOf(departureItem, arrivalItem)
+        val allCheckpoints: MutableList<Item> = mutableListOf()
+        if(trip.checkPoints.size > 2){
+            trip.checkPoints.forEachIndexed { index, checkPoint ->
+                when(index){
+                    0 -> {
+                        allCheckpoints.add(
+                                DepartureItem(checkPoint.location, checkPoint.timestamp)
+                        )
+                    }
+                    trip.checkPoints.size-1 -> {
+                        allCheckpoints.add(
+                                ArrivalItem(checkPoint.location, checkPoint.timestamp)
+                        )
+                    }
+                    else -> {
+                        allCheckpoints.add(
+                                IntermediateItem(checkPoint.location, checkPoint.timestamp)
+                        )
+                    }
+                }
+            }
+        }
+        else{
+            showHideButton.visibility = View.GONE
+        }
+
+        recyclerView.adapter = ItemAdapter(startEndCheckpoints)
+
+        var i = 0
+        showHideButton.setOnClickListener {
+            if (i % 2 == 0) {
+                showHideButton.text = getString(R.string.hide_intermediate_stops)
+                recyclerView.adapter = ItemAdapter(allCheckpoints)
+            } else {
+                showHideButton.text = getString(R.string.show_intermediate_stops)
+                recyclerView.adapter = ItemAdapter(startEndCheckpoints)
+            }
+            i++
+        }
+
+        estimatedDuration.text = getString(R.string.estimated_duration_msg, trip.estimatedDuration)
+        availableSeats.text = getString(R.string.available_seats_msg, trip.availableSeats)
+        seatPrice.text = getString(R.string.seat_price_msg, trip.seatPrice.toString())
+        description.text = trip.description
+    }
+
     private fun onFragmentResult(requestKey: String, bundle: Bundle) {
         if (requestKey === "tripDetails") {
             position = bundle.getInt("pos")
             val tripJSON = bundle.getString("trip")
             val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
             trip = GsonBuilder().create().fromJson(tripJSON, type)
-            println(trip)
-            //TODO carPhotoPath.setImageURI()
-            carDescription.text = trip.carDescription
-            driverName.text = trip.driverName
-            driverRate.rating = trip.driverRate
 
-            val departureCheckpoint = trip.checkPoints.first()
-            val arrivalCheckpoint = trip.checkPoints.last()
-
-            //TODO handle timestamp
-            val departureItem = DepartureItem(departureCheckpoint.location, departureCheckpoint.timestamp)
-            val arrivalItem = ArrivalItem(arrivalCheckpoint.location, arrivalCheckpoint.timestamp)
-
-            val startEndCheckpoints = listOf(departureItem, arrivalItem)
-            val allCheckpoints: MutableList<Item> = mutableListOf()
-            if(trip.checkPoints.size > 2){
-                trip.checkPoints.forEachIndexed { index, checkPoint ->
-                    when(index){
-                        0 -> {
-                            allCheckpoints.add(
-                                DepartureItem(checkPoint.location, checkPoint.timestamp)
-                            )
-                        }
-                        trip.checkPoints.size-1 -> {
-                            allCheckpoints.add(
-                                ArrivalItem(checkPoint.location, checkPoint.timestamp)
-                            )
-                        }
-                        else -> {
-                            allCheckpoints.add(
-                                IntermediateItem(checkPoint.location, checkPoint.timestamp)
-                            )
-                        }
-                    }
-                }
-            }
-            else{
-                showHideButton.visibility = View.GONE
-            }
-
-            recyclerView.adapter = ItemAdapter(startEndCheckpoints)
-
-            var i = 0
-            showHideButton.setOnClickListener {
-                if (i % 2 == 0) {
-                    showHideButton.text = getString(R.string.hide_intermediate_stops)
-                    recyclerView.adapter = ItemAdapter(allCheckpoints)
-                } else {
-                    showHideButton.text = getString(R.string.show_intermediate_stops)
-                    recyclerView.adapter = ItemAdapter(startEndCheckpoints)
-                }
-                i++
-            }
-
-            estimatedDuration.text = getString(R.string.estimated_duration_msg, trip.estimatedDuration)
-            availableSeats.text = getString(R.string.available_seats_msg, trip.availableSeats)
-            seatPrice.text = getString(R.string.seat_price_msg, trip.seatPrice.toString())
-            description.text = trip.description
+            setTripInformation(trip)
         }
     }
 
