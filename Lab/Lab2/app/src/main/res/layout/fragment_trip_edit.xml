@@ -34,7 +34,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/carName"
+                app:layout_constraintBottom_toTopOf="@+id/carNameET_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -42,19 +42,29 @@
                 tools:srcCompat="@drawable/car_photo"
                 android:contentDescription="@string/car_photo" />
 
-            <EditText
-                android:id="@+id/carName"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/carNameET_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:text="@string/car_name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                android:textSize="@dimen/secondary_text"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:hint="Car Name"
+                app:endIconMode="clear_text"
                 app:layout_constraintBottom_toTopOf="@+id/carGuideline"
                 app:layout_constraintEnd_toEndOf="@+id/carPhoto"
-                app:layout_constraintStart_toStartOf="@+id/carPhoto"
-                android:hint="Car Name"/>
+                app:layout_constraintStart_toStartOf="@+id/carPhoto">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/carNameET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textAutoCorrect|textPersonName|textCapWords"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/carGuideline"
@@ -63,17 +73,29 @@
                 android:orientation="horizontal"
                 app:layout_constraintGuide_percent="0.25" />
 
-            <EditText
-                android:id="@+id/driverName"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/driverNameET_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/driver_name"
-                android:textSize="@dimen/secondary_text"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:hint="Driver Name"
+                app:endIconMode="clear_text"
                 app:layout_constraintEnd_toStartOf="@+id/driverRate"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/carGuideline"
-                android:hint="Driver Name"/>
+                app:layout_constraintTop_toTopOf="@+id/carGuideline">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/driverNameET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textAutoCorrect|textPersonName|textCapWords"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <RatingBar
                 android:id="@+id/driverRate"
@@ -87,9 +109,9 @@
                 android:rating="4"
                 android:secondaryProgressTint="@color/ratingBar"
                 android:stepSize="0.5"
-                app:layout_constraintBottom_toBottomOf="@+id/driverName"
+                app:layout_constraintBottom_toBottomOf="@+id/driverNameET_layout"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/driverName"
+                app:layout_constraintTop_toTopOf="@+id/driverNameET_layout"
                 tools:targetApi="lollipop" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -101,15 +123,15 @@
                 android:layout_marginRight="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/driverName" />
+                app:layout_constraintTop_toBottomOf="@+id/driverNameET_layout" />
 
             <Button
-                android:id="@+id/show_hide"
+                android:id="@+id/new_stop"
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/show_hide"
+                android:text="Add New Stop"
                 app:layout_constraintEnd_toEndOf="@+id/recyclerView"
                 app:layout_constraintStart_toStartOf="@+id/recyclerView"
                 app:layout_constraintTop_toBottomOf="@+id/recyclerView"
@@ -126,7 +148,7 @@
                 android:textSize="@dimen/secondary_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/show_hide" />
+                app:layout_constraintTop_toBottomOf="@+id/new_stop" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/availableSeatsET_layout"
@@ -176,21 +198,30 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <EditText
-                android:id="@+id/tripDescription"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tripDescriptionET_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:text="@string/trip_description"
-                android:textSize="@dimen/secondary_text"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:hint="Trip Description"
+                app:endIconMode="clear_text"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/seatPriceET_layout"
-                android:hint="Trip Description"/>
+                app:layout_constraintTop_toBottomOf="@+id/seatPriceET_layout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tripDescriptionET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textAutoCorrect|textMultiLine|textPersonName|textCapWords" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <ImageButton
                 android:id="@+id/imageButton"
