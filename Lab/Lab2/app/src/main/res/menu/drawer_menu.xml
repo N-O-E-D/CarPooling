@@ -5,9 +5,11 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/showProfileFragment"
-            android:title="Profile" />
+            android:title="@string/menu_profile"
+            android:icon="@drawable/face_neutral"/>
         <item
             android:id="@+id/tripListFragment"
-            android:title="Trips" />
+            android:title="@string/menu_trips"
+            android:icon="@drawable/car"/>
     </group>
 </menu>

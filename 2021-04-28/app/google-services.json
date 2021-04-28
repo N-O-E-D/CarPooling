@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "866781613003",
+    "project_id": "myfirestoretest-4934a",
+    "storage_bucket": "myfirestoretest-4934a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866781613003:android:0f91058f63ba684d35444e",
+        "android_client_info": {
+          "package_name": "it.polito.s279434.myfirestoreapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "866781613003-9jbr0cr2jqci4ht0l0hetuntonpnt9e1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5DjzAy0oLqT7bU18lchTOIocesifDYHk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "866781613003-9jbr0cr2jqci4ht0l0hetuntonpnt9e1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
