@@ -21,12 +21,16 @@ import com.google.android.material.navigation.NavigationView
 import org.json.JSONObject
 import java.io.FileNotFoundException
 
-class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager {
+interface IOnBackPressed {
+    fun onBackPressed(): Boolean
+}
+
+class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var headerMainInfo: TextView
     private lateinit var headerSecInfo: TextView
     private lateinit var headerProfilePhoto: ImageView
-    private lateinit var sharedPref : SharedPreferences
+    private lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +41,7 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.showProfileFragment, R.id.tripListFragment), drawerLayout
+                setOf(R.id.showProfileFragment, R.id.tripListFragment), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
@@ -47,14 +51,15 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager {
         headerProfilePhoto = navigationView.getHeaderView(0).findViewById(R.id.nav_profile_photo)
         sharedPref = getPreferences(Context.MODE_PRIVATE)!!
 
-        val jsonObject = sharedPref.getString("profile",null)
-        if(jsonObject!=null){
+        val jsonObject = sharedPref.getString("profile", null)
+        if (jsonObject != null) {
             val deserializedJSON = JSONObject(jsonObject)
-            updateTexts(deserializedJSON.getString("fullName"),deserializedJSON.getString("email"))
+            updateTexts(deserializedJSON.getString("fullName"), deserializedJSON.getString("email"))
 
         }
         retrieveUserImage()
     }
+
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
@@ -69,17 +74,25 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager {
         headerProfilePhoto.setImageBitmap(bitmap)
     }
 
-    private fun retrieveUserImage(){
-        try{
-            applicationContext.openFileInput("userProfileImage").use{
+    private fun retrieveUserImage() {
+        try {
+            applicationContext.openFileInput("userProfileImage").use {
                 val bitmap: Bitmap? = BitmapFactory.decodeStream(it)
-                if(bitmap != null){
+                if (bitmap != null) {
                     headerProfilePhoto.setImageBitmap(bitmap)
                 }
             }
-        }
-        catch(e: FileNotFoundException){
+        } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
     }
+
+
+    /*override fun onBackPressed() {
+        val fragment =
+                this.supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container)
+        (fragment as? IOnBackPressed)?.onBackPressed()?.not()?.let {
+            super.onBackPressed()
+        }
+    }*/
 }

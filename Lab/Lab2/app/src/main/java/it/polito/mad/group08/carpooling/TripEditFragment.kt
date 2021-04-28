@@ -19,6 +19,7 @@ import android.text.format.DateFormat
 import android.util.Log
 import android.view.*
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
@@ -32,6 +33,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -45,7 +47,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.jvm.Throws
 
-class TripEditFragment : Fragment() {
+class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
 
 
     lateinit var carNameET: EditText
@@ -57,6 +59,7 @@ class TripEditFragment : Fragment() {
     lateinit var ratingBar: RatingBar
     lateinit var recyclerView: RecyclerView
     lateinit var adapter: ItemEditAdapter
+    var entryPoint: Int = -1
     var filename: String? = null
     lateinit var trip: TripListFragment.Trip
     lateinit var button_stop: Button
@@ -72,6 +75,20 @@ class TripEditFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val bundle = bundleOf("pos" to position, "trip" to Gson().toJson(trip))
+                setFragmentResult("tripDetails", bundle)
+                if(entryPoint == 0){
+                    findNavController().popBackStack(R.id.tripDetailsFragment, false)
+                }
+                else{
+                    findNavController().popBackStack()
+                }
+            }
+        })
+
         pickImageContract = object : ActivityResultContract<Uri, Uri?>() {
             override fun createIntent(context: Context, input: Uri): Intent {
                 return Intent(Intent.ACTION_PICK, input)
@@ -159,6 +176,7 @@ class TripEditFragment : Fragment() {
 
         setFragmentResultListener("fromDetailsToEdit") { requestKey, bundle ->
             if (requestKey == "fromDetailsToEdit") {
+                entryPoint = 0
                 val tripJSON = bundle.getString("trip")
                 position = bundle.getInt("pos")
                 val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
@@ -179,6 +197,7 @@ class TripEditFragment : Fragment() {
 
         setFragmentResultListener("tripEdit") { requestKey, bundle ->
             if (requestKey == "tripEdit") {
+                entryPoint = 1
                 val tripJSON = bundle.getString("trip")
                 val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
                 trip = GsonBuilder().create().fromJson(tripJSON, type)
@@ -198,6 +217,7 @@ class TripEditFragment : Fragment() {
 
         setFragmentResultListener("tripAdd") { requestKey, bundle ->
             if (requestKey == "tripAdd") {
+                entryPoint = 1
                 trip = TripListFragment.Trip(null, "", "", 4.5f,
                         mutableListOf(), "", 0, 0.toBigDecimal(), "")
                 adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
@@ -217,6 +237,7 @@ class TripEditFragment : Fragment() {
             outState.putString("tripSaved", Gson().toJson(trip))
             outState.putInt("pos", position)
             outState.putString("filename", filename)
+            outState.putInt("entryPoint", entryPoint)
         }
     }
 
@@ -231,6 +252,7 @@ class TripEditFragment : Fragment() {
             recyclerView.adapter = adapter
             position = savedInstanceState.getInt("pos")
             filename = savedInstanceState.getString("filename")
+            entryPoint = savedInstanceState.getInt("entryPoint")
         }
     }
 
@@ -324,10 +346,17 @@ class TripEditFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
-            /*16908332 -> {
-                Toast.makeText(activity?.applicationContext,"Back Premuto", Toast.LENGTH_SHORT).show()
+            16908332 -> {
+                val bundle = bundleOf("pos" to position, "trip" to Gson().toJson(trip))
+                setFragmentResult("tripDetails", bundle)
+                if(entryPoint == 0){
+                    findNavController().popBackStack(R.id.tripDetailsFragment, false)
+                }
+                else{
+                    findNavController().popBackStack()
+                }
                 return true
-            }*/
+            }
             R.id.saveButton -> {
                 if(carNameET.text.toString() == "" || driverNameET.text.toString() == "" ||
                         availableSeatsET.text.toString() == "" || seatPriceET.text.toString() == "" || checkCheckpoint()) {
@@ -348,11 +377,10 @@ class TripEditFragment : Fragment() {
                 trip.description = informationsET.text.toString()
 
 
-                Log.d("Trip-prova", trip.toString())
-
                 val bundle = bundleOf("pos" to position, "trip" to Gson().toJson(trip))
                 setFragmentResult("tripEditedAdded", bundle)
                 findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
+
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -387,6 +415,12 @@ class TripEditFragment : Fragment() {
             else -> super.onContextItemSelected(item)
         }
     }
+
+    /*override fun onBackPressed(): Boolean {
+        findNavController().navigate(R.id.action_tripEditFragment_to_tripDetailsFragment)
+        Toast.makeText(context, "AAAA", Toast.LENGTH_LONG).show()
+        return true
+    }*/
 }
 
 class ItemEditAdapter(private val items: MutableList<TripListFragment.CheckPoint>,

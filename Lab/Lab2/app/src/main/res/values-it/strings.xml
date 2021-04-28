@@ -43,4 +43,6 @@
 
     <string name="no_trips">Nessun viaggio disponibile!</string>
     <string name="car_photo_description">Fotografia della macchina</string>
+    <string name="trip_added_successfully">Viaggio aggiunto!</string>
+    <string name="trip_edited_successfully">Viaggio modificato!</string>
 </resources>

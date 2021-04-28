@@ -47,7 +47,6 @@ class TripDetailsFragment : Fragment() {
         setUpResultListener()
     }
 
-
     private fun setUpResultListener() {
         setFragmentResultListener("tripDetails") { requestKey, bundle ->
             onFragmentResult(requestKey, bundle)
