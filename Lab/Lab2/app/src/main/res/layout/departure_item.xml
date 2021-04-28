@@ -14,7 +14,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/itemDetailsLocation"
         app:srcCompat="@drawable/ic_baseline_location_start"
-        tools:ignore="VectorDrawableCompat" />
+        tools:ignore="VectorDrawableCompat"
+        android:contentDescription="@string/location_image" />
 
     <ImageView
         android:id="@+id/southArrow"
@@ -26,7 +27,8 @@
         app:layout_constraintStart_toStartOf="@+id/startLocationImage"
         app:layout_constraintTop_toBottomOf="@+id/startLocationImage"
         app:srcCompat="@drawable/ic_baseline_south_24"
-        tools:ignore="VectorDrawableCompat" />
+        tools:ignore="VectorDrawableCompat"
+        android:contentDescription="@string/south_arrow" />
 
     <TextView
         android:id="@+id/itemDetailsLocation"
@@ -37,7 +39,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:text="Start Address"
+        android:text="@string/address"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="@dimen/secondary_text"
         app:layout_constraintEnd_toStartOf="@+id/clockGuideline"
@@ -59,7 +61,8 @@
         app:layout_constraintStart_toStartOf="@+id/clockGuideline"
         app:layout_constraintTop_toTopOf="@+id/itemDetailsTimestamp"
         app:srcCompat="@drawable/ic_baseline_clock"
-        tools:ignore="VectorDrawableCompat" />
+        tools:ignore="VectorDrawableCompat"
+        android:contentDescription="@string/clock_image" />
 
     <TextView
         android:id="@+id/itemDetailsTimestamp"
@@ -69,7 +72,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:gravity="center"
-        android:text="Time"
+        android:text="@string/time"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="@dimen/tertiary_text"
         app:layout_constraintEnd_toEndOf="parent"

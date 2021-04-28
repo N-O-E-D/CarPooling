@@ -9,8 +9,8 @@
     <color name="white">#FFFFFFFF</color>
 
     <!-- Base application theme. -->
-    <color name="colorPrimary">#388E3C</color>
-    <color name="colorPrimaryVariant">#388E3C</color>
+    <color name="colorPrimary">#087f23</color>
+    <color name="colorPrimaryVariant">#4caf50</color>
 
     <!-- Activity main  -->
     <color name="ratingBar">#f8d568</color>

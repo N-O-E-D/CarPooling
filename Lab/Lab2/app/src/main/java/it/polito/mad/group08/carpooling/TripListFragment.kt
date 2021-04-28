@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -78,9 +79,11 @@ class TripListFragment : Fragment() {
                 val tripFromEdit: Trip = GsonBuilder().create().fromJson(tripFromEditJSON, type)
                 if(position != -1){
                     adapter.onItemChange(tripFromEdit, position)
+                    Snackbar.make(view?.findViewById(R.id.emptyTextView)!!,R.string.trip_edited_successfully, Snackbar.LENGTH_SHORT).show()
                 }
                 else{
                     adapter.onItemAdded(tripFromEdit)
+                    Snackbar.make(view?.findViewById(R.id.emptyTextView)!!,R.string.trip_added_successfully, Snackbar.LENGTH_SHORT).show()
                 }
 
                 saveInPreferences()
@@ -119,7 +122,6 @@ class TripListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //TODO if sharedPref empty message on the screen
         val view = inflater.inflate(R.layout.fragment_trip_list, container, false)
         emptyTextView = view.findViewById(R.id.emptyTextView)
         recyclerView = view.findViewById(R.id.tripListRecyclerView)
@@ -191,8 +193,7 @@ class TripListFragment : Fragment() {
                 arrivalLocation.text = trip.checkPoints[trip.checkPoints.size - 1].location
                 departureTimestamp.text = trip.checkPoints[0].timestamp
                 arrivalTimestamp.text = trip.checkPoints[trip.checkPoints.size-1].timestamp
-                var bitmap: Bitmap? = null
-                bitmap = takeSavedPhoto(trip.carPhotoPath, itemView)
+                val bitmap: Bitmap? = takeSavedPhoto(trip.carPhotoPath, itemView)
                 when(itemView.context.resources.configuration.orientation){
                     Configuration.ORIENTATION_PORTRAIT -> {
                         if(bitmap != null){
