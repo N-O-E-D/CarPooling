@@ -19,6 +19,8 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import java.io.FileNotFoundException
 import java.lang.reflect.Type
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class TripDetailsFragment : Fragment() {
@@ -135,10 +137,45 @@ class TripDetailsFragment : Fragment() {
             i++
         }
 
-        estimatedDuration.text = getString(R.string.estimated_duration_msg, trip.estimatedDuration)
+        estimatedDuration.text = getString(R.string.estimated_duration_msg, calcDuration(trip.checkPoints.first(), trip.checkPoints.last()))
         availableSeats.text = getString(R.string.available_seats_msg, trip.availableSeats)
         seatPrice.text = getString(R.string.seat_price_msg, trip.seatPrice.toString())
         description.text = trip.description
+    }
+
+    private fun calcDuration(dep: TripListFragment.CheckPoint, arr: TripListFragment.CheckPoint): String {
+        val depTs = dep.timestamp
+        val arrTs = arr.timestamp
+        val format = SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.US)
+        val dateDep = format.parse(depTs)!!
+        val dateArr = format.parse(arrTs)!!
+
+        val diff: Long = dateArr.time - dateDep.time
+        val seconds = diff / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        val days = hours / 24
+        //println("$days $hours $minutes")
+        return concatenate(days.toInt(), hours.toInt(), minutes.toInt())
+    }
+
+    private fun concatenate(days: Int, hours: Int, minutes: Int): String {
+        var finalString = ""
+        if(days != 0) {
+            finalString = "$finalString $days g"
+        }
+        if(hours != 0) {
+            val newHours = hours - days*24
+            if (newHours != 0)
+                finalString = "$finalString $newHours h"
+        }
+        if(minutes != 0) {
+            val newMinutes = minutes - hours*60
+            if(newMinutes != 0)
+                finalString = "$finalString $newMinutes m"
+        }
+
+        return finalString
     }
 
     private fun onFragmentResult(requestKey: String, bundle: Bundle) {
