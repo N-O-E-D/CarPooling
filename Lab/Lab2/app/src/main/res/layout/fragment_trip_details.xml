@@ -34,33 +34,28 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
+                android:contentDescription="@string/car_photo"
                 app:layout_constraintBottom_toTopOf="@+id/carName"
+                app:layout_constraintDimensionRatio="1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.5"
                 app:srcCompat="@drawable/car_photo"
-                tools:srcCompat="@drawable/car_photo"
-                android:contentDescription="@string/car_photo" />
+                tools:srcCompat="@drawable/car_photo" />
 
             <TextView
                 android:id="@+id/carName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="13dp"
                 android:gravity="center"
                 android:text="@string/car_name"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:textSize="@dimen/secondary_text"
-                app:layout_constraintBottom_toTopOf="@+id/carGuideline"
                 app:layout_constraintEnd_toEndOf="@+id/carPhoto"
-                app:layout_constraintStart_toStartOf="@+id/carPhoto" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/carGuideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.35" />
+                app:layout_constraintStart_toStartOf="@+id/carPhoto"
+                app:layout_constraintTop_toBottomOf="@+id/carPhoto" />
 
             <TextView
                 android:id="@+id/driverName"
@@ -71,7 +66,7 @@
                 android:textSize="@dimen/secondary_text"
                 app:layout_constraintEnd_toStartOf="@+id/driverRate"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/carGuideline" />
+                app:layout_constraintTop_toBottomOf="@+id/carName" />
 
             <RatingBar
                 android:id="@+id/driverRate"

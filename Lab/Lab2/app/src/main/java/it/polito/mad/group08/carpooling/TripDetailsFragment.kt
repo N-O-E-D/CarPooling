@@ -69,13 +69,17 @@ class TripDetailsFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("trip", Gson().toJson(trip))
+        if(view != null){
+            outState.putString("trip", Gson().toJson(trip))
+            outState.putInt("pos", position)
+        }
     }
 
     //called after onViewCreated
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if(savedInstanceState!=null){
+            position = savedInstanceState.getInt("pos")
             val tripJSON = savedInstanceState.getString("trip")
             val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
             trip = GsonBuilder().create().fromJson(tripJSON, type)
