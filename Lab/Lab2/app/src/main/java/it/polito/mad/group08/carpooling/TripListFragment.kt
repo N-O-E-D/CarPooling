@@ -122,7 +122,6 @@ class TripListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //TODO if sharedPref empty message on the screen
         val view = inflater.inflate(R.layout.fragment_trip_list, container, false)
         emptyTextView = view.findViewById(R.id.emptyTextView)
         recyclerView = view.findViewById(R.id.tripListRecyclerView)
