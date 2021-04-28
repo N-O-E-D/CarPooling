@@ -26,6 +26,10 @@
     <string name="available_seats_msg">"Available Seats: %1$d</string>
     <string name="seat_price_msg">"Price/Person: €%1$s</string>
 
+    <string name="add_new_stop">Add New Stop</string>
+    <string name="address">Address</string>
+    <string name="date">Date</string>
+
     <string name="changes_applied_successfully">Changes applied successfully</string>
 
     <!--Nav header sctrings-->
