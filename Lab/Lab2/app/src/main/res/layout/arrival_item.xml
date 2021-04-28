@@ -13,7 +13,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/itemDetailsLocation"
         app:srcCompat="@drawable/ic_baseline_location_arrival"
-        tools:ignore="VectorDrawableCompat" />
+        tools:ignore="VectorDrawableCompat"
+        android:contentDescription="@string/location_image" />
 
     <TextView
         android:id="@+id/itemDetailsLocation"
@@ -25,7 +26,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="8dp"
-        android:text="End Address"
+        android:text="@string/address"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="@dimen/secondary_text"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -41,7 +42,8 @@
         app:layout_constraintStart_toStartOf="@+id/clockGuideline"
         app:layout_constraintTop_toTopOf="@+id/itemDetailsTimestamp"
         app:srcCompat="@drawable/ic_baseline_clock"
-        tools:ignore="VectorDrawableCompat" />
+        tools:ignore="VectorDrawableCompat"
+        android:contentDescription="@string/clock_image" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/clockGuideline"
@@ -59,7 +61,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:gravity="center"
-        android:text="Time"
+        android:text="@string/time"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="@dimen/tertiary_text"
         app:layout_constraintBottom_toBottomOf="parent"

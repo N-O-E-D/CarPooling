@@ -26,6 +26,11 @@
     <string name="estimated_duration_msg">Stima della durata: %1$s</string>
     <string name="available_seats_msg">"Posti disponibili: %1$d</string>
     <string name="seat_price_msg">"Costo unitario: €%1$s</string>
+    <string name="south_arrow">Freccia in basso</string>
+    <string name="location_image">Immagine del luogo</string>
+    <string name="time">Tempo</string>
+    <string name="clock_image">Orologio</string>
+    <string name="delete_item">Elimina</string>
 
     <string name="add_new_stop">Aggiungi Nuova Fermata</string>
     <string name="address">Indirizzo</string>
