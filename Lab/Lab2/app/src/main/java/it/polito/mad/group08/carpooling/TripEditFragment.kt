@@ -11,6 +11,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
@@ -21,7 +22,9 @@ import android.widget.*
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
@@ -32,10 +35,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import java.io.File
 import java.io.FileNotFoundException
+import java.io.IOException
 import java.lang.reflect.Type
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.jvm.Throws
 
 class TripEditFragment : Fragment() {
 
@@ -56,9 +64,10 @@ class TripEditFragment : Fragment() {
     private lateinit var pickImageContract: ActivityResultContract<Uri, Uri?>
     private lateinit var pickImageCallback: ActivityResultCallback<Uri?>
     private lateinit var pickImageLauncher: ActivityResultLauncher<Uri>
-    private lateinit var takeImageContract: ActivityResultContract<Any, Bitmap?>
-    private lateinit var takeImageCallback: ActivityResultCallback<Bitmap?>
+    private lateinit var takeImageContract: ActivityResultContract<Any, Any?>
+    private lateinit var takeImageCallback: ActivityResultCallback<Any?>
     private lateinit var takeImageLauncher: ActivityResultLauncher<Any>
+    lateinit var currentPhotoPath: String
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,10 +108,31 @@ class TripEditFragment : Fragment() {
 
         pickImageLauncher = registerForActivityResult(pickImageContract, pickImageCallback)
 
-        //val pickContactIntent = pickImageContract.createIntent(requireContext(), MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-
-        takeImageContract = object : ActivityResultContract<Any, Bitmap?>() {
+        takeImageContract = object : ActivityResultContract<Any, Any?>() {
             override fun createIntent(context: Context, input: Any): Intent {
+                val photoFile: File? = try {
+                    val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+                    val storageDir: File = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+                    File.createTempFile(
+                            "JPEG_${timeStamp}_", /* prefix */
+                            ".jpg", /* suffix */
+                            storageDir /* directory */
+                    ).apply {
+                        // Save a file: path for use with ACTION_VIEW intents
+                        currentPhotoPath = absolutePath
+                    }
+                } catch (ex: IOException) {
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                            context,
+                            "it.polito.mad.group08.carpooling",
+                            it
+                    )
+                    return Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                }
                 return Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             }
             override fun parseResult(resultCode: Int, intent: Intent?): Bitmap? {
@@ -114,17 +144,14 @@ class TripEditFragment : Fragment() {
 
         }
 
-        takeImageCallback = ActivityResultCallback { imageBitmap: Bitmap? ->
-            if(imageBitmap != null) {
-                imageView.setImageBitmap(imageBitmap)
+        takeImageCallback = ActivityResultCallback {  noop ->
+            val bitmap = BitmapFactory.decodeFile(currentPhotoPath)
+            imageView.setImageBitmap(bitmap)
 
-                filename = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+            filename = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
 
-                if (imageBitmap != null) {
-                    activity?.applicationContext?.openFileOutput(filename, Context.MODE_PRIVATE).use {
-                        imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
-                    }
-                }
+            activity?.applicationContext?.openFileOutput(filename, Context.MODE_PRIVATE).use {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
             }
         }
 
@@ -136,6 +163,7 @@ class TripEditFragment : Fragment() {
                 position = bundle.getInt("pos")
                 val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
                 trip = GsonBuilder().create().fromJson(tripJSON, type)
+                filename = trip.carPhotoPath
                 carNameET.setText(trip.carDescription)
                 driverNameET.setText(trip.driverName)
                 seatPriceET.setText(trip.seatPrice.toString())
@@ -144,7 +172,8 @@ class TripEditFragment : Fragment() {
                 ratingBar.rating = trip.driverRate
                 adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
                 recyclerView.adapter = adapter
-                takeSavedPhoto(trip.carPhotoPath, imageView)
+                takeSavedPhoto(filename, imageView)
+                //estimatedDuration.text = "Durata stimata: " + calcDuration(trip.checkPoints[0], trip.checkPoints[trip.checkPoints.size - 1])
             }
         }
 
@@ -153,6 +182,7 @@ class TripEditFragment : Fragment() {
                 val tripJSON = bundle.getString("trip")
                 val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
                 trip = GsonBuilder().create().fromJson(tripJSON, type)
+                filename = trip.carPhotoPath
                 carNameET.setText(trip.carDescription)
                 driverNameET.setText(trip.driverName)
                 seatPriceET.setText(trip.seatPrice.toString())
@@ -162,7 +192,7 @@ class TripEditFragment : Fragment() {
                 adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
                 recyclerView.adapter = adapter
                 position = bundle.getInt("pos")
-                takeSavedPhoto(trip.carPhotoPath, imageView)
+                takeSavedPhoto(filename, imageView)
             }
         }
 
@@ -179,6 +209,29 @@ class TripEditFragment : Fragment() {
     fun removeAt(position: Int) {
         trip.checkPoints.removeAt(position)
         adapter.onItemEditDeleted(position)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if(view != null) {
+            outState.putString("tripSaved", Gson().toJson(trip))
+            outState.putInt("pos", position)
+            outState.putString("filename", filename)
+        }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if(savedInstanceState!=null){
+            val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
+            trip = GsonBuilder().create().fromJson(savedInstanceState.getString("tripSaved"), type)
+            filename = savedInstanceState.getString("filename")
+            takeSavedPhoto(filename, imageView)
+            adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
+            recyclerView.adapter = adapter
+            position = savedInstanceState.getInt("pos")
+            filename = savedInstanceState.getString("filename")
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -206,27 +259,47 @@ class TripEditFragment : Fragment() {
         button_stop = view.findViewById(R.id.new_stop)
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
-//        recyclerView.adapter = ItemEditAdapter(trip.checkPoints)  { position: Int -> trip.checkPoints.removeAt(position) }
-
-        /*val showHideButton = view.findViewById<Button>(R.id.show_hide)
-        showHideButton.text = "Show Intermediate Stops"
-        var i = 0
-        showHideButton.setOnClickListener {
-            if (i % 2 == 0) {
-                showHideButton.text = "Hide Intermediate Stops"
-                recyclerView.adapter = ItemAdapter(trip1)
-            } else {
-                showHideButton.text = "Show Intermediate Stops"
-                recyclerView.adapter = ItemAdapter(trip2)
-            }
-            i++
-        }*/
 
         button_stop.setOnClickListener{
             trip.checkPoints.add(TripListFragment.CheckPoint("", ""))
             adapter.onItemEditAdded()
         }
     }
+
+    /*fun calcDuration(dep: TripListFragment.CheckPoint, arr: TripListFragment.CheckPoint): String {
+        val dep_ts = dep.timestamp
+        val arr_ts = arr.timestamp
+        val format = SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.US)
+        val date_dep = format.parse(dep_ts)
+        val date_arr = format.parse(arr_ts)
+
+        val diff: Long = date_arr.getTime() - date_dep.getTime()
+        val seconds = diff / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        val days = hours / 24
+        println("" + days + " " + hours + " " + minutes)
+        return concatenate(days.toInt(), hours.toInt(), minutes.toInt())
+    }
+
+    fun concatenate(days: Int, hours: Int, minutes: Int): String {
+        var final_string = ""
+        if(days != 0) {
+            final_string = final_string + "${days} g"
+        }
+        if(hours != 0) {
+            val new_hours = hours - days*24
+            if (new_hours != 0)
+                final_string = final_string + " ${new_hours} h"
+        }
+        if(minutes != 0) {
+            val new_minutes = minutes - hours*60
+            if(new_minutes != 0)
+                final_string = final_string + " ${new_minutes} m"
+        }
+
+        return final_string
+    }*/
 
     override fun onCreateContextMenu(
         menu: ContextMenu,
@@ -242,9 +315,31 @@ class TripEditFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    private fun checkCheckpoint(): Boolean {
+        for (checkpoint in trip.checkPoints)
+            if(checkpoint.location == "" || checkpoint.timestamp == "")
+                return true
+        return false
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
+            /*16908332 -> {
+                Toast.makeText(activity?.applicationContext,"Back Premuto", Toast.LENGTH_SHORT).show()
+                return true
+            }*/
             R.id.saveButton -> {
+                if(carNameET.text.toString() == "" || driverNameET.text.toString() == "" ||
+                        availableSeatsET.text.toString() == "" || seatPriceET.text.toString() == "" || checkCheckpoint()) {
+
+                    Toast.makeText(activity?.applicationContext, "Please fill all the fields before saving!", Toast.LENGTH_SHORT).show()
+                    return true
+                }
+
+                if (trip.checkPoints.size < 2) {
+                    Toast.makeText(activity?.applicationContext, "Please insert at least departure and arrival!", Toast.LENGTH_SHORT).show()
+                    return true
+                }
                 trip.carPhotoPath = filename
                 trip.carDescription = carNameET.text.toString()
                 trip.driverName = driverNameET.text.toString()
