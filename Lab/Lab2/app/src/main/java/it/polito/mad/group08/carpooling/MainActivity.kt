@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.updateLayoutParams
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(findViewById(R.id.toolbar))
         val drawerLayout: DrawerLayout = findViewById(R.id.drawerLayout)
         val navigationView: NavigationView = findViewById(R.id.nav_view)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment

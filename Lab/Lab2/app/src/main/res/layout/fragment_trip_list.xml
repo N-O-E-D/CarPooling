@@ -21,7 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="No trips available!"
+        android:text="@string/no_trips"
+        android:visibility="gone"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="#FF001A" />
 

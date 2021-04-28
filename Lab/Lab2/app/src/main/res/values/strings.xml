@@ -28,11 +28,14 @@
 
     <string name="changes_applied_successfully">Changes applied successfully</string>
 
-    <!--Nav header sctrings-->
+    <!--Nav header strings-->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
 
     <string name="menu_profile">Profile</string>
     <string name="menu_trips">Trips</string>
+
+    <string name="no_trips">No trips available!</string>
+    <string name="car_photo_description">Car photo</string>
 </resources>

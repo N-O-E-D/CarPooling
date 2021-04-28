@@ -191,8 +191,7 @@ class TripListFragment : Fragment() {
                 arrivalLocation.text = trip.checkPoints[trip.checkPoints.size - 1].location
                 departureTimestamp.text = trip.checkPoints[0].timestamp
                 arrivalTimestamp.text = trip.checkPoints[trip.checkPoints.size-1].timestamp
-                var bitmap: Bitmap? = null
-                bitmap = takeSavedPhoto(trip.carPhotoPath, itemView)
+                val bitmap: Bitmap? = takeSavedPhoto(trip.carPhotoPath, itemView)
                 when(itemView.context.resources.configuration.orientation){
                     Configuration.ORIENTATION_PORTRAIT -> {
                         if(bitmap != null){
