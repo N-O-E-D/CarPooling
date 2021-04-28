@@ -215,7 +215,8 @@
                 app:layout_constraintHeight_percent="0.2"
                 app:layout_constraintStart_toStartOf="@+id/carPhoto"
                 app:layout_constraintTop_toTopOf="@+id/carPhoto"
-                app:layout_constraintWidth_percent="0.4" />
+                app:layout_constraintWidth_percent="0.4"
+                android:contentDescription="@string/change_photo" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

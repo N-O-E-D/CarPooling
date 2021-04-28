@@ -16,7 +16,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/addressET_layout"
         app:srcCompat="@drawable/ic_baseline_location_intemediate"
-        tools:ignore="VectorDrawableCompat" />
+        tools:ignore="VectorDrawableCompat"
+        android:contentDescription="@string/location_image" />
 
     <ImageView
         android:id="@+id/southArrow"
@@ -29,7 +30,8 @@
         app:layout_constraintTop_toBottomOf="@+id/startLocationImage"
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/ic_baseline_south_24"
-        tools:ignore="VectorDrawableCompat" />
+        tools:ignore="VectorDrawableCompat"
+        android:contentDescription="@string/south_arrow" />
 
 
     <com.google.android.material.textfield.TextInputLayout
@@ -98,6 +100,7 @@
         app:layout_constraintStart_toEndOf="@+id/itemEditTimestampET_layout"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.1"
-        app:srcCompat="@android:drawable/ic_delete" />
+        app:srcCompat="@android:drawable/ic_delete"
+        android:contentDescription="@string/car_photo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

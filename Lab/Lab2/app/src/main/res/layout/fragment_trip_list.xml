@@ -35,7 +35,8 @@
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
         android:elevation="4dp"
-        android:contentDescription="add"
-        app:srcCompat="@drawable/add" />
+        android:contentDescription="@string/add_new_stop"
+        app:srcCompat="@drawable/add"
+        tools:ignore="RtlHardcoded" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

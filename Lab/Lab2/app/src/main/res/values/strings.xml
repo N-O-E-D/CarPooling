@@ -25,6 +25,11 @@
     <string name="estimated_duration_msg">"Estimated duration: %1$s</string>
     <string name="available_seats_msg">"Available Seats: %1$d</string>
     <string name="seat_price_msg">"Price/Person: €%1$s</string>
+    <string name="south_arrow">South Arrow</string>
+    <string name="location_image">Start location image</string>
+    <string name="time">Time</string>
+    <string name="clock_image">Clock</string>
+    <string name="delete_item">Remove</string>
 
     <string name="add_new_stop">Add New Stop</string>
     <string name="address">Address</string>
