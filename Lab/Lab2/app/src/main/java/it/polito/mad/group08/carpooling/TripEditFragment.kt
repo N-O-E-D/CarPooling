@@ -108,7 +108,7 @@ class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
                         imageUri
                     )
                     else -> {
-                        val source = ImageDecoder.createSource(activity?.contentResolver!!, imageUri!!)
+                        val source = ImageDecoder.createSource(activity?.contentResolver!!, imageUri)
                         ImageDecoder.decodeBitmap(source)
                     }
                 }
@@ -128,8 +128,8 @@ class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
         takeImageContract = object : ActivityResultContract<Any, Any?>() {
             override fun createIntent(context: Context, input: Any): Intent {
                 val photoFile: File? = try {
-                    val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-                    val storageDir: File = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+                    val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                    val storageDir: File = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
                     File.createTempFile(
                             "JPEG_${timeStamp}_", /* prefix */
                             ".jpg", /* suffix */
@@ -161,7 +161,7 @@ class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
 
         }
 
-        takeImageCallback = ActivityResultCallback {  noop ->
+        takeImageCallback = ActivityResultCallback {
             val bitmap = BitmapFactory.decodeFile(currentPhotoPath)
             imageView.setImageBitmap(bitmap)
 
