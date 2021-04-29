@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/grp_2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/showProfileFragment"
+            android:title="@string/menu_profile"
+            android:icon="@drawable/face_neutral"/>
+        <item
+            android:id="@+id/tripListFragment"
+            android:title="@string/menu_trips"
+            android:icon="@drawable/car"/>
+    </group>
+</menu>
