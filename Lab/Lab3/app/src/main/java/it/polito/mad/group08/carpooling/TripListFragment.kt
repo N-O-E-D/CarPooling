@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.opengl.Visibility
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,8 +20,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,16 +38,18 @@ import java.io.FileNotFoundException
 import java.lang.reflect.Type
 import java.math.BigDecimal
 
-val EDIT_BUTTON_CLICKED = 1
-val CARD_CLICKED = 2
-val FAB_CLICKED = 3
+const val EDIT_BUTTON_CLICKED = 1
+const val CARD_CLICKED = 2
+const val FAB_CLICKED = 3
 
 class TripListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TripAdapter
-    private lateinit var trips: MutableList<Trip>
-    private lateinit var sharedPref: SharedPreferences
+//    private lateinit var trips: MutableList<Trip>
+//    private lateinit var sharedPref: SharedPreferences
     private lateinit var emptyTextView: TextView
+
+    private val model: SharedViewModel by activityViewModels()
 
     private fun navigationClickListener(mode: Int, trip: Trip?, position: Int?) {
         val navController = findNavController()
@@ -65,58 +70,58 @@ class TripListFragment : Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//
+//        loadFromPreferences()
 
-        loadFromPreferences()
+//        setFragmentResultListener("tripEditedAdded"){ requestKey, bundle ->
+//            if(requestKey == "tripEditedAdded"){
+//                val position = bundle.getInt("pos")
+//                println(position)
+//                val tripFromEditJSON = bundle.getString("trip")
+//                val type: Type = object : TypeToken<Trip?>() {}.type
+//                val tripFromEdit: Trip = GsonBuilder().create().fromJson(tripFromEditJSON, type)
+//                if(position != -1){
+//                    adapter.onItemChange(tripFromEdit, position)
+//                    Snackbar.make(view?.findViewById(R.id.emptyTextView)!!,R.string.trip_edited_successfully, Snackbar.LENGTH_SHORT).show()
+//                }
+//                else{
+//                    adapter.onItemAdded(tripFromEdit)
+//                    Snackbar.make(view?.findViewById(R.id.emptyTextView)!!,R.string.trip_added_successfully, Snackbar.LENGTH_SHORT).show()
+//                }
+//
+//                saveInPreferences()
+//            }
+//        }
+//    }
 
-        setFragmentResultListener("tripEditedAdded"){ requestKey, bundle ->
-            if(requestKey == "tripEditedAdded"){
-                val position = bundle.getInt("pos")
-                println(position)
-                val tripFromEditJSON = bundle.getString("trip")
-                val type: Type = object : TypeToken<Trip?>() {}.type
-                val tripFromEdit: Trip = GsonBuilder().create().fromJson(tripFromEditJSON, type)
-                if(position != -1){
-                    adapter.onItemChange(tripFromEdit, position)
-                    Snackbar.make(view?.findViewById(R.id.emptyTextView)!!,R.string.trip_edited_successfully, Snackbar.LENGTH_SHORT).show()
-                }
-                else{
-                    adapter.onItemAdded(tripFromEdit)
-                    Snackbar.make(view?.findViewById(R.id.emptyTextView)!!,R.string.trip_added_successfully, Snackbar.LENGTH_SHORT).show()
-                }
+//    private fun saveInPreferences() {
+//        with(sharedPref.edit()) {
+//            val tripsJSON = Gson().toJson(trips)
+//            putString("trips", tripsJSON)
+//            apply()
+//        }
+//    }
 
-                saveInPreferences()
-            }
-        }
-    }
+//    private fun loadFromPreferences(){
+//        sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)!!
+//        val tripsJSON = sharedPref.getString("trips", Gson().toJson(mutableListOf<Trip>()).toString())
+//        val type: Type = object : TypeToken<List<Trip?>?>() {}.type
+//        trips = GsonBuilder().create().fromJson(tripsJSON, type)
+//    }
 
-    private fun saveInPreferences() {
-        with(sharedPref.edit()) {
-            val tripsJSON = Gson().toJson(trips)
-            putString("trips", tripsJSON)
-            apply()
-        }
-    }
-
-    private fun loadFromPreferences(){
-        sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)!!
-        val tripsJSON = sharedPref.getString("trips", Gson().toJson(mutableListOf<Trip>()).toString())
-        val type: Type = object : TypeToken<List<Trip?>?>() {}.type
-        trips = GsonBuilder().create().fromJson(tripsJSON, type)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if(trips.size == 0){
-            recyclerView.visibility = View.GONE
-            emptyTextView.visibility = View.VISIBLE
-        }
-        else{
-            recyclerView.visibility = View.VISIBLE
-            emptyTextView.visibility = View.GONE
-        }
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        if(trips.size == 0){
+//            recyclerView.visibility = View.GONE
+//            emptyTextView.visibility = View.VISIBLE
+//        }
+//        else{
+//            recyclerView.visibility = View.VISIBLE
+//            emptyTextView.visibility = View.GONE
+//        }
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -135,8 +140,6 @@ class TripListFragment : Fragment() {
             }
         }
 
-        adapter = TripAdapter(trips) { mode: Int, tripItem: Trip, position: Int? -> navigationClickListener(mode, tripItem, position) }
-        recyclerView.adapter = adapter
         return view
     }
 
@@ -160,6 +163,22 @@ class TripListFragment : Fragment() {
             addFab.startAnimation(anim)
             navigationClickListener(FAB_CLICKED, null, null)
         }
+
+        // DECOUPLE DATA FROM UI
+        model.getTrips().observe(viewLifecycleOwner, Observer<MutableList<Trip>>{ tripsDB ->
+            // update UI
+            if(tripsDB.isEmpty()){
+                recyclerView.visibility = View.GONE
+                emptyTextView.visibility = View.VISIBLE
+            }
+            else{
+                recyclerView.visibility = View.VISIBLE
+                emptyTextView.visibility = View.GONE
+            }
+
+            adapter = TripAdapter(tripsDB) { mode: Int, tripItem: Trip, position: Int? -> navigationClickListener(mode, tripItem, position) }
+            recyclerView.adapter = adapter
+        })
     }
 
     data class CheckPoint(var location: String, var timestamp: String)

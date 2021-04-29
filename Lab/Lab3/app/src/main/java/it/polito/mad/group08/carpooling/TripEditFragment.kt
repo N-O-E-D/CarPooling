@@ -28,6 +28,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
@@ -71,6 +72,7 @@ class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
     private lateinit var takeImageCallback: ActivityResultCallback<Any?>
     private lateinit var takeImageLauncher: ActivityResultLauncher<Any>
     lateinit var currentPhotoPath: String
+    private val model: SharedViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -288,41 +290,6 @@ class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
         }
     }
 
-    /*fun calcDuration(dep: TripListFragment.CheckPoint, arr: TripListFragment.CheckPoint): String {
-        val dep_ts = dep.timestamp
-        val arr_ts = arr.timestamp
-        val format = SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.US)
-        val date_dep = format.parse(dep_ts)
-        val date_arr = format.parse(arr_ts)
-
-        val diff: Long = date_arr.getTime() - date_dep.getTime()
-        val seconds = diff / 1000
-        val minutes = seconds / 60
-        val hours = minutes / 60
-        val days = hours / 24
-        println("" + days + " " + hours + " " + minutes)
-        return concatenate(days.toInt(), hours.toInt(), minutes.toInt())
-    }
-
-    fun concatenate(days: Int, hours: Int, minutes: Int): String {
-        var final_string = ""
-        if(days != 0) {
-            final_string = final_string + "${days} g"
-        }
-        if(hours != 0) {
-            val new_hours = hours - days*24
-            if (new_hours != 0)
-                final_string = final_string + " ${new_hours} h"
-        }
-        if(minutes != 0) {
-            val new_minutes = minutes - hours*60
-            if(new_minutes != 0)
-                final_string = final_string + " ${new_minutes} m"
-        }
-
-        return final_string
-    }*/
-
     override fun onCreateContextMenu(
         menu: ContextMenu,
         v: View,
@@ -377,8 +344,9 @@ class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
                 trip.description = informationsET.text.toString()
 
 
-                val bundle = bundleOf("pos" to position, "trip" to Gson().toJson(trip))
-                setFragmentResult("tripEditedAdded", bundle)
+                //val bundle = bundleOf("pos" to position, "trip" to Gson().toJson(trip))
+                //setFragmentResult("tripEditedAdded", bundle)
+                model.addNewTrip(trip)
                 findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
 
                 true
