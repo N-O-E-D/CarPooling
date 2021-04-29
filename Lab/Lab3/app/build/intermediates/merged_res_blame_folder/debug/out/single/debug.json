@@ -1,0 +1,290 @@
+[
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-anydpi-v24_ic_baseline_clock.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\generated\\res\\pngs\\debug\\drawable-anydpi-v24\\ic_baseline_clock.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable_location.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable\\location.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout_arrival_item_edit.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout\\arrival_item_edit.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-anydpi-v21_ic_launcher_background.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\generated\\res\\pngs\\debug\\drawable-anydpi-v21\\ic_launcher_background.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi_ic_launcher_background.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\generated\\res\\pngs\\debug\\drawable-hdpi\\ic_launcher_background.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable_edit.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable\\edit.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout_fragment_trip_details.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout\\fragment_trip_details.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-v24_nickname_v24.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable-v24\\nickname_v24.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-v24_location_v24.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable-v24\\location_v24.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher_round.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-mdpi_ic_launcher.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-v24_face_neutral_v24.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable-v24\\face_neutral_v24.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable_car.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable\\car.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout_intermediate_item_edit.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout\\intermediate_item_edit.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable_focus_border_style.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable\\focus_border_style.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout_fragment_edit_profile.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout\\fragment_edit_profile.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\menu_save_menu.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\menu\\save_menu.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-v24_phone.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable-v24\\phone.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable_photo_default.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable\\photo_default.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout-land_trip_item_layout.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout-land\\trip_item_layout.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_round.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-anydpi-v24_ic_baseline_location_start.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\generated\\res\\pngs\\debug\\drawable-anydpi-v24\\ic_baseline_location_start.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout_fragment_trip_edit.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout\\fragment_trip_edit.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\mipmap-anydpi-v26\\ic_launcher.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher_round.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi_ic_launcher_background.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\generated\\res\\pngs\\debug\\drawable-xxxhdpi\\ic_launcher_background.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-anydpi-v24_ic_baseline_location_arrival.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\generated\\res\\pngs\\debug\\drawable-anydpi-v24\\ic_baseline_location_arrival.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable_email.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable\\email.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-v24_add.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable-v24\\add.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\menu_drawer_menu.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\menu\\drawer_menu.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout-land_fragment_show_profile.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout-land\\fragment_show_profile.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout_departure_item_edit.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout\\departure_item_edit.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable_face_neutral.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable\\face_neutral.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\navigation_nav_graph.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\navigation\\nav_graph.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout-land_fragment_edit_profile.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout-land\\fragment_edit_profile.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout_intermediate_item.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout\\intermediate_item.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout-land_fragment_trip_edit.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout-land\\fragment_trip_edit.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-v24_email_v24.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable-v24\\email_v24.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-anydpi-v24_ic_baseline_location_intemediate.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\generated\\res\\pngs\\debug\\drawable-anydpi-v24\\ic_baseline_location_intemediate.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout_departure_item.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout\\departure_item.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\menu_floating_menu.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\menu\\floating_menu.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable_check.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable\\check.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable_side_nav_bar.jpg.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable\\side_nav_bar.jpg"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_ic_launcher_background.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\generated\\res\\pngs\\debug\\drawable-mdpi\\ic_launcher_background.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout-land_fragment_trip_details.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout-land\\fragment_trip_details.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout_activity_main.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_round.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-anydpi-v24_ic_launcher_foreground.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\generated\\res\\pngs\\debug\\drawable-anydpi-v24\\ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\menu_edit_menu.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\menu\\edit_menu.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi_ic_launcher_background.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\generated\\res\\pngs\\debug\\drawable-ldpi\\ic_launcher_background.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout_nav_header_main.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout\\nav_header_main.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-v24_car_photo.jpg.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable-v24\\car_photo.jpg"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi_ic_launcher_background.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\generated\\res\\pngs\\debug\\drawable-xhdpi\\ic_launcher_background.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\anim_shake.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\anim\\shake.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout_fragment_show_profile.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout\\fragment_show_profile.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi_ic_launcher_background.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\generated\\res\\pngs\\debug\\drawable-xxhdpi\\ic_launcher_background.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi_ic_launcher.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable_lost_focus_style.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable\\lost_focus_style.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable_nickname.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable\\nickname.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout_fragment_trip_list.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout\\fragment_trip_list.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-anydpi-v24_ic_baseline_south_24.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\generated\\res\\pngs\\debug\\drawable-anydpi-v24\\ic_baseline_south_24.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\xml_file_paths.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\xml\\file_paths.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-v24_phone_v24.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable-v24\\phone_v24.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher_round.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\drawable_camera.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\drawable\\camera.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout_trip_item_layout.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout\\trip_item_layout.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\anim_zoom.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\anim\\zoom.xml"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\build\\intermediates\\res\\merged\\debug\\layout_arrival_item.xml.flat",
+        "source": "D:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\Lab\\Lab2\\app\\src\\main\\res\\layout\\arrival_item.xml"
+    }
+]
