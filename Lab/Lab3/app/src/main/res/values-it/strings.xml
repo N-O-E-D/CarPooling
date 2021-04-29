@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Trasportami</string>
+    <string name="edit">Modifica</string>
+    <string name="photo">Foto</string>
+    <string name="change_photo">Cambia Foto</string>
+    <string name="fullName">Nome Completo</string>
+    <string name="nickname">Nickname</string>
+    <string name="email">Email</string>
+    <string name="location">Posizione</string>
+    <string name="openGallery">Apri galleria</string>
+    <string name="openCamera">Apri fotocamera</string>
+    <string name="save">Salva</string>
+    <string name="phone_number">Cellulare</string>
+
+    <string name="car_photo">Foto Macchina</string>
+    <string name="car_name">Nome Macchina</string>
+    <string name="driver_name">Nome Guidatore</string>
+    <string name="show_hide">Mostra Nascondi</string>
+    <string name="estimated_duration">Stima della durata</string>
+    <string name="trip_description">Descrizione del viaggio</string>
+    <string name="seat_price">Costo posto</string>
+    <string name="available_seats">Posti disponibili</string>
+    <string name="show_intermediate_stops">Mostra tappe intermedie</string>
+    <string name="hide_intermediate_stops">Nascondi tappe intermedie</string>
+    <string name="estimated_duration_msg">Stima della durata: %1$s</string>
+    <string name="available_seats_msg">"Posti disponibili: %1$d</string>
+    <string name="seat_price_msg">"Costo unitario: €%1$s</string>
+    <string name="south_arrow">Freccia in basso</string>
+    <string name="location_image">Immagine del luogo</string>
+    <string name="time">Tempo</string>
+    <string name="clock_image">Orologio</string>
+    <string name="delete_item">Elimina</string>
+
+    <string name="add_new_stop">Aggiungi Nuova Fermata</string>
+    <string name="address">Indirizzo</string>
+    <string name="date">Data</string>
+
+    <string name="changes_applied_successfully">Modifiche applicate correttamente</string>
+
+    <!--Nav header sctrings-->
+    <string name="navigation_drawer_open">Apri menu</string>
+    <string name="navigation_drawer_close">Chiudi menu</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="menu_profile">Profilo</string>
+    <string name="menu_trips">Viaggi</string>
+
+    <string name="no_trips">Nessun viaggio disponibile!</string>
+    <string name="car_photo_description">Fotografia della macchina</string>
+    <string name="trip_added_successfully">Viaggio aggiunto!</string>
+    <string name="trip_edited_successfully">Viaggio modificato!</string>
+</resources>

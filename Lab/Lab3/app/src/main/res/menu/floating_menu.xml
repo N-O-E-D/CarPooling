@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+
+        <item
+        android:id="@+id/openGalleryOption"
+        android:title="@string/openGallery" />
+
+        <item
+        android:id="@+id/openCameraOption"
+        android:title="@string/openCamera" />
+
+    </group>
+</menu>
