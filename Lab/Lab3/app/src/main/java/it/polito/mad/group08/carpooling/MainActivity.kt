@@ -21,10 +21,6 @@ import com.google.android.material.navigation.NavigationView
 import org.json.JSONObject
 import java.io.FileNotFoundException
 
-interface IOnBackPressed {
-    fun onBackPressed(): Boolean
-}
-
 class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var headerMainInfo: TextView
