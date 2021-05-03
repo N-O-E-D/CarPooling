@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "886522778931",
+    "project_id": "group08firebase",
+    "storage_bucket": "group08firebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886522778931:android:694e106907747dbdedda46",
+        "android_client_info": {
+          "package_name": "it.polito.mad.group08.carpooling"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "886522778931-698f6bkmod6af65ed18ogmvomkregduh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdWnEWxMqDEJltnTeGJ9bOKw8L2zoSUyg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "886522778931-698f6bkmod6af65ed18ogmvomkregduh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

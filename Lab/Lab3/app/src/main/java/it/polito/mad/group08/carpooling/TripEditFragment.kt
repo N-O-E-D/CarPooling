@@ -221,7 +221,7 @@ class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
             if (requestKey == "tripAdd") {
                 entryPoint = 1
                 trip = TripListFragment.Trip(null, "", "", 4.5f,
-                        mutableListOf(), "", 0, 0.toBigDecimal(), "")
+                        mutableListOf(), "", 0, 0.0f, "")
                 adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
                 recyclerView.adapter = adapter
             }
@@ -340,7 +340,7 @@ class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
                 trip.carDescription = carNameET.text.toString()
                 trip.driverName = driverNameET.text.toString()
                 trip.availableSeats = availableSeatsET.text.toString().toInt()
-                trip.seatPrice = seatPriceET.text.toString().toBigDecimal()
+                trip.seatPrice = seatPriceET.text.toString().toFloat()
                 trip.description = informationsET.text.toString()
 
 

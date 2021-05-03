@@ -4,16 +4,28 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.firestore.FirebaseFirestore
+
 
 class SharedViewModel : ViewModel() {
-    private val trips: MutableLiveData<MutableList<TripListFragment.Trip>> = MutableLiveData(mutableListOf())/*by lazy {
+    private var db = FirebaseFirestore.getInstance()
+
+    private val trips: MutableLiveData<MutableList<TripListFragment.Trip>> by lazy {
         MutableLiveData<MutableList<TripListFragment.Trip>>().also {
             loadTrips()
         }
-    }*/
+    }
 
     fun addNewTrip(newTrip: TripListFragment.Trip) {
-        trips.value?.add(newTrip)
+        // Add a new document with a generated ID
+        db.collection("trips")
+                .add(newTrip)
+                .addOnSuccessListener { documentReference ->
+                    Log.d("AAAA", "DocumentSnapshot added with ID: " + documentReference.id)
+                }
+                .addOnFailureListener { e ->
+                    Log.w("AAAA", "Error adding document", e)
+                }
     }
 
     fun getTrips() : LiveData<MutableList<TripListFragment.Trip>>{
@@ -22,6 +34,22 @@ class SharedViewModel : ViewModel() {
 
     private fun loadTrips(){
         // Do an asynchronous operation to fetch trips.
-        // TODO read data from DB
+        db.collection("trips")
+                .addSnapshotListener { tasks, error ->
+                    if(error != null)
+                        Log.w("AAAA", "Error getting documents.", error)
+
+                    if(tasks != null) {
+                        val tmpTrips = mutableListOf<TripListFragment.Trip>()
+                        for (document in tasks.documents) {
+                            Log.d("AAAA", document.id + " => " + document.data)
+                            val tmp = document.toObject(TripListFragment.Trip::class.java)!!
+                            Log.d("AAAA", tmp.toString())
+                            tmpTrips.add(tmp)
+                        }
+                        trips.value = tmpTrips
+                    }else
+                        Log.d("AAAA", "success but empty trips")
+                }
     }
 }

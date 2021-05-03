@@ -181,17 +181,17 @@ class TripListFragment : Fragment() {
         })
     }
 
-    data class CheckPoint(var location: String, var timestamp: String)
+    data class CheckPoint(var location: String = "", var timestamp: String = "")
 
-    data class Trip(var carPhotoPath: String?,
-                    var carDescription: String,
-                    var driverName: String,
-                    var driverRate: Float,
-                    var checkPoints: MutableList<CheckPoint>,
-                    var estimatedDuration: String,
-                    var availableSeats: Int,
-                    var seatPrice: BigDecimal,
-                    var description: String
+    data class Trip(var carPhotoPath: String? = "",
+                    var carDescription: String = "",
+                    var driverName: String = "",
+                    var driverRate: Float = 0f,
+                    var checkPoints: MutableList<CheckPoint> = mutableListOf(),
+                    var estimatedDuration: String = "",
+                    var availableSeats: Int = 0,
+                    var seatPrice: Float = 0f,
+                    var description: String = ""
     )
 
 
