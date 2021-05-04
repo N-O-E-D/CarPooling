@@ -16,15 +16,14 @@ class SharedViewModel : ViewModel() {
         }
     }
 
-    fun addNewTrip(newTrip: TripListFragment.Trip) {
-        // Add a new document with a generated ID
+    private val position = MutableLiveData(0)
+
+    fun addOrReplaceTrip(newTrip: TripListFragment.Trip) {
         db.collection("trips")
-                .add(newTrip)
-                .addOnSuccessListener { documentReference ->
-                    Log.d("AAAA", "DocumentSnapshot added with ID: " + documentReference.id)
-                }
-                .addOnFailureListener { e ->
-                    Log.w("AAAA", "Error adding document", e)
+                .document("${newTrip.driverName}_${position.value}")
+                .set(newTrip)
+                .addOnSuccessListener {
+                    Log.d("AAAA", "DATO AGGIORNATO")
                 }
     }
 
@@ -32,8 +31,15 @@ class SharedViewModel : ViewModel() {
         return trips
     }
 
-    private fun loadTrips(){
-        // Do an asynchronous operation to fetch trips.
+    fun getPosition() : LiveData<Int>{
+        return position
+    }
+
+    fun setPosition(pos: Int){
+        position.value = pos
+    }
+
+    private fun loadTrips(){         // Do an asynchronous operation to fetch trips.
         db.collection("trips")
                 .addSnapshotListener { tasks, error ->
                     if(error != null)
