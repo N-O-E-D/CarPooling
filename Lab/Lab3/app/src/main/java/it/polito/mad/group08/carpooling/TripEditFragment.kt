@@ -26,15 +26,11 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -43,53 +39,43 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.lang.reflect.Type
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.jvm.Throws
 
-class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
+class TripEditFragment : Fragment() {
+    //VIEW
+    private lateinit var carNameET: EditText
+    private lateinit var driverNameET: EditText
+    private lateinit var seatPriceET: EditText
+    private lateinit var availableSeatsET: EditText
+    private lateinit var informationsET: EditText
+    private lateinit var imageView: ImageView
+    private lateinit var ratingBar: RatingBar
+    private lateinit var button_stop: Button
 
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: ItemEditAdapter
 
-    lateinit var carNameET: EditText
-    lateinit var driverNameET: EditText
-    lateinit var seatPriceET: EditText
-    lateinit var availableSeatsET: EditText
-    lateinit var informationsET: EditText
-    lateinit var imageView: ImageView
-    lateinit var ratingBar: RatingBar
-    lateinit var recyclerView: RecyclerView
-    lateinit var adapter: ItemEditAdapter
-    var entryPoint: Int = -1
-    var filename: String? = null
-    lateinit var trip: TripListFragment.Trip
-    lateinit var button_stop: Button
-    var position: Int = -1
+    // TEMPORARY VARIABLE BEFORE SAVE
+    private var filename: String? = null
+    private lateinit var trip: TripListFragment.Trip
+    private var tmp_checkpoints: MutableList<TripListFragment.CheckPoint> = mutableListOf()
+    private var currentPhotoPath: String = ""
+
+    private var position: Int = -1
+
+    // USED FOR INTENT
     private lateinit var pickImageContract: ActivityResultContract<Uri, Uri?>
     private lateinit var pickImageCallback: ActivityResultCallback<Uri?>
     private lateinit var pickImageLauncher: ActivityResultLauncher<Uri>
     private lateinit var takeImageContract: ActivityResultContract<Any, Any?>
     private lateinit var takeImageCallback: ActivityResultCallback<Any?>
     private lateinit var takeImageLauncher: ActivityResultLauncher<Any>
-    lateinit var currentPhotoPath: String
+
     private val model: SharedViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                val bundle = bundleOf("pos" to position, "trip" to Gson().toJson(trip))
-                setFragmentResult("tripDetails", bundle)
-                if(entryPoint == 0){
-                    findNavController().popBackStack(R.id.tripDetailsFragment, false)
-                }
-                else{
-                    findNavController().popBackStack()
-                }
-            }
-        })
 
         pickImageContract = object : ActivityResultContract<Uri, Uri?>() {
             override fun createIntent(context: Context, input: Uri): Intent {
@@ -175,86 +161,34 @@ class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
         }
 
         takeImageLauncher = registerForActivityResult(takeImageContract, takeImageCallback)
-
-        setFragmentResultListener("fromDetailsToEdit") { requestKey, bundle ->
-            if (requestKey == "fromDetailsToEdit") {
-                entryPoint = 0
-                val tripJSON = bundle.getString("trip")
-                position = bundle.getInt("pos")
-                val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
-                trip = GsonBuilder().create().fromJson(tripJSON, type)
-                filename = trip.carPhotoPath
-                carNameET.setText(trip.carDescription)
-                driverNameET.setText(trip.driverName)
-                seatPriceET.setText(trip.seatPrice.toString())
-                availableSeatsET.setText(trip.availableSeats.toString())
-                informationsET.setText(trip.description)
-                ratingBar.rating = trip.driverRate
-                adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
-                recyclerView.adapter = adapter
-                takeSavedPhoto(filename, imageView)
-                //estimatedDuration.text = "Durata stimata: " + calcDuration(trip.checkPoints[0], trip.checkPoints[trip.checkPoints.size - 1])
-            }
-        }
-
-        setFragmentResultListener("tripEdit") { requestKey, bundle ->
-            if (requestKey == "tripEdit") {
-                entryPoint = 1
-                val tripJSON = bundle.getString("trip")
-                val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
-                trip = GsonBuilder().create().fromJson(tripJSON, type)
-                filename = trip.carPhotoPath
-                carNameET.setText(trip.carDescription)
-                driverNameET.setText(trip.driverName)
-                seatPriceET.setText(trip.seatPrice.toString())
-                availableSeatsET.setText(trip.availableSeats.toString())
-                informationsET.setText(trip.description)
-                ratingBar.rating = trip.driverRate
-                adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
-                recyclerView.adapter = adapter
-                position = bundle.getInt("pos")
-                takeSavedPhoto(filename, imageView)
-            }
-        }
-
-        setFragmentResultListener("tripAdd") { requestKey, bundle ->
-            if (requestKey == "tripAdd") {
-                entryPoint = 1
-                trip = TripListFragment.Trip(null, "", "", 4.5f,
-                        mutableListOf(), "", 0, 0.0f, "")
-                adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
-                recyclerView.adapter = adapter
-            }
-        }
     }
 
     fun removeAt(position: Int) {
-        trip.checkPoints.removeAt(position)
+        tmp_checkpoints.removeAt(position)
         adapter.onItemEditDeleted(position)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if(view != null) {
-            outState.putString("tripSaved", Gson().toJson(trip))
-            outState.putInt("pos", position)
+            outState.putString("currentPhotoPath", currentPhotoPath)
             outState.putString("filename", filename)
-            outState.putInt("entryPoint", entryPoint)
+            outState.putString("tmp_checkpoints", Gson().toJson(tmp_checkpoints))
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if(savedInstanceState!=null){
-            val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
-            trip = GsonBuilder().create().fromJson(savedInstanceState.getString("tripSaved"), type)
+            val type: Type = object : TypeToken<MutableList<TripListFragment.CheckPoint?>?>() {}.type
+            currentPhotoPath = savedInstanceState.getString("currentPhotoPath")!!
             filename = savedInstanceState.getString("filename")
-            takeSavedPhoto(filename, imageView)
-            adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
+            tmp_checkpoints = GsonBuilder().create()
+                    .fromJson(savedInstanceState.getString("tmp_checkpoints"), type)
+            adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
             recyclerView.adapter = adapter
-            position = savedInstanceState.getInt("pos")
-            filename = savedInstanceState.getString("filename")
-            entryPoint = savedInstanceState.getInt("entryPoint")
+
+            takeSavedPhoto(filename, imageView)
         }
     }
 
@@ -285,9 +219,42 @@ class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         button_stop.setOnClickListener{
-            trip.checkPoints.add(TripListFragment.CheckPoint("", ""))
+            tmp_checkpoints.add(TripListFragment.CheckPoint("", ""))
             adapter.onItemEditAdded()
         }
+
+        loadTrip()
+    }
+
+    private fun loadTrip(){
+            position = model.getPosition().value!!
+            if(position == model.getTrips().value?.size){ // ADD EMPTY VIEW
+                trip = TripListFragment.Trip()
+                adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
+                recyclerView.adapter = adapter
+                return
+            }
+
+            // EDIT EXISTING TRIP VIEW
+            trip = model.getTrips().value!![position]
+
+            filename = trip.carPhotoPath
+            carNameET.setText(trip.carDescription)
+            driverNameET.setText(trip.driverName)
+            seatPriceET.setText(trip.seatPrice.toString())
+            availableSeatsET.setText(trip.availableSeats.toString())
+            informationsET.setText(trip.description)
+            ratingBar.rating = trip.driverRate
+
+            //adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
+            for (item in trip.checkPoints) {
+                tmp_checkpoints.add(TripListFragment.CheckPoint(item.location, item.timestamp))
+            }
+            adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
+            recyclerView.adapter = adapter
+
+            takeSavedPhoto(filename, imageView)
+
     }
 
     override fun onCreateContextMenu(
@@ -305,25 +272,25 @@ class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
     }
 
     private fun checkCheckpoint(): Boolean {
-        for (checkpoint in trip.checkPoints)
+        for (checkpoint in tmp_checkpoints)
             if(checkpoint.location == "" || checkpoint.timestamp == "")
                 return true
         return false
     }
 
+    private fun checkCheckpointCoherency(): Boolean {
+        val format = SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.US)
+        for (i in 0 .. tmp_checkpoints.size - 2) {
+            val date1 = format.parse(tmp_checkpoints[i].timestamp)
+            val date2 = format.parse(tmp_checkpoints[i + 1].timestamp)
+            if (date2!!.time <= date1!!.time)
+                return true
+        }
+        return false
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
-            16908332 -> {
-                val bundle = bundleOf("pos" to position, "trip" to Gson().toJson(trip))
-                setFragmentResult("tripDetails", bundle)
-                if(entryPoint == 0){
-                    findNavController().popBackStack(R.id.tripDetailsFragment, false)
-                }
-                else{
-                    findNavController().popBackStack()
-                }
-                return true
-            }
             R.id.saveButton -> {
                 if(carNameET.text.toString() == "" || driverNameET.text.toString() == "" ||
                         availableSeatsET.text.toString() == "" || seatPriceET.text.toString() == "" || checkCheckpoint()) {
@@ -332,23 +299,26 @@ class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
                     return true
                 }
 
-                if (trip.checkPoints.size < 2) {
+                if (tmp_checkpoints.size < 2) {
                     Toast.makeText(activity?.applicationContext, "Please insert at least departure and arrival!", Toast.LENGTH_SHORT).show()
                     return true
                 }
+
+                if (checkCheckpointCoherency()) {
+                    Toast.makeText(activity?.applicationContext, "Please make sure the dates are in chronological order!", Toast.LENGTH_SHORT).show()
+                    return true
+                }
+
                 trip.carPhotoPath = filename
                 trip.carDescription = carNameET.text.toString()
                 trip.driverName = driverNameET.text.toString()
                 trip.availableSeats = availableSeatsET.text.toString().toInt()
                 trip.seatPrice = seatPriceET.text.toString().toFloat()
                 trip.description = informationsET.text.toString()
+                trip.checkPoints = tmp_checkpoints
 
-
-                //val bundle = bundleOf("pos" to position, "trip" to Gson().toJson(trip))
-                //setFragmentResult("tripEditedAdded", bundle)
-                model.addNewTrip(trip)
+                model.addOrReplaceTrip(trip)
                 findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
-
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -383,12 +353,6 @@ class TripEditFragment : Fragment()/*, IOnBackPressed*/ {
             else -> super.onContextItemSelected(item)
         }
     }
-
-    /*override fun onBackPressed(): Boolean {
-        findNavController().navigate(R.id.action_tripEditFragment_to_tripDetailsFragment)
-        Toast.makeText(context, "AAAA", Toast.LENGTH_LONG).show()
-        return true
-    }*/
 }
 
 class ItemEditAdapter(private val items: MutableList<TripListFragment.CheckPoint>,
@@ -435,7 +399,10 @@ class ItemEditAdapter(private val items: MutableList<TripListFragment.CheckPoint
                             // set DatePickerDialog to point to today's date when it loads up
                             cal.get(Calendar.YEAR),
                             cal.get(Calendar.MONTH),
-                            cal.get(Calendar.DAY_OF_MONTH)).show()
+                            cal.get(Calendar.DAY_OF_MONTH))
+                            .apply {
+                                datePicker.minDate = System.currentTimeMillis() - 1000
+                            }.show()
             }
             timestamp.addTextChangedListener(object: TextWatcher{
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -455,6 +422,11 @@ class ItemEditAdapter(private val items: MutableList<TripListFragment.CheckPoint
             }
         }
 
+        fun unbind() {
+            timestamp.setOnClickListener { null }
+            delete_button.setOnClickListener { null }
+        }
+
         private fun updateDateInView(timestamp: EditText, cal: Calendar) {
             val myFormat = "MM/dd/yyyy" // mention the format you need
             val sdf = SimpleDateFormat(myFormat, Locale.US)
@@ -467,7 +439,6 @@ class ItemEditAdapter(private val items: MutableList<TripListFragment.CheckPoint
             timestamp.setText(timestamp.text.toString() + " " + sdf.format(cal.time))
         }
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemEditViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -490,6 +461,11 @@ class ItemEditAdapter(private val items: MutableList<TripListFragment.CheckPoint
         holder.bind(items[position], clickListener, items)
     }
 
+    override fun onViewRecycled(holder: ItemEditViewHolder) {
+        super.onViewRecycled(holder)
+        holder.unbind()
+    }
+
     override fun getItemCount() = items.size
 
     override fun getItemViewType(position: Int): Int {
@@ -507,7 +483,6 @@ class ItemEditAdapter(private val items: MutableList<TripListFragment.CheckPoint
     }
 
     fun onItemEditDeleted(position: Int) {
-        //items.removeAt(position)
         notifyItemRemoved(position)
         notifyItemRangeChanged(position, items.size)
     }

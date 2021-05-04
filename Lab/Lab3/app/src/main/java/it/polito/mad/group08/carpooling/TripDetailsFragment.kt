@@ -8,17 +8,11 @@ import androidx.fragment.app.Fragment
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
-import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
 import java.io.FileNotFoundException
-import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -41,17 +35,8 @@ class TripDetailsFragment : Fragment() {
     //List[0] = departure; list[0+i] = intermediateStops; List[N-1] = arrival
     private lateinit var trip: TripListFragment.Trip
 
+    private val model: SharedViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setUpResultListener()
-    }
-
-    private fun setUpResultListener() {
-        setFragmentResultListener("tripDetails") { requestKey, bundle ->
-            onFragmentResult(requestKey, bundle)
-        }
-    }
 
     private fun takeSavedPhoto(name: String?) {
         try {
@@ -64,26 +49,6 @@ class TripDetailsFragment : Fragment() {
             }
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if(view != null){
-            outState.putString("trip", Gson().toJson(trip))
-            outState.putInt("pos", position)
-        }
-    }
-
-    //called after onViewCreated
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        if(savedInstanceState!=null){
-            position = savedInstanceState.getInt("pos")
-            val tripJSON = savedInstanceState.getString("trip")
-            val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
-            trip = GsonBuilder().create().fromJson(tripJSON, type)
-            setTripInformation(trip)
         }
     }
 
@@ -181,17 +146,6 @@ class TripDetailsFragment : Fragment() {
         return finalString
     }
 
-    private fun onFragmentResult(requestKey: String, bundle: Bundle) {
-        if (requestKey === "tripDetails") {
-            position = bundle.getInt("pos")
-            val tripJSON = bundle.getString("trip")
-            val type: Type = object : TypeToken<TripListFragment.Trip?>() {}.type
-            trip = GsonBuilder().create().fromJson(tripJSON, type)
-
-            setTripInformation(trip)
-        }
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         val v = inflater.inflate(R.layout.fragment_trip_details, container, false)
@@ -203,6 +157,7 @@ class TripDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // FIND VIEW
         carPhotoPath = view.findViewById(R.id.carPhoto)
         carDescription = view.findViewById(R.id.carName)
         driverName = view.findViewById(R.id.driverName)
@@ -216,6 +171,13 @@ class TripDetailsFragment : Fragment() {
 
         showHideButton = view.findViewById<Button>(R.id.show_hide)
         showHideButton.text = getString(R.string.show_intermediate_stops)
+
+        // INITIALIZE DATA
+        position = model.getPosition().value!!
+        trip = model.getTrips().value!![position]
+
+        // POPULATE VIEW WITH DATA
+        setTripInformation(trip)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -226,10 +188,10 @@ class TripDetailsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.editButton -> {
-                val bundle = bundleOf("pos" to position, "trip" to Gson().toJson(trip))
-                setFragmentResult("fromDetailsToEdit", bundle)
-                findNavController().navigate(R.id.action_tripDetailsFragment_to_tripEditFragment)
-                println("Hello EditFragment")
+                findNavController()
+                        .navigate(
+                                R.id.action_tripDetailsFragment_to_tripEditFragment
+                        )
                 true
             }
             else -> super.onOptionsItemSelected(item)
