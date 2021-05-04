@@ -23,6 +23,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
@@ -49,6 +50,8 @@ class EditProfileFragment : Fragment() {
     private lateinit var photoURI: Uri
     private var currentPhotoPath: String = ""
     private var bitmap: Bitmap? = null
+    private lateinit var user: User
+    private val model: SharedViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -63,23 +66,25 @@ class EditProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        user = model.getUser().value!!
+
         photoIV = view.findViewById(R.id.photoImage)
         changePhotoIB = view.findViewById(R.id.changeImageButton)
 
         fullNameET = view.findViewById(R.id.fullNameET)
-        fullNameET.setText(arguments?.getString("fullname"))
+        fullNameET.setText(user.name)
 
         nicknameET = view.findViewById(R.id.nicknameET)
-        nicknameET.setText(arguments?.getString("nickname"))
+        nicknameET.setText(user.nickname)
 
         emailET = view.findViewById(R.id.emailET)
-        emailET.setText(arguments?.getString("email"))
+        emailET.setText(user.email)
 
         locationET = view.findViewById(R.id.locationET)
-        locationET.setText(arguments?.getString("location"))
+        locationET.setText(user.location)
 
         phonenumberET = view.findViewById(R.id.phonenumberET)
-        phonenumberET.setText(arguments?.getString("phonenumber"))
+        phonenumberET.setText(user.phone_number)
 
         changePhotoIB.setOnClickListener{
             registerForContextMenu(it)
@@ -167,13 +172,13 @@ class EditProfileFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.saveButton -> {
-                val bundle = bundleOf(
+                /*val bundle = bundleOf(
                     "fullname" to fullNameET.text.toString(),
                     "nickname" to nicknameET.text.toString(),
                     "email" to emailET.text.toString(),
                     "location" to locationET.text.toString(),
                     "phonenumber" to phonenumberET.text.toString()
-                )
+                )*/
 
 
                 if(bitmap != null){
@@ -187,7 +192,10 @@ class EditProfileFragment : Fragment() {
                         Toast.makeText(activity, "Not enough space to store the photo!", Toast.LENGTH_LONG).show()
                     }
                 }
-                findNavController().navigate(R.id.action_editProfileFragment_to_showProfileFragment,bundle)
+                model.editUser(User(fullNameET.text.toString(), nicknameET.text.toString(),
+                    emailET.text.toString(), locationET.text.toString(),
+                    phonenumberET.text.toString(), user.rating))
+                findNavController().navigate(R.id.action_editProfileFragment_to_showProfileFragment)
                 Snackbar.make(view?.findViewById(R.id.fullNameET)!!,R.string.changes_applied_successfully,Snackbar.LENGTH_SHORT).show()
                 true
             }

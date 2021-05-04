@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.firestore.FirebaseFirestore
 
 
@@ -16,14 +17,54 @@ class SharedViewModel : ViewModel() {
         }
     }
 
+    private val user = MutableLiveData<User>()
+
     private val position = MutableLiveData(0)
+
+    private val account = MutableLiveData<GoogleSignInAccount>()
+
+    fun setUser(user: User) {
+        db.collection("users").document(account.value?.email!!).addSnapshotListener { userDB, err ->
+            if (err != null)
+                Log.d("BBBB", "Error getting documents.", err)
+            if (userDB != null) {
+                if (userDB.data == null) {
+                    db.collection("users").document(user.email).set(user)
+                        .addOnSuccessListener { this.user.value = user }
+                } else {
+                    this.user.value = userDB.toObject(User::class.java)
+                }
+            }
+        }
+    }
+
+    fun editUser(user: User) {
+        db.collection("users").document(account.value?.email!!).set(user)
+            .addOnSuccessListener {}
+    }
+
+    fun getUser(): MutableLiveData<User> {
+        return user
+    }
+
+    fun setAccount(account: GoogleSignInAccount) {
+        this.account.value = account
+    }
+
+    fun getAccount(): GoogleSignInAccount {
+        return account.value!!
+    }
+
 
     fun addOrReplaceTrip(newTrip: TripListFragment.Trip) {
         db.collection("trips")
-                .document("${newTrip.driverName}_${position.value}")
+                .document("${account.value?.email!!}_${position.value}")
                 .set(newTrip)
                 .addOnSuccessListener {
                     Log.d("AAAA", "DATO AGGIORNATO")
+                }
+                .addOnFailureListener {
+                    Log.d("AAAA", "ERROREEE")
                 }
     }
 
@@ -59,3 +100,7 @@ class SharedViewModel : ViewModel() {
                 }
     }
 }
+
+data class User(val name:String = "", val nickname: String = "",
+                val email: String = "", val location: String = "",
+                val phone_number: String = "", val rating: Float = 0f)

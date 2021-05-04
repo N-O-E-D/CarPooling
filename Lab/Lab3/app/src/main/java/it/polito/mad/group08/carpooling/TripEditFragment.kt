@@ -230,7 +230,7 @@ class TripEditFragment : Fragment() {
             position = model.getPosition().value!!
             if(position == model.getTrips().value?.size){ // ADD EMPTY VIEW
                 trip = TripListFragment.Trip()
-                adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
+                adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
                 recyclerView.adapter = adapter
                 return
             }
