@@ -19,7 +19,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Lab/Lab2" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Lab/Lab3" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -35,10 +35,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="2104" y="282" key="FileChooserDialogImpl" timestamp="1619518737044">
-      <screen x="1366" y="0" width="1920" height="1080" />
+    <state x="493" y="192" key="FileChooserDialogImpl" timestamp="1620055029407">
+      <screen x="0" y="0" width="1366" height="738" />
     </state>
-    <state x="525" y="193" key="FileChooserDialogImpl/0.0.1366.738/1366.0.1920.1080@0.0.1366.738" timestamp="1618218723478" />
+    <state x="493" y="192" key="FileChooserDialogImpl/0.0.1366.738/1366.0.1920.1080@0.0.1366.738" timestamp="1620055029407" />
     <state x="2104" y="282" key="FileChooserDialogImpl/0.0.1366.738/1366.0.1920.1080@1366.0.1920.1080" timestamp="1619518737044" />
     <state x="738" y="272" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1616862024659" />
   </component>
