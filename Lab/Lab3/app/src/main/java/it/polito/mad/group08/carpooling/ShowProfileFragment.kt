@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import org.json.JSONObject
 import java.io.FileNotFoundException
@@ -22,7 +24,9 @@ class ShowProfileFragment : Fragment() {
     private lateinit var emailTV : TextView
     private lateinit var locationTV : TextView
     private lateinit var phonenumberTV : TextView
-    private lateinit var sharedPref : SharedPreferences
+    //private lateinit var sharedPref : SharedPreferences
+    //private lateinit var user: User
+    private val model: SharedViewModel by activityViewModels()
 
     interface InfoManager{
         fun updateTexts(main: String, secondary: String)
@@ -48,7 +52,7 @@ class ShowProfileFragment : Fragment() {
         locationTV = view.findViewById(R.id.locationTV)
         phonenumberTV = view.findViewById(R.id.phonenumberTV)
 
-        sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)!!
+        /*sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)!!
 
         val jsonObjectDefault = JSONObject()
         jsonObjectDefault.put("fullName", getString(R.string.fullName))
@@ -73,15 +77,22 @@ class ShowProfileFragment : Fragment() {
 
         val jsonObject = sharedPref.getString("profile", jsonObjectDefault.toString())!!
 
-        val deserializedJSON = JSONObject(jsonObject)
+        val deserializedJSON = JSONObject(jsonObject)*/
 
-        fullNameTV.text = deserializedJSON.getString("fullName")
-        nicknameTV.text = deserializedJSON.getString("nickname")
-        emailTV.text = deserializedJSON.getString("email")
-        locationTV.text = deserializedJSON.getString("location")
-        phonenumberTV.text = deserializedJSON.getString("phonenumber")
-        
-        (activity as? InfoManager)?.updateTexts(fullNameTV.text.toString(),emailTV.text.toString())
+        model.getUser().observe(viewLifecycleOwner, Observer<User> { userDB->
+            fullNameTV.text = if (userDB.name == "") "Full Name" else userDB.name
+            nicknameTV.text = if (userDB.nickname == "") "Nickname" else userDB.nickname
+            emailTV.text = if (userDB.email == "") "Email" else userDB.email
+            locationTV.text = if (userDB.location == "") "Location" else userDB.location
+            phonenumberTV.text = if (userDB.phone_number == "") "#" else userDB.phone_number
+        })
+/*
+        fullNameTV.text = if (user.name == "") "Full Name" else user.name
+        nicknameTV.text = if (user.nickname == "") "Nickname" else user.nickname
+        emailTV.text = if (user.email == "") "Email" else user.email
+        locationTV.text = if (user.location == "") "Location" else user.location
+        phonenumberTV.text = if (user.phone_number == "") "#" else user.phone_number
+*/
         retrieveUserImage()
     }
 
@@ -93,14 +104,14 @@ class ShowProfileFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.editButton -> {
-                val bundle = bundleOf(
+                /*val bundle = bundleOf(
                     "fullname" to fullNameTV.text.toString(),
                     "nickname" to nicknameTV.text.toString(),
                     "email" to emailTV.text.toString(),
                     "location" to locationTV.text.toString(),
                     "phonenumber" to phonenumberTV.text.toString()
-                )
-                findNavController().navigate(R.id.action_showProfileFragment_to_editProfileFragment, bundle)
+                )*/
+                findNavController().navigate(R.id.action_showProfileFragment_to_editProfileFragment)
                 true
             }
             else -> super.onOptionsItemSelected(item)

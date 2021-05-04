@@ -4,12 +4,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.core.view.updateLayoutParams
+import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -17,9 +15,11 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.material.navigation.NavigationView
 import org.json.JSONObject
 import java.io.FileNotFoundException
+
 
 class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -82,7 +82,6 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
             e.printStackTrace()
         }
     }
-
 
     /*override fun onBackPressed() {
         val fragment =
