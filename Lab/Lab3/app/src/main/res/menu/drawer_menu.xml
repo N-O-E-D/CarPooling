@@ -11,5 +11,9 @@
             android:id="@+id/tripListFragment"
             android:title="@string/menu_trips"
             android:icon="@drawable/car"/>
+        <item
+            android:id="@+id/othersTripListFragment"
+            android:title="@string/menu_others_trips"
+            android:icon="@drawable/car"/>
     </group>
 </menu>

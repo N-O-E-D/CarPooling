@@ -68,7 +68,7 @@ class LoginFragment : Fragment() {
             (activity as? ShowProfileFragment.InfoManager)?.
             updateTexts(account!!.displayName.toString(), account!!.email.toString())
             Log.d("BBBB", "on resume")
-            findNavController().navigate(R.id.action_loginFragment_to_tripListFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_othersTripListFragment)
         }
     }
 

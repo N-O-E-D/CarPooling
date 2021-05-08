@@ -86,8 +86,20 @@
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
-            android:id="@+id/action_loginFragment_to_tripListFragment"
-            app:destination="@id/tripListFragment"
+            android:id="@+id/action_loginFragment_to_othersTripListFragment"
+            app:destination="@id/othersTripListFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/othersTripListFragment"
+        android:name="it.polito.mad.group08.carpooling.OthersTripListFragment"
+        android:label="OthersTripListFragment" >
+        <action
+            android:id="@+id/action_othersTripListFragment_to_tripDetailsFragment"
+            app:destination="@id/tripDetailsFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"

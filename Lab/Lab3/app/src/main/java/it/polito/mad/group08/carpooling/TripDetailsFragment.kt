@@ -33,7 +33,7 @@ class TripDetailsFragment : Fragment() {
     private lateinit var description: TextView
 
     //List[0] = departure; list[0+i] = intermediateStops; List[N-1] = arrival
-    private lateinit var trip: TripListFragment.Trip
+    private lateinit var trip: Trip
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -52,7 +52,7 @@ class TripDetailsFragment : Fragment() {
         }
     }
 
-    private fun setTripInformation(trip: TripListFragment.Trip){
+    private fun setTripInformation(trip: Trip){
         takeSavedPhoto(trip.carPhotoPath)
         carDescription.text = trip.carDescription
         driverName.text = trip.driverName
@@ -111,7 +111,7 @@ class TripDetailsFragment : Fragment() {
         description.text = trip.description
     }
 
-    private fun calcDuration(dep: TripListFragment.CheckPoint, arr: TripListFragment.CheckPoint): String {
+    private fun calcDuration(dep: CheckPoint, arr: CheckPoint): String {
         val depTs = dep.timestamp
         val arrTs = arr.timestamp
         val format = SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.US)
@@ -174,13 +174,17 @@ class TripDetailsFragment : Fragment() {
 
         // INITIALIZE DATA
         position = model.getPosition().value!!
-        trip = model.getTrips().value!![position]
+        if(arguments?.getString("parent")=="TRIPS")
+            trip = model.getTrips().value!![position]
+        else if(arguments?.getString("parent")=="OTHERS_TRIPS")
+            trip = model.getOthersTrips().value!![position]
 
         // POPULATE VIEW WITH DATA
         setTripInformation(trip)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        if(arguments?.getString("parent")=="TRIPS")
         inflater.inflate(R.menu.edit_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
