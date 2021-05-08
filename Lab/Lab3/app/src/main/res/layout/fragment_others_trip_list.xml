@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OthersTripListFragment"
+    android:background="@color/constraintLayoutBackground">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/otherstripListRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/emptyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/no_trips"
+        android:visibility="gone"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="#FF001A" />
+
+    <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_fab"
+        android:backgroundTint="@color/colorPrimary"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        android:elevation="4dp"
+        android:contentDescription="@string/add_new_stop"
+        app:srcCompat="@drawable/add"
+        tools:ignore="RtlHardcoded" />-->
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

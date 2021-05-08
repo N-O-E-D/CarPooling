@@ -57,8 +57,8 @@ class TripEditFragment : Fragment() {
 
     // TEMPORARY VARIABLE BEFORE SAVE
     private var filename: String? = null
-    private lateinit var trip: TripListFragment.Trip
-    private var tmp_checkpoints: MutableList<TripListFragment.CheckPoint> = mutableListOf()
+    private lateinit var trip: Trip
+    private var tmp_checkpoints: MutableList<CheckPoint> = mutableListOf()
     private var currentPhotoPath: String = ""
 
     private var position: Int = -1
@@ -180,7 +180,7 @@ class TripEditFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if(savedInstanceState!=null){
-            val type: Type = object : TypeToken<MutableList<TripListFragment.CheckPoint?>?>() {}.type
+            val type: Type = object : TypeToken<MutableList<CheckPoint?>?>() {}.type
             currentPhotoPath = savedInstanceState.getString("currentPhotoPath")!!
             filename = savedInstanceState.getString("filename")
             tmp_checkpoints = GsonBuilder().create()
@@ -219,7 +219,7 @@ class TripEditFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         button_stop.setOnClickListener{
-            tmp_checkpoints.add(TripListFragment.CheckPoint("", ""))
+            tmp_checkpoints.add(CheckPoint("", ""))
             adapter.onItemEditAdded()
         }
 
@@ -229,7 +229,7 @@ class TripEditFragment : Fragment() {
     private fun loadTrip(){
             position = model.getPosition().value!!
             if(position == model.getTrips().value?.size){ // ADD EMPTY VIEW
-                trip = TripListFragment.Trip()
+                trip = Trip()
                 adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
                 recyclerView.adapter = adapter
                 return
@@ -248,7 +248,7 @@ class TripEditFragment : Fragment() {
 
             //adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
             for (item in trip.checkPoints) {
-                tmp_checkpoints.add(TripListFragment.CheckPoint(item.location, item.timestamp))
+                tmp_checkpoints.add(CheckPoint(item.location, item.timestamp))
             }
             adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
             recyclerView.adapter = adapter
@@ -312,6 +312,7 @@ class TripEditFragment : Fragment() {
                 trip.carPhotoPath = filename
                 trip.carDescription = carNameET.text.toString()
                 trip.driverName = driverNameET.text.toString()
+                trip.driverEmail = model.getAccount().email!!
                 trip.availableSeats = availableSeatsET.text.toString().toInt()
                 trip.seatPrice = seatPriceET.text.toString().toFloat()
                 trip.description = informationsET.text.toString()
@@ -355,7 +356,7 @@ class TripEditFragment : Fragment() {
     }
 }
 
-class ItemEditAdapter(private val items: MutableList<TripListFragment.CheckPoint>,
+class ItemEditAdapter(private val items: MutableList<CheckPoint>,
                       private val clickListener: (Int) -> Unit) : RecyclerView.Adapter<ItemEditAdapter.ItemEditViewHolder>() {
 
     class ItemEditViewHolder(v: View) : RecyclerView.ViewHolder(v) {
@@ -379,7 +380,7 @@ class ItemEditAdapter(private val items: MutableList<TripListFragment.CheckPoint
             timePickerDialog.show()
         }
 
-        fun bind(i: TripListFragment.CheckPoint, clickListener: (Int) -> Unit, items: MutableList<TripListFragment.CheckPoint>) {
+        fun bind(i: CheckPoint, clickListener: (Int) -> Unit, items: MutableList<CheckPoint>) {
             location.setText(i.location)
             location.addTextChangedListener(object: TextWatcher{
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {

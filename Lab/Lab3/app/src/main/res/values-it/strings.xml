@@ -44,10 +44,12 @@
     <string name="nav_header_desc">Navigation header</string>
 
     <string name="menu_profile">Profilo</string>
-    <string name="menu_trips">Viaggi</string>
+    <string name="menu_trips">Miei viaggi</string>
+    <string name="menu_others_trips">Altri viaggi</string>
 
     <string name="no_trips">Nessun viaggio disponibile!</string>
     <string name="car_photo_description">Fotografia della macchina</string>
     <string name="trip_added_successfully">Viaggio aggiunto!</string>
     <string name="trip_edited_successfully">Viaggio modificato!</string>
+    <string name="trip_show_interest">Mostra interesse</string>
 </resources>

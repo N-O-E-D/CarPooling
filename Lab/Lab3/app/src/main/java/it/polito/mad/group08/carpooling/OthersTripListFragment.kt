@@ -38,11 +38,8 @@ import java.io.FileNotFoundException
 import java.lang.reflect.Type
 import java.math.BigDecimal
 
-const val EDIT_BUTTON_CLICKED = 1
-const val CARD_CLICKED = 2
-const val FAB_CLICKED = 3
 
-class TripListFragment : Fragment() {
+class OthersTripListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TripAdapter
     private lateinit var emptyTextView: TextView
@@ -51,17 +48,10 @@ class TripListFragment : Fragment() {
 
     private fun navigationClickListener(mode: Int, trip: Trip?, position: Int?) {
         val navController = findNavController()
-        if (mode == EDIT_BUTTON_CLICKED && position != null && trip != null) {
-            model.setPosition(position)
-            navController.navigate(R.id.action_tripListFragment_to_tripEditFragment)
-            //Toast.makeText(context, "EDIT: From ${trip.departureLocation} to ${trip.arrivalLocation}!", Toast.LENGTH_SHORT).show()
-        } else if (mode == CARD_CLICKED && trip != null) {
+        if (mode == CARD_CLICKED && trip != null) {
             model.setPosition(position!!)
-            navController.navigate(R.id.action_tripListFragment_to_tripDetailsFragment, bundleOf("parent" to "TRIPS"))
+            navController.navigate(R.id.action_othersTripListFragment_to_tripDetailsFragment, bundleOf("parent" to "OTHERS_TRIPS"))
             //Toast.makeText(context, "DETAILS: From ${trip.departureLocation} to ${trip.arrivalLocation}!", Toast.LENGTH_SHORT).show()
-        } else if (mode == FAB_CLICKED) {
-            model.setPosition(model.getTrips().value!!.size)
-            navController.navigate(R.id.action_tripListFragment_to_tripEditFragment)
         }
     }
 
@@ -69,9 +59,9 @@ class TripListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_trip_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_others_trip_list, container, false)
         emptyTextView = view.findViewById(R.id.emptyTextView)
-        recyclerView = view.findViewById(R.id.tripListRecyclerView)
+        recyclerView = view.findViewById(R.id.otherstripListRecyclerView)
 
         when(resources.configuration.orientation){
             Configuration.ORIENTATION_PORTRAIT -> {
@@ -87,28 +77,12 @@ class TripListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val addFab: FloatingActionButton = view.findViewById(R.id.add_fab)
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (dy > 0 && addFab.visibility == View.VISIBLE) {
-                    addFab.hide()
-                } else if (dy < 0 && addFab.visibility != View.VISIBLE) {
-                    addFab.show()
-                }
-            }
-        })
-
-        addFab.setOnClickListener {
-            val anim: Animation = AnimationUtils.loadAnimation(addFab.context, R.anim.zoom)
-            anim.duration = 150
-            addFab.startAnimation(anim)
-            navigationClickListener(FAB_CLICKED, null, null)
-        }
 
         // DECOUPLE DATA FROM UI
-        model.getTrips().observe(viewLifecycleOwner, Observer<MutableList<Trip>>{ tripsDB ->
+        model.getOthersTrips().observe(viewLifecycleOwner, Observer<MutableList<Trip>>{ tripsDB ->
             // update UI
+
+            Log.d("OTHERSAAAA", tripsDB.toString())
             if(tripsDB.isEmpty()){
                 recyclerView.visibility = View.GONE
                 emptyTextView.visibility = View.VISIBLE
@@ -142,6 +116,7 @@ class TripListFragment : Fragment() {
                 arrivalLocation.text = trip.checkPoints[trip.checkPoints.size - 1].location
                 departureTimestamp.text = trip.checkPoints[0].timestamp
                 arrivalTimestamp.text = trip.checkPoints[trip.checkPoints.size-1].timestamp
+                editButton.text = itemView.context.getString(R.string.trip_show_interest)
                 val bitmap: Bitmap? = takeSavedPhoto(trip.carPhotoPath, itemView)
                 when(itemView.context.resources.configuration.orientation){
                     Configuration.ORIENTATION_PORTRAIT -> {
@@ -156,7 +131,7 @@ class TripListFragment : Fragment() {
                     clickListener(CARD_CLICKED, trip, bindingAdapterPosition)
                 }
                 editButton.setOnClickListener {
-                    clickListener(EDIT_BUTTON_CLICKED, trip, bindingAdapterPosition)
+                    //clickListener(EDIT_BUTTON_CLICKED, trip, bindingAdapterPosition)
                 }
             }
 
