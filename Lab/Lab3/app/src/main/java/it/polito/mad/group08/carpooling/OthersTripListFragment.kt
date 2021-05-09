@@ -1,42 +1,26 @@
 package it.polito.mad.group08.carpooling
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
-import org.w3c.dom.Text
 import java.io.FileNotFoundException
-import java.lang.reflect.Type
-import java.math.BigDecimal
 
 
 class OthersTripListFragment : Fragment() {
@@ -61,7 +45,7 @@ class OthersTripListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_others_trip_list, container, false)
         emptyTextView = view.findViewById(R.id.emptyTextView)
-        recyclerView = view.findViewById(R.id.otherstripListRecyclerView)
+        recyclerView = view.findViewById(R.id.othersTripListRecyclerView)
 
         when(resources.configuration.orientation){
             Configuration.ORIENTATION_PORTRAIT -> {
@@ -109,8 +93,6 @@ class OthersTripListFragment : Fragment() {
             private val editButton: Button = itemView.findViewById(R.id.editButton)
             private val card: CardView = itemView.findViewById(R.id.card)
 
-
-
             fun bind(trip: Trip, clickListener: (Int, Trip, Int?) -> Unit) {
                 departureLocation.text = trip.checkPoints[0].location
                 arrivalLocation.text = trip.checkPoints[trip.checkPoints.size - 1].location
@@ -131,6 +113,7 @@ class OthersTripListFragment : Fragment() {
                     clickListener(CARD_CLICKED, trip, bindingAdapterPosition)
                 }
                 editButton.setOnClickListener {
+                    //TODO
                     //clickListener(EDIT_BUTTON_CLICKED, trip, bindingAdapterPosition)
                 }
             }

@@ -1,30 +1,38 @@
 package it.polito.mad.group08.carpooling
 
+import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.*
-import android.widget.Button
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.*
 import androidx.fragment.app.Fragment
-import android.widget.ImageView
-import android.widget.RatingBar
-import android.widget.TextView
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
 
+
+const val MY_TRIPS_IS_PARENT = "TRIPS"
+const val OTHER_TRIPS_PARENT = "OTHERS_TRIPS"
 
 class TripDetailsFragment : Fragment() {
     private lateinit var carPhotoPath: ImageView
     private lateinit var carDescription: TextView
     private lateinit var driverName: TextView
     private lateinit var driverRate: RatingBar
-    private var position: Int = -1
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var showHideButton: Button
+    private lateinit var intermediateTripsRecyclerView: RecyclerView
+    private lateinit var intermediateTripsShowHideButton: Button
+
+    private lateinit var interestedUsersRecyclerView: RecyclerView
+    private lateinit var interestedUsersShowHideButton: Button
 
     private lateinit var estimatedDuration: TextView
     private lateinit var availableSeats: TextView
@@ -32,8 +40,7 @@ class TripDetailsFragment : Fragment() {
 
     private lateinit var description: TextView
 
-    //List[0] = departure; list[0+i] = intermediateStops; List[N-1] = arrival
-    private lateinit var trip: Trip
+    private lateinit var showInterestFab: FloatingActionButton
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -52,12 +59,16 @@ class TripDetailsFragment : Fragment() {
         }
     }
 
+    @SuppressLint("ShowToast")
     private fun setTripInformation(trip: Trip){
         takeSavedPhoto(trip.carPhotoPath)
         carDescription.text = trip.carDescription
+
         driverName.text = trip.driverName
         driverRate.rating = trip.driverRate
 
+        //TRIP RECYCLER VIEW
+        intermediateTripsRecyclerView.layoutManager = LinearLayoutManager(context)
         val departureCheckpoint = trip.checkPoints.first()
         val arrivalCheckpoint = trip.checkPoints.last()
 
@@ -67,6 +78,7 @@ class TripDetailsFragment : Fragment() {
         val startEndCheckpoints = listOf(departureItem, arrivalItem)
         val allCheckpoints: MutableList<Item> = mutableListOf()
         if(trip.checkPoints.size > 2){
+            intermediateTripsShowHideButton.text = getString(R.string.show_intermediate_stops)
             trip.checkPoints.forEachIndexed { index, checkPoint ->
                 when(index){
                     0 -> {
@@ -74,7 +86,7 @@ class TripDetailsFragment : Fragment() {
                                 DepartureItem(checkPoint.location, checkPoint.timestamp)
                         )
                     }
-                    trip.checkPoints.size-1 -> {
+                    trip.checkPoints.lastIndex -> {
                         allCheckpoints.add(
                                 ArrivalItem(checkPoint.location, checkPoint.timestamp)
                         )
@@ -88,19 +100,20 @@ class TripDetailsFragment : Fragment() {
             }
         }
         else{
-            showHideButton.visibility = View.GONE
+            intermediateTripsShowHideButton.visibility = View.GONE
         }
 
-        recyclerView.adapter = ItemAdapter(startEndCheckpoints)
+        intermediateTripsRecyclerView.adapter = ItemAdapter(startEndCheckpoints)
 
+        //UPDATE BUTTON STATUS TRIP RECYCLER VIEW
         var i = 0
-        showHideButton.setOnClickListener {
+        intermediateTripsShowHideButton.setOnClickListener {
             if (i % 2 == 0) {
-                showHideButton.text = getString(R.string.hide_intermediate_stops)
-                recyclerView.adapter = ItemAdapter(allCheckpoints)
+                intermediateTripsShowHideButton.text = getString(R.string.hide_intermediate_stops)
+                intermediateTripsRecyclerView.adapter = ItemAdapter(allCheckpoints)
             } else {
-                showHideButton.text = getString(R.string.show_intermediate_stops)
-                recyclerView.adapter = ItemAdapter(startEndCheckpoints)
+                intermediateTripsShowHideButton.text = getString(R.string.show_intermediate_stops)
+                intermediateTripsRecyclerView.adapter = ItemAdapter(startEndCheckpoints)
             }
             i++
         }
@@ -109,6 +122,63 @@ class TripDetailsFragment : Fragment() {
         availableSeats.text = getString(R.string.available_seats_msg, trip.availableSeats)
         seatPrice.text = getString(R.string.seat_price_msg, trip.seatPrice.toString())
         description.text = trip.description
+
+        //TODO do it in landscape
+        //TODO would be nice change color too
+
+        // FAB (FOR USER != OWNER)
+        if(model.bookingIsAccepted(trip.id)){ //user alredy show favorite and owner accepted
+            showInterestFab.setImageResource(R.drawable.check)
+            showInterestFab.setOnClickListener {
+                Toast.makeText(context, "You already booked this trip!", Toast.LENGTH_LONG).show()
+            }
+        }else{
+            if(model.userIsInterested(trip)){
+                showInterestFab.setImageResource(R.drawable.ic_baseline_clear_24)
+            }else{
+                showInterestFab.setImageResource(R.drawable.ic_baseline_favorite_24)
+            }
+
+            showInterestFab.setOnClickListener {
+                val anim: Animation = AnimationUtils.loadAnimation(showInterestFab.context, R.anim.zoom)
+                anim.duration = 150
+                showInterestFab.startAnimation(anim)
+
+                if(model.userIsInterested(trip)){ // Already interested, but she would to cancel
+                    model.updateTripInterestedUser(trip, false, null)
+                    showInterestFab.setImageResource(R.drawable.ic_baseline_favorite_24)
+                }
+                else {
+                    model.updateTripInterestedUser(trip, true, null)
+                    showInterestFab.setImageResource(R.drawable.ic_baseline_clear_24)
+                }
+            }
+        }
+
+        //INTERESTED USERS RECYCLER VIEW (FOR THE OWNER)
+        interestedUsersRecyclerView.layoutManager = LinearLayoutManager(context)
+        interestedUsersRecyclerView.visibility = View.GONE
+
+        if(trip.interestedUsers.isNotEmpty()){
+            interestedUsersShowHideButton.text = getString(R.string.show_interested_users)
+            interestedUsersRecyclerView.adapter = InterestedUserAdapter(trip.interestedUsers, model, trip)
+        }
+        else{
+            interestedUsersShowHideButton.visibility = View.GONE
+        }
+
+        //UPDATE BUTTON STATUS INTERESTED USERS (FOR OWNER)
+        var j = 0
+        interestedUsersShowHideButton.setOnClickListener {
+            if (j % 2 == 0) {
+                interestedUsersShowHideButton.text = getString(R.string.hide_intermediate_stops)
+                interestedUsersRecyclerView.visibility = View.VISIBLE
+            } else {
+                interestedUsersShowHideButton.text = getString(R.string.show_interested_users)
+                interestedUsersRecyclerView.visibility = View.GONE
+            }
+            j++
+        }
     }
 
     private fun calcDuration(dep: CheckPoint, arr: CheckPoint): String {
@@ -162,30 +232,53 @@ class TripDetailsFragment : Fragment() {
         carDescription = view.findViewById(R.id.carName)
         driverName = view.findViewById(R.id.driverName)
         driverRate = view.findViewById(R.id.driverRate)
-        recyclerView = view.findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        intermediateTripsRecyclerView = view.findViewById(R.id.tripRecyclerView)
         estimatedDuration = view.findViewById(R.id.estimatedDuration)
         availableSeats = view.findViewById(R.id.availableSeats)
         seatPrice = view.findViewById(R.id.seatPrice)
         description = view.findViewById(R.id.tripDescription)
 
-        showHideButton = view.findViewById<Button>(R.id.show_hide)
-        showHideButton.text = getString(R.string.show_intermediate_stops)
+        intermediateTripsShowHideButton = view.findViewById<Button>(R.id.showHideIntermediateSteps)
+
+        showInterestFab = view.findViewById(R.id.show_interest_fab)
+
+        interestedUsersRecyclerView = view.findViewById(R.id.interestedUserRecyclerView)
+        interestedUsersShowHideButton = view.findViewById(R.id.showHideInterestedUsers)
 
         // INITIALIZE DATA
-        position = model.getPosition().value!!
-        if(arguments?.getString("parent")=="TRIPS")
-            trip = model.getTrips().value!![position]
-        else if(arguments?.getString("parent")=="OTHERS_TRIPS")
-            trip = model.getOthersTrips().value!![position]
-
-        // POPULATE VIEW WITH DATA
-        setTripInformation(trip)
+        //NOTE: please notice the nested call. You can access parentPosition only when it's returned
+        model.getPosition().observe(viewLifecycleOwner, Observer<Int> {parentPosition ->
+            when(arguments?.getString("parent")){
+                MY_TRIPS_IS_PARENT -> {
+                    model.getTrips()
+                            .observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
+                        // POPULATE VIEW WITH DATA
+                        setTripInformation(tripsDB[parentPosition])
+                        showInterestFab.hide()
+                    })
+                }
+                OTHER_TRIPS_PARENT -> {
+                    model.getOthersTrips()
+                            .observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
+                        // POPULATE VIEW WITH DATA
+                        model.getBookings().observe(viewLifecycleOwner, Observer<MutableList<Booking>> {
+                            setTripInformation(tripsDB[parentPosition])
+                            showInterestFab.show()
+                            interestedUsersRecyclerView.visibility = View.GONE
+                            interestedUsersShowHideButton.visibility = View.INVISIBLE
+                        })
+                    })
+                }
+                else -> {
+                    Toast.makeText(context, "Error in laod the Trip!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if(arguments?.getString("parent")=="TRIPS")
-        inflater.inflate(R.menu.edit_menu, menu)
+        if(arguments?.getString("parent").equals(MY_TRIPS_IS_PARENT))
+            inflater.inflate(R.menu.edit_menu, menu)    //Edit menu button only in MY trip details
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -260,5 +353,54 @@ class ItemAdapter(private val items: List<Item>) : RecyclerView.Adapter<ItemAdap
             }
             else -> super.getItemViewType(position)
         }
+    }
+}
+
+class InterestedUserAdapter(
+        private val users: List<User>,
+        private val model: SharedViewModel,
+        private val targetTrip: Trip): RecyclerView.Adapter<InterestedUserAdapter.UserViewHolder>(){
+    class UserViewHolder(v: View) : RecyclerView.ViewHolder(v){
+        private val userImage = v.findViewById<ImageButton>(R.id.userImage)
+        private val userName = v.findViewById<TextView>(R.id.userName)
+        private val userEmail = v.findViewById<TextView>(R.id.userEmail)
+        private val acceptButton = v.findViewById<ImageButton>(R.id.acceptUserButton)
+        private val rejectButton = v.findViewById<ImageButton>(R.id.rejectUserButton)
+
+        fun bind(u: User, model: SharedViewModel, targetTrip: Trip) {
+            userImage.setImageResource(R.drawable.photo_default)
+            //TODO return email to showProfileUser in show/hide Interested User
+            // userImage.setOnContextClickListener {}
+            userName.text = u.name
+            userEmail.text = u.email
+            acceptButton.setOnClickListener {
+                model.acceptUser(targetTrip, u)
+            }
+            rejectButton.setOnClickListener {
+                model.updateTripInterestedUser(targetTrip, false, u)
+                //TODO should I prevent this user to express her preferences again?
+            }
+        }
+
+        fun unbind(){
+            acceptButton.setOnClickListener { null }
+            rejectButton.setOnClickListener { null }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
+        val layout = LayoutInflater.from(parent.context).inflate(R.layout.user_item, parent, false)
+        return UserViewHolder(layout)
+    }
+
+    override fun getItemCount() = users.size
+
+    override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
+        holder.bind(users[position], model, targetTrip)
+    }
+
+    override fun onViewRecycled(holder: UserViewHolder) {
+        super.onViewRecycled(holder)
+        holder.unbind()
     }
 }

@@ -23,11 +23,28 @@ class SharedViewModel : ViewModel() {
         }
     }
 
+    private val bookings: MutableLiveData<MutableList<Booking>> by lazy {
+        MutableLiveData<MutableList<Booking>>().also {
+            loadBookings()
+        }
+    }
+
+    // FAKE MAIL USED IN THE APP
     private val user = MutableLiveData<User>()
 
+    // MAIL FROM WHICH YOU ARE LOGGED IN
+    private val account = MutableLiveData<GoogleSignInAccount>()
+
+    //TODO I'm not sure position should be managed by means of sharedViewModel. Bundle is better
     private val position = MutableLiveData(0)
 
-    private val account = MutableLiveData<GoogleSignInAccount>()
+    fun getPosition() : LiveData<Int>{
+        return position
+    }
+
+    fun setPosition(pos: Int){
+        position.value = pos
+    }
 
     fun setUser(user: User) {
         db.collection("users").document(account.value?.email!!).addSnapshotListener { userDB, err ->
@@ -61,35 +78,8 @@ class SharedViewModel : ViewModel() {
         return account.value!!
     }
 
-
-    fun addOrReplaceTrip(newTrip: Trip) {
-        db.collection("trips")
-                .document("${account.value?.email!!}_${position.value}")
-                .set(newTrip)
-                .addOnSuccessListener {
-                    Log.d("AAAA", "DATO AGGIORNATO")
-                }
-                .addOnFailureListener {
-                    Log.d("AAAA", "ERROREEE")
-                }
-    }
-
-    fun getTrips() : LiveData<MutableList<Trip>>{
-        return trips
-    }
-
-    fun getOthersTrips() : LiveData<MutableList<Trip>>{
-        return othersTrips
-    }
-
-    fun getPosition() : LiveData<Int>{
-        return position
-    }
-
-    fun setPosition(pos: Int){
-        position.value = pos
-    }
-
+    //TODO merge loadTrips() with loadOtherTrips()
+    //TODO handle error case
     private fun loadTrips(){         // Do an asynchronous operation to fetch trips.
         db.collection("trips").whereEqualTo("driverEmail",account.value?.email)
                 .addSnapshotListener { tasks, error ->
@@ -110,6 +100,22 @@ class SharedViewModel : ViewModel() {
                 }
     }
 
+    fun addOrReplaceTrip(newTrip: Trip) {
+        newTrip.id = "${account.value?.email!!}_${position.value}"
+        db.collection("trips")
+                .document(newTrip.id)
+                .set(newTrip)
+                .addOnSuccessListener {
+                    Log.d("AAAA", "DATO AGGIORNATO")
+                }
+                .addOnFailureListener {
+                    Log.d("AAAA", "ERROREEE")
+                }
+    }
+
+    fun getTrips() : LiveData<MutableList<Trip>>{
+        return trips
+    }
 
     private fun loadOthersTrips(){         // Do an asynchronous operation to fetch trips.
         db.collection("trips").whereNotEqualTo("driverEmail",account.value?.email)
@@ -130,6 +136,77 @@ class SharedViewModel : ViewModel() {
                         Log.d("OTHERTRIPSAAAA", "success but empty trips")
                 }
     }
+
+    fun getOthersTrips() : LiveData<MutableList<Trip>>{
+        return othersTrips
+    }
+
+    fun userIsInterested(tripToCheck: Trip): Boolean{
+        val myself = User(email = account.value?.email!!, name = account.value?.displayName!!)
+        return tripToCheck.interestedUsers.contains(myself)
+    }
+
+    fun updateTripInterestedUser(tripToUpdate: Trip, isInterested: Boolean, userToUpdate: User?){
+        var userTarget: User? = null
+        val myself = User(email = account.value?.email!!, name = account.value?.displayName!!)
+        userTarget = userToUpdate ?: myself
+
+        if(isInterested)
+            tripToUpdate.interestedUsers.add(userTarget)
+        else
+            tripToUpdate.interestedUsers.remove(userTarget)
+
+        db.collection("trips")
+                .document(tripToUpdate.id)
+                .set(tripToUpdate)
+                .addOnSuccessListener {
+                    Log.d("AAAA", "updateTripInterestedUser with success")
+                }
+                .addOnFailureListener {
+                    Log.d("AAAA", "updateTripInterestedUser with error")
+                }
+    }
+
+    fun acceptUser(targetTrip: Trip, targetUser: User){
+        val booking = Booking(targetTrip.id, targetUser.email)
+        db.collection("bookings")
+                .document("${targetTrip.id}_${targetUser.email}")
+                .set(booking)
+                .addOnSuccessListener {
+                    Log.d("AAAA", "acceptUser with success")
+                    updateTripInterestedUser(targetTrip, false, targetUser)
+                }
+                .addOnFailureListener {
+                    Log.d("AAAA", "acceptUser with error")
+                }
+    }
+
+    private fun loadBookings(){
+        db.collection("bookings")
+                .addSnapshotListener { bookingsDB, error ->
+                    if(error != null)
+                        Log.w("AAAA", "Error loadBookings", error)
+
+                    if(bookingsDB != null) {
+                        val tmpBookings = mutableListOf<Booking>()
+                        for (document in bookingsDB.documents) {
+                            val tmp = document.toObject(Booking::class.java)!!
+                            tmpBookings.add(tmp)
+                        }
+                        bookings.value = tmpBookings
+                    }
+                }
+    }
+
+    fun getBookings() : LiveData<MutableList<Booking>>{
+        return bookings
+    }
+
+    fun bookingIsAccepted(tripID: String): Boolean{
+        val possibleBooking = Booking(tripID, account.value?.email!!)
+        return bookings.value?.contains(possibleBooking)!!
+
+    }
 }
 
 data class User(val name:String = "", val nickname: String = "",
@@ -138,7 +215,8 @@ data class User(val name:String = "", val nickname: String = "",
 
 data class CheckPoint(var location: String = "", var timestamp: String = "")
 
-data class Trip(var carPhotoPath: String? = "",
+data class Trip(var id: String = "",
+                var carPhotoPath: String? = "",
                 var carDescription: String = "",
                 var driverName: String = "",
                 var driverEmail: String = "",
@@ -147,5 +225,8 @@ data class Trip(var carPhotoPath: String? = "",
                 var estimatedDuration: String = "",
                 var availableSeats: Int = 0,
                 var seatPrice: Float = 0f,
-                var description: String = ""
+                var description: String = "",
+                val interestedUsers: MutableList<User> = mutableListOf()
 )
+
+data class Booking(var tripID: String = "", var userEmail: String = "")
