@@ -79,13 +79,29 @@ class ShowProfileFragment : Fragment() {
 
         val deserializedJSON = JSONObject(jsonObject)*/
 
-        model.getUser().observe(viewLifecycleOwner, Observer<User> { userDB->
-            fullNameTV.text = if (userDB.name == "") "Full Name" else userDB.name
-            nicknameTV.text = if (userDB.nickname == "") "Nickname" else userDB.nickname
-            emailTV.text = if (userDB.email == "") "Email" else userDB.email
-            locationTV.text = if (userDB.location == "") "Location" else userDB.location
-            phonenumberTV.text = if (userDB.phone_number == "") "#" else userDB.phone_number
-        })
+        if(arguments?.getString("parent")=="OTHERUSER"){
+            model.getOtherUser().observe(viewLifecycleOwner, Observer<User> { userDB->
+                fullNameTV.text = if (userDB.name == "") "Full Name" else userDB.name
+                nicknameTV.text = if (userDB.nickname == "") "Nickname" else userDB.nickname
+                emailTV.text = if (userDB.email == "") "Email" else userDB.email
+
+                locationTV.visibility = View.GONE
+                phonenumberTV.visibility = View.GONE
+                view.findViewById<ImageView>(R.id.locationIcon).visibility = View.GONE
+                view.findViewById<ImageView>(R.id.phonenumberIcon).visibility = View.GONE
+            })
+        }
+        else{
+            model.getUser().observe(viewLifecycleOwner, Observer<User> { userDB->
+                fullNameTV.text = if (userDB.name == "") "Full Name" else userDB.name
+                nicknameTV.text = if (userDB.nickname == "") "Nickname" else userDB.nickname
+                emailTV.text = if (userDB.email == "") "Email" else userDB.email
+                //TODO: set location & phone number visibility SHOW
+                locationTV.text = if (userDB.location == "") "Location" else userDB.location
+                phonenumberTV.text = if (userDB.phone_number == "") "#" else userDB.phone_number
+            })
+        }
+
 /*
         fullNameTV.text = if (user.name == "") "Full Name" else user.name
         nicknameTV.text = if (user.nickname == "") "Nickname" else user.nickname
@@ -98,7 +114,8 @@ class ShowProfileFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu,inflater)
-        inflater.inflate(R.menu.edit_menu, menu)
+        if(arguments?.getString("parent")=="OTHERUSER")
+            inflater.inflate(R.menu.edit_menu, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

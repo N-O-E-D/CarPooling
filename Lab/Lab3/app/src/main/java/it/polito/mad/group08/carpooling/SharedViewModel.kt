@@ -24,6 +24,7 @@ class SharedViewModel : ViewModel() {
     }
 
     private val user = MutableLiveData<User>()
+    private val otherUser = MutableLiveData<User>()
 
     private val position = MutableLiveData(0)
 
@@ -44,6 +45,10 @@ class SharedViewModel : ViewModel() {
         }
     }
 
+    fun setOtherUser(email: User){
+        //retrieve from db the otherUser, based on information passed
+    }
+
     fun editUser(user: User) {
         db.collection("users").document(account.value?.email!!).set(user)
             .addOnSuccessListener {}
@@ -51,6 +56,10 @@ class SharedViewModel : ViewModel() {
 
     fun getUser(): MutableLiveData<User> {
         return user
+    }
+
+    fun getOtherUser(): MutableLiveData<User> {
+        return otherUser
     }
 
     fun setAccount(account: GoogleSignInAccount) {
