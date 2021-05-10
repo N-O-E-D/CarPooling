@@ -129,30 +129,32 @@ class TripDetailsFragment : Fragment() {
         //TODO would be nice change color too
 
         // FAB (FOR USER != OWNER)
-        if(model.bookingIsAccepted(trip.id)){ //user alredy show favorite and owner accepted
-            showInterestFab.setImageResource(R.drawable.check)
-            showInterestFab.setOnClickListener {
-                Toast.makeText(context, "You already booked this trip!", Toast.LENGTH_LONG).show()
-            }
-        }else{
-            if(model.userIsInterested(trip)){
-                showInterestFab.setImageResource(R.drawable.ic_baseline_clear_24)
+        if(trip.driverEmail != model.getAccount().email){
+            if(model.bookingIsAccepted(trip.id)){ //user alredy show favorite and owner accepted
+                showInterestFab.setImageResource(R.drawable.check)
+                showInterestFab.setOnClickListener {
+                    Toast.makeText(context, "You already booked this trip!", Toast.LENGTH_LONG).show()
+                }
             }else{
-                showInterestFab.setImageResource(R.drawable.ic_baseline_favorite_24)
-            }
-
-            showInterestFab.setOnClickListener {
-                val anim: Animation = AnimationUtils.loadAnimation(showInterestFab.context, R.anim.zoom)
-                anim.duration = 150
-                showInterestFab.startAnimation(anim)
-
-                if(model.userIsInterested(trip)){ // Already interested, but she would to cancel
-                    model.updateTripInterestedUser(trip, false, null)
+                if(model.userIsInterested(trip)){
+                    showInterestFab.setImageResource(R.drawable.ic_baseline_clear_24)
+                }else{
                     showInterestFab.setImageResource(R.drawable.ic_baseline_favorite_24)
                 }
-                else {
-                    model.updateTripInterestedUser(trip, true, null)
-                    showInterestFab.setImageResource(R.drawable.ic_baseline_clear_24)
+
+                showInterestFab.setOnClickListener {
+                    val anim: Animation = AnimationUtils.loadAnimation(showInterestFab.context, R.anim.zoom)
+                    anim.duration = 150
+                    showInterestFab.startAnimation(anim)
+
+                    if(model.userIsInterested(trip)){ // Already interested, but she would to cancel
+                        model.updateTripInterestedUser(trip, false, null)
+                        showInterestFab.setImageResource(R.drawable.ic_baseline_favorite_24)
+                    }
+                    else {
+                        model.updateTripInterestedUser(trip, true, null)
+                        showInterestFab.setImageResource(R.drawable.ic_baseline_clear_24)
+                    }
                 }
             }
         }
@@ -163,6 +165,7 @@ class TripDetailsFragment : Fragment() {
 
         if(trip.interestedUsers.isNotEmpty()){
             interestedUsersShowHideButton.text = getString(R.string.show_interested_users)
+            interestedUsersShowHideButton.visibility = View.VISIBLE
             interestedUsersRecyclerView.adapter = InterestedUserAdapter(trip.interestedUsers, model, trip, findNavController())
         }
         else{
@@ -265,7 +268,10 @@ class TripDetailsFragment : Fragment() {
                         // POPULATE VIEW WITH DATA
                         model.getBookings().observe(viewLifecycleOwner, Observer<MutableList<Booking>> {
                             setTripInformation(tripsDB[parentPosition])
-                            showInterestFab.show()
+                            if(tripsDB[parentPosition].availableSeats > 0)
+                                showInterestFab.show()
+                            else
+                                showInterestFab.hide()
                             interestedUsersRecyclerView.visibility = View.GONE
                             interestedUsersShowHideButton.visibility = View.INVISIBLE
                         })

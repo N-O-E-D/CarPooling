@@ -195,6 +195,16 @@ class SharedViewModel : ViewModel() {
                 .addOnFailureListener {
                     Log.d("AAAA", "acceptUser with error")
                 }
+        targetTrip.availableSeats--
+        db.collection("trips")
+                .document(targetTrip.id)
+                .set(targetTrip)
+                .addOnSuccessListener {
+                    Log.d("AAAA", "update available seat with success")
+                }
+                .addOnFailureListener {
+                    Log.d("AAAA", "Error in update available seat")
+                }
     }
 
     private fun loadBookings(){
