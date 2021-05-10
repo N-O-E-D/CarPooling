@@ -72,8 +72,14 @@ class SharedViewModel : ViewModel() {
         return user
     }
 
-    fun setOtherUser(email: User){
-        //retrieve from db the otherUser, based on information passed
+    fun setOtherUser(email: String){
+        db.collection("users").document(email).addSnapshotListener { userDB, err ->
+            if (err != null)
+                Log.d("BBBB", "Error getting documents.", err)
+            if (userDB != null) {
+                this.otherUser.value = userDB.toObject(User::class.java)
+            }
+        }
     }
 
     fun getOtherUser(): MutableLiveData<User> {
@@ -214,6 +220,7 @@ class SharedViewModel : ViewModel() {
 
     fun bookingIsAccepted(tripID: String): Boolean{
         val possibleBooking = Booking(tripID, account.value?.email!!)
+        Log.d("AAABBB","$possibleBooking")
         return bookings.value?.contains(possibleBooking)!!
 
     }

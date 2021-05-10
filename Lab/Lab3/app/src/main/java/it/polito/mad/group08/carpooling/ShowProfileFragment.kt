@@ -114,7 +114,7 @@ class ShowProfileFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu,inflater)
-        if(arguments?.getString("parent")=="OTHERUSER")
+        if(arguments?.getString("parent")!="OTHERUSER")
             inflater.inflate(R.menu.edit_menu, menu)
     }
 

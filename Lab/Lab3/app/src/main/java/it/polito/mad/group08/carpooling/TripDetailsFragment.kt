@@ -8,9 +8,11 @@ import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -161,7 +163,7 @@ class TripDetailsFragment : Fragment() {
 
         if(trip.interestedUsers.isNotEmpty()){
             interestedUsersShowHideButton.text = getString(R.string.show_interested_users)
-            interestedUsersRecyclerView.adapter = InterestedUserAdapter(trip.interestedUsers, model, trip)
+            interestedUsersRecyclerView.adapter = InterestedUserAdapter(trip.interestedUsers, model, trip, findNavController())
         }
         else{
             interestedUsersShowHideButton.visibility = View.GONE
@@ -359,7 +361,8 @@ class ItemAdapter(private val items: List<Item>) : RecyclerView.Adapter<ItemAdap
 class InterestedUserAdapter(
         private val users: List<User>,
         private val model: SharedViewModel,
-        private val targetTrip: Trip): RecyclerView.Adapter<InterestedUserAdapter.UserViewHolder>(){
+        private val targetTrip: Trip,
+        private val navController: NavController): RecyclerView.Adapter<InterestedUserAdapter.UserViewHolder>(){
     class UserViewHolder(v: View) : RecyclerView.ViewHolder(v){
         private val userImage = v.findViewById<ImageButton>(R.id.userImage)
         private val userName = v.findViewById<TextView>(R.id.userName)
@@ -367,10 +370,13 @@ class InterestedUserAdapter(
         private val acceptButton = v.findViewById<ImageButton>(R.id.acceptUserButton)
         private val rejectButton = v.findViewById<ImageButton>(R.id.rejectUserButton)
 
-        fun bind(u: User, model: SharedViewModel, targetTrip: Trip) {
+        fun bind(u: User, model: SharedViewModel, targetTrip: Trip, navController: NavController) {
             userImage.setImageResource(R.drawable.photo_default)
             //TODO return email to showProfileUser in show/hide Interested User
-            // userImage.setOnContextClickListener {}
+            userImage.setOnClickListener {
+                model.setOtherUser(u.email)
+                navController.navigate(R.id.action_tripDetailsFragment_to_showProfileFragment,bundleOf("parent" to "OTHERUSER"))
+            }
             userName.text = u.name
             userEmail.text = u.email
             acceptButton.setOnClickListener {
@@ -396,7 +402,7 @@ class InterestedUserAdapter(
     override fun getItemCount() = users.size
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        holder.bind(users[position], model, targetTrip)
+        holder.bind(users[position], model, targetTrip, navController)
     }
 
     override fun onViewRecycled(holder: UserViewHolder) {
