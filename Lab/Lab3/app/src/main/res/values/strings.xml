@@ -51,4 +51,14 @@
     <string name="trip_added_successfully">Trip added successfully!</string>
     <string name="trip_edited_successfully">Trip edited successfully!</string>
     <string name="trip_show_interest">Show interest</string>
+
+    <string name="filters">Filters</string>
+    <string name="apply_filters">Apply</string>
+    <string name="cancel_filters">Cancel</string>
+    <string name="reset_filters">Reset</string>
+    <string name="price_range">Price\nRange</string>
+    <string name="departure_address">Departure address</string>
+    <string name="arrival_address">Arrival address</string>
+    <string name="departure_date">Departure date</string>
+    <string name="arrival_date">Arrival date</string>
 </resources>

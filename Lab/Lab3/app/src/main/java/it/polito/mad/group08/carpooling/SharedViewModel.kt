@@ -11,6 +11,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 class SharedViewModel : ViewModel() {
     private var db = FirebaseFirestore.getInstance()
 
+    private val filter = MutableLiveData<Filter>(Filter())
+
     private val trips: MutableLiveData<MutableList<Trip>> by lazy {
         MutableLiveData<MutableList<Trip>>().also {
             loadTrips()
@@ -36,7 +38,7 @@ class SharedViewModel : ViewModel() {
             if (userDB != null) {
                 if (userDB.data == null) {
                     db.collection("users").document(user.email).set(user)
-                        .addOnSuccessListener { this.user.value = user }
+                            .addOnSuccessListener { this.user.value = user }
                 } else {
                     this.user.value = userDB.toObject(User::class.java)
                 }
@@ -46,7 +48,7 @@ class SharedViewModel : ViewModel() {
 
     fun editUser(user: User) {
         db.collection("users").document(account.value?.email!!).set(user)
-            .addOnSuccessListener {}
+                .addOnSuccessListener {}
     }
 
     fun getUser(): MutableLiveData<User> {
@@ -74,29 +76,39 @@ class SharedViewModel : ViewModel() {
                 }
     }
 
-    fun getTrips() : LiveData<MutableList<Trip>>{
+    fun getTrips(): LiveData<MutableList<Trip>> {
         return trips
     }
 
-    fun getOthersTrips() : LiveData<MutableList<Trip>>{
+    fun getOthersTrips(): LiveData<MutableList<Trip>> {
         return othersTrips
     }
 
-    fun getPosition() : LiveData<Int>{
+    fun getPosition(): LiveData<Int> {
         return position
     }
 
-    fun setPosition(pos: Int){
+    fun setPosition(pos: Int) {
         position.value = pos
     }
 
-    private fun loadTrips(){         // Do an asynchronous operation to fetch trips.
-        db.collection("trips").whereEqualTo("driverEmail",account.value?.email)
+    fun setFilter(filter: Filter) {
+        this.filter.value = filter
+        loadOthersTrips()
+    }
+
+    fun getFilter(): Filter?{
+        return filter.value
+    }
+
+
+    private fun loadTrips() {         // Do an asynchronous operation to fetch trips.
+        db.collection("trips").whereEqualTo("driverEmail", account.value?.email)
                 .addSnapshotListener { tasks, error ->
-                    if(error != null)
+                    if (error != null)
                         Log.w("AAAA", "Error getting documents.", error)
 
-                    if(tasks != null) {
+                    if (tasks != null) {
                         val tmpTrips = mutableListOf<Trip>()
                         for (document in tasks.documents) {
                             Log.d("AAAA", document.id + " => " + document.data)
@@ -105,19 +117,20 @@ class SharedViewModel : ViewModel() {
                             tmpTrips.add(tmp)
                         }
                         trips.value = tmpTrips
-                    }else
+                    } else
                         Log.d("AAAA", "success but empty trips")
                 }
     }
 
 
-    private fun loadOthersTrips(){         // Do an asynchronous operation to fetch trips.
-        db.collection("trips").whereNotEqualTo("driverEmail",account.value?.email)
+    private fun loadOthersTrips() {         // Do an asynchronous operation to fetch trips.
+        db.collection("trips")
+                .whereNotEqualTo("driverEmail", account.value?.email)
                 .addSnapshotListener { tasks, error ->
-                    if(error != null)
+                    if (error != null)
                         Log.w("OTHERTRIPSAAAA", "Error getting documents.", error)
 
-                    if(tasks != null) {
+                    if (tasks != null) {
                         val tmpTrips = mutableListOf<Trip>()
                         for (document in tasks.documents) {
                             Log.d("OTHERTRIPSAAAA", document.id + " => " + document.data)
@@ -125,14 +138,37 @@ class SharedViewModel : ViewModel() {
                             Log.d("OTHERTRIPSAAAA", tmp.toString())
                             tmpTrips.add(tmp)
                         }
-                        othersTrips.value = tmpTrips
-                    }else
+                        //othersTrips.value = tmpTrips
+                        othersTrips.value = tmpTrips.filter {
+                            if (filter.value?.departureLocation != null)
+                                it.checkPoints[0].location == filter.value?.departureLocation
+                            else
+                                true
+                        }.filter {
+                            if (filter.value?.arrivalLocation != null)
+                                it.checkPoints[it.checkPoints.size - 1].location == filter.value?.arrivalLocation
+                            else
+                                true
+                        }.filter {
+                            if (filter.value?.departureDate != null)
+                                it.checkPoints[0].timestamp.subSequence(0, 10) == filter.value?.departureDate
+                            else
+                                true
+                        }.filter {
+                            if (filter.value?.arrivalDate != null)
+                                it.checkPoints[it.checkPoints.size - 1].timestamp.subSequence(0, 10)  == filter.value?.arrivalDate
+                            else
+                                true
+                        }.filter {
+                            it.seatPrice <= filter.value?.maxPrice!! && it.seatPrice >= filter.value?.minPrice!!
+                        }.toMutableList()
+                    } else
                         Log.d("OTHERTRIPSAAAA", "success but empty trips")
                 }
     }
 }
 
-data class User(val name:String = "", val nickname: String = "",
+data class User(val name: String = "", val nickname: String = "",
                 val email: String = "", val location: String = "",
                 val phone_number: String = "", val rating: Float = 0f)
 
@@ -149,3 +185,10 @@ data class Trip(var carPhotoPath: String? = "",
                 var seatPrice: Float = 0f,
                 var description: String = ""
 )
+
+data class Filter(var departureLocation: String? = null,
+                  var arrivalLocation: String? = null,
+                  var departureDate: String? = null,
+                  var arrivalDate: String? = null,
+                  var minPrice: Float = 0f,
+                  var maxPrice: Float = 100f)

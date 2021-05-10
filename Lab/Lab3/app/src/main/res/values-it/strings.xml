@@ -52,4 +52,14 @@
     <string name="trip_added_successfully">Viaggio aggiunto!</string>
     <string name="trip_edited_successfully">Viaggio modificato!</string>
     <string name="trip_show_interest">Mostra interesse</string>
+
+    <string name="filters">Filtri</string>
+    <string name="apply_filters">Applica</string>
+    <string name="cancel_filters">Annulla</string>
+    <string name="reset_filters">Reset</string>
+    <string name="price_range">Range\ndi prezzo</string>
+    <string name="departure_address">Indirizzo partenza</string>
+    <string name="arrival_address">Indirizzo arrivo</string>
+    <string name="departure_date">Data partenza</string>
+    <string name="arrival_date">Data arrivo</string>
 </resources>
