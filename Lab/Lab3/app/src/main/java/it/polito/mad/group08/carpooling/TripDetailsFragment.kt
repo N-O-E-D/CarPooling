@@ -133,6 +133,16 @@ class TripDetailsFragment : Fragment() {
 
         // FAB (FOR USER != OWNER)
         if(trip.driverEmail != model.getAccount().email){
+
+            val scrollView = requireView().findViewById<ScrollView>(R.id.scrollView)
+            scrollView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+                if (scrollY > oldScrollY && showInterestFab.visibility == View.VISIBLE) {
+                    showInterestFab.hide()
+                } else if (scrollY < oldScrollY && showInterestFab.visibility != View.VISIBLE) {
+                    showInterestFab.show()
+                }
+            }
+
             if(model.bookingIsAccepted(trip.id)){ //user alredy show favorite and owner accepted
                 showInterestFab.setImageResource(R.drawable.check)
                 showInterestFab.setOnClickListener {
@@ -187,15 +197,6 @@ class TripDetailsFragment : Fragment() {
             }
             j++
         }
-
-        val scrollView = requireView().findViewById<ScrollView>(R.id.scrollView)
-        scrollView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-            if (scrollY > oldScrollY && showInterestFab.visibility == View.VISIBLE) {
-                showInterestFab.hide()
-            } else if (scrollY < oldScrollY && showInterestFab.visibility != View.VISIBLE) {
-                showInterestFab.show()
-            }
-        }
     }
 
     private fun calcDuration(dep: CheckPoint, arr: CheckPoint): String {
@@ -241,6 +242,7 @@ class TripDetailsFragment : Fragment() {
         return v
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -280,7 +282,7 @@ class TripDetailsFragment : Fragment() {
                         // POPULATE VIEW WITH DATA
                         model.getBookings().observe(viewLifecycleOwner, Observer<MutableList<Booking>> {
                             setTripInformation(tripsDB[parentPosition])
-                            if(tripsDB[parentPosition].availableSeats > 0)
+                            if(tripsDB[parentPosition].availableSeats > 0 || model.bookingIsAccepted(tripsDB[parentPosition].id))
                                 showInterestFab.show()
                             else
                                 showInterestFab.hide()

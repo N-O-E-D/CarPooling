@@ -232,6 +232,11 @@ class SharedViewModel : ViewModel() {
                     Log.d("AAAA", "acceptUser with error")
                 }
         targetTrip.availableSeats--
+
+        if(targetTrip.availableSeats == 0){
+            targetTrip.interestedUsers = mutableListOf()
+        }
+
         db.collection("trips")
                 .document(targetTrip.id)
                 .set(targetTrip)
@@ -290,7 +295,7 @@ data class Trip(var id: String = "",
                 var availableSeats: Int = 0,
                 var seatPrice: Float = 0f,
                 var description: String = "",
-                val interestedUsers: MutableList<User> = mutableListOf()
+                var interestedUsers: MutableList<User> = mutableListOf()
 )
 
 data class Booking(var tripID: String = "", var userEmail: String = "")
