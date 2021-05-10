@@ -2,12 +2,14 @@ package it.polito.mad.group08.carpooling
 
 import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -61,6 +63,7 @@ class TripDetailsFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("ShowToast")
     private fun setTripInformation(trip: Trip){
         takeSavedPhoto(trip.carPhotoPath)
@@ -184,6 +187,15 @@ class TripDetailsFragment : Fragment() {
             }
             j++
         }
+
+        val scrollView = requireView().findViewById<ScrollView>(R.id.scrollView)
+        scrollView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            if (scrollY > oldScrollY && showInterestFab.visibility == View.VISIBLE) {
+                showInterestFab.hide()
+            } else if (scrollY < oldScrollY && showInterestFab.visibility != View.VISIBLE) {
+                showInterestFab.show()
+            }
+        }
     }
 
     private fun calcDuration(dep: CheckPoint, arr: CheckPoint): String {
@@ -273,7 +285,7 @@ class TripDetailsFragment : Fragment() {
                             else
                                 showInterestFab.hide()
                             interestedUsersRecyclerView.visibility = View.GONE
-                            interestedUsersShowHideButton.visibility = View.INVISIBLE
+                            interestedUsersShowHideButton.visibility = View.GONE
                         })
                     })
                 }

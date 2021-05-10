@@ -8,7 +8,7 @@
     android:background="@color/constraintLayoutBackground">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/otherstripListRecyclerView"
+        android:id="@+id/othersTripListRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.opengl.Visibility
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -18,6 +19,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
@@ -85,19 +87,18 @@ class TripListFragment : Fragment() {
         return view
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val addFab: FloatingActionButton = view.findViewById(R.id.add_fab)
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (dy > 0 && addFab.visibility == View.VISIBLE) {
-                    addFab.hide()
-                } else if (dy < 0 && addFab.visibility != View.VISIBLE) {
-                    addFab.show()
-                }
+
+        recyclerView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            if (scrollY > oldScrollY && addFab.visibility == View.VISIBLE) {
+                addFab.hide()
+            } else if (scrollY < oldScrollY && addFab.visibility != View.VISIBLE) {
+                addFab.show()
             }
-        })
+        }
 
         addFab.setOnClickListener {
             val anim: Animation = AnimationUtils.loadAnimation(addFab.context, R.anim.zoom)
