@@ -107,7 +107,7 @@
                 tools:targetApi="lollipop" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+                android:id="@+id/tripRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="8dp"
@@ -124,9 +124,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/add_new_stop"
-                app:layout_constraintEnd_toEndOf="@+id/recyclerView"
-                app:layout_constraintStart_toStartOf="@+id/recyclerView"
-                app:layout_constraintTop_toBottomOf="@+id/recyclerView"
+                app:layout_constraintEnd_toEndOf="@+id/tripRecyclerView"
+                app:layout_constraintStart_toStartOf="@+id/tripRecyclerView"
+                app:layout_constraintTop_toBottomOf="@+id/tripRecyclerView"
                 app:strokeColor="#4CAF50"
                 app:strokeWidth="2dp" />
 

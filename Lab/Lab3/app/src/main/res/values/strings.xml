@@ -22,6 +22,10 @@
     <string name="available_seats">Available Seats</string>
     <string name="show_intermediate_stops">Show intermediate stops</string>
     <string name="hide_intermediate_stops">Hide intermediate stops</string>
+    <string name="show_interested_users">Show interested users</string>
+    <string name="hide_interested_users">Hide interested users</string>
+    <string name="user_image">User Image</string>
+    <string name="user_accept_button">Accept</string>
     <string name="estimated_duration_msg">"Estimated duration: %1$s</string>
     <string name="available_seats_msg">"Available Seats: %1$d</string>
     <string name="seat_price_msg">"Price/Person: €%1$s</string>

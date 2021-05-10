@@ -24,8 +24,6 @@ class ShowProfileFragment : Fragment() {
     private lateinit var emailTV : TextView
     private lateinit var locationTV : TextView
     private lateinit var phonenumberTV : TextView
-    //private lateinit var sharedPref : SharedPreferences
-    //private lateinit var user: User
     private val model: SharedViewModel by activityViewModels()
 
     interface InfoManager{
@@ -52,65 +50,41 @@ class ShowProfileFragment : Fragment() {
         locationTV = view.findViewById(R.id.locationTV)
         phonenumberTV = view.findViewById(R.id.phonenumberTV)
 
-        /*sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)!!
+        if(arguments?.getString("parent")=="OTHERUSER"){
+            model.getOtherUser().observe(viewLifecycleOwner, Observer<User> { userDB->
+                fullNameTV.text = if (userDB.name == "") "Full Name" else userDB.name
+                nicknameTV.text = if (userDB.nickname == "") "Nickname" else userDB.nickname
+                emailTV.text = if (userDB.email == "") "Email" else userDB.email
 
-        val jsonObjectDefault = JSONObject()
-        jsonObjectDefault.put("fullName", getString(R.string.fullName))
-        jsonObjectDefault.put("nickname", getString(R.string.nickname))
-        jsonObjectDefault.put("email", getString(R.string.email))
-        jsonObjectDefault.put("location", getString(R.string.location))
-        jsonObjectDefault.put("phonenumber", "#")
-
-        if(arguments != null){
-            with (sharedPref.edit()) {
-                val jsonObject = JSONObject()
-                jsonObject.put("fullName", if(arguments?.getString("fullname")!="") arguments?.getString("fullname") else "Full name")
-                jsonObject.put("nickname", if(arguments?.getString("nickname")!="") arguments?.getString("nickname") else "Nickname")
-                jsonObject.put("email", if(arguments?.getString("email")!="") arguments?.getString("email") else "Email")
-                jsonObject.put("location", if(arguments?.getString("location")!="") arguments?.getString("location") else "Location")
-                jsonObject.put("phonenumber", if(arguments?.getString("phonenumber")!="") arguments?.getString("phonenumber") else "#")
-
-                putString("profile", jsonObject.toString())
-                apply()
-            }
+                locationTV.visibility = View.GONE
+                phonenumberTV.visibility = View.GONE
+                view.findViewById<ImageView>(R.id.locationIcon).visibility = View.GONE
+                view.findViewById<ImageView>(R.id.phonenumberIcon).visibility = View.GONE
+            })
+        }
+        else{
+            model.getUser().observe(viewLifecycleOwner, Observer<User> { userDB->
+                fullNameTV.text = if (userDB.name == "") "Full Name" else userDB.name
+                nicknameTV.text = if (userDB.nickname == "") "Nickname" else userDB.nickname
+                emailTV.text = if (userDB.email == "") "Email" else userDB.email
+                //TODO: set location & phone number visibility SHOW
+                locationTV.text = if (userDB.location == "") "Location" else userDB.location
+                phonenumberTV.text = if (userDB.phone_number == "") "#" else userDB.phone_number
+            })
         }
 
-        val jsonObject = sharedPref.getString("profile", jsonObjectDefault.toString())!!
-
-        val deserializedJSON = JSONObject(jsonObject)*/
-
-        model.getUser().observe(viewLifecycleOwner, Observer<User> { userDB->
-            fullNameTV.text = if (userDB.name == "") "Full Name" else userDB.name
-            nicknameTV.text = if (userDB.nickname == "") "Nickname" else userDB.nickname
-            emailTV.text = if (userDB.email == "") "Email" else userDB.email
-            locationTV.text = if (userDB.location == "") "Location" else userDB.location
-            phonenumberTV.text = if (userDB.phone_number == "") "#" else userDB.phone_number
-        })
-/*
-        fullNameTV.text = if (user.name == "") "Full Name" else user.name
-        nicknameTV.text = if (user.nickname == "") "Nickname" else user.nickname
-        emailTV.text = if (user.email == "") "Email" else user.email
-        locationTV.text = if (user.location == "") "Location" else user.location
-        phonenumberTV.text = if (user.phone_number == "") "#" else user.phone_number
-*/
         retrieveUserImage()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu,inflater)
-        inflater.inflate(R.menu.edit_menu, menu)
+        if(arguments?.getString("parent")!="OTHERUSER")
+            inflater.inflate(R.menu.edit_menu, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.editButton -> {
-                /*val bundle = bundleOf(
-                    "fullname" to fullNameTV.text.toString(),
-                    "nickname" to nicknameTV.text.toString(),
-                    "email" to emailTV.text.toString(),
-                    "location" to locationTV.text.toString(),
-                    "phonenumber" to phonenumberTV.text.toString()
-                )*/
                 findNavController().navigate(R.id.action_showProfileFragment_to_editProfileFragment)
                 true
             }
