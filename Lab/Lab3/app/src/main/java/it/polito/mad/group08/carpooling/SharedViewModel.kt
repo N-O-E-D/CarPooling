@@ -34,22 +34,6 @@ class SharedViewModel : ViewModel() {
     // FAKE MAIL USED IN THE APP
     private val user = MutableLiveData<User>()
 
-    private val otherUser = MutableLiveData<User>()
-
-    // MAIL FROM WHICH YOU ARE LOGGED IN
-    private val account = MutableLiveData<GoogleSignInAccount>()
-
-    //TODO I'm not sure position should be managed by means of sharedViewModel. Bundle is better
-    private val position = MutableLiveData(0)
-
-    fun getPosition() : LiveData<Int>{
-        return position
-    }
-
-    fun setPosition(pos: Int){
-        position.value = pos
-    }
-
     fun setUser(user: User) {
         db.collection("users").document(account.value?.email!!).addSnapshotListener { userDB, err ->
             if (err != null)
@@ -57,7 +41,7 @@ class SharedViewModel : ViewModel() {
             if (userDB != null) {
                 if (userDB.data == null) {
                     db.collection("users").document(user.email).set(user)
-                        .addOnSuccessListener { this.user.value = user }
+                            .addOnSuccessListener { this.user.value = user }
                 } else {
                     this.user.value = userDB.toObject(User::class.java)
                 }
@@ -67,14 +51,16 @@ class SharedViewModel : ViewModel() {
 
     fun editUser(user: User) {
         db.collection("users").document(account.value?.email!!).set(user)
-            .addOnSuccessListener {}
+                .addOnSuccessListener {}
     }
 
     fun getUser(): MutableLiveData<User> {
         return user
     }
 
-    fun setOtherUser(email: String){
+    private val otherUser = MutableLiveData<User>()
+
+    fun setOtherUser(email: String) {
         db.collection("users").document(email).addSnapshotListener { userDB, err ->
             if (err != null)
                 Log.d("BBBB", "Error getting documents.", err)
@@ -88,6 +74,9 @@ class SharedViewModel : ViewModel() {
         return otherUser
     }
 
+    // MAIL FROM WHICH YOU ARE LOGGED IN
+    private val account = MutableLiveData<GoogleSignInAccount>()
+
     fun setAccount(account: GoogleSignInAccount) {
         this.account.value = account
     }
@@ -96,11 +85,8 @@ class SharedViewModel : ViewModel() {
         return account.value!!
     }
 
-    //TODO merge loadTrips() with loadOtherTrips()
-    //TODO handle error case
-    private fun loadTrips(){         // Do an asynchronous operation to fetch trips.
-        db.collection("trips").whereEqualTo("driverEmail",account.value?.email)
-
+    //TODO I'm not sure position should be managed by means of sharedViewModel. Bundle is better
+    private val position = MutableLiveData(0)
 
     fun getPosition(): LiveData<Int> {
         return position
@@ -110,17 +96,19 @@ class SharedViewModel : ViewModel() {
         position.value = pos
     }
 
+
     fun setFilter(filter: Filter) {
         this.filter.value = filter
         loadOthersTrips()
     }
 
-    fun getFilter(): Filter?{
+    fun getFilter(): Filter? {
         return filter.value
     }
 
-
-    fun loadTrips() {         // Do an asynchronous operation to fetch trips.
+    //TODO merge loadTrips() with loadOtherTrips()
+    //TODO handle error case
+    private fun loadTrips() {         // Do an asynchronous operation to fetch trips.
         db.collection("trips").whereEqualTo("driverEmail", account.value?.email)
                 .addSnapshotListener { tasks, error ->
                     if (error != null)
@@ -153,11 +141,11 @@ class SharedViewModel : ViewModel() {
                 }
     }
 
-    fun getTrips() : LiveData<MutableList<Trip>>{
+    fun getTrips(): LiveData<MutableList<Trip>> {
         return trips
     }
 
-    fun loadOthersTrips() {         // Do an asynchronous operation to fetch trips.
+    private fun loadOthersTrips() {         // Do an asynchronous operation to fetch trips.
         db.collection("trips")
                 .whereNotEqualTo("driverEmail", account.value?.email)
                 .addSnapshotListener { tasks, error ->
@@ -190,7 +178,7 @@ class SharedViewModel : ViewModel() {
                                 true
                         }.filter {
                             if (filter.value?.arrivalDate != null)
-                                it.checkPoints[it.checkPoints.size - 1].timestamp.subSequence(0, 10)  == filter.value?.arrivalDate
+                                it.checkPoints[it.checkPoints.size - 1].timestamp.subSequence(0, 10) == filter.value?.arrivalDate
                             else
                                 true
                         }.filter {
@@ -201,21 +189,21 @@ class SharedViewModel : ViewModel() {
                 }
     }
 
-    fun getOthersTrips() : LiveData<MutableList<Trip>>{
+    fun getOthersTrips(): LiveData<MutableList<Trip>> {
         return othersTrips
     }
 
-    fun userIsInterested(tripToCheck: Trip): Boolean{
+    fun userIsInterested(tripToCheck: Trip): Boolean {
         val myself = User(email = account.value?.email!!, name = account.value?.displayName!!)
         return tripToCheck.interestedUsers.contains(myself)
     }
 
-    fun updateTripInterestedUser(tripToUpdate: Trip, isInterested: Boolean, userToUpdate: User?){
+    fun updateTripInterestedUser(tripToUpdate: Trip, isInterested: Boolean, userToUpdate: User?) {
         var userTarget: User? = null
         val myself = User(email = account.value?.email!!, name = account.value?.displayName!!)
         userTarget = userToUpdate ?: myself
 
-        if(isInterested)
+        if (isInterested)
             tripToUpdate.interestedUsers.add(userTarget)
         else
             tripToUpdate.interestedUsers.remove(userTarget)
@@ -231,7 +219,7 @@ class SharedViewModel : ViewModel() {
                 }
     }
 
-    fun acceptUser(targetTrip: Trip, targetUser: User){
+    fun acceptUser(targetTrip: Trip, targetUser: User) {
         val booking = Booking(targetTrip.id, targetUser.email)
         db.collection("bookings")
                 .document("${targetTrip.id}_${targetUser.email}")
@@ -255,13 +243,13 @@ class SharedViewModel : ViewModel() {
                 }
     }
 
-    fun loadBookings(){
+    private fun loadBookings() {
         db.collection("bookings")
                 .addSnapshotListener { bookingsDB, error ->
-                    if(error != null)
+                    if (error != null)
                         Log.w("AAAA", "Error loadBookings", error)
 
-                    if(bookingsDB != null) {
+                    if (bookingsDB != null) {
                         val tmpBookings = mutableListOf<Booking>()
                         for (document in bookingsDB.documents) {
                             val tmp = document.toObject(Booking::class.java)!!
@@ -272,16 +260,17 @@ class SharedViewModel : ViewModel() {
                 }
     }
 
-    fun getBookings() : LiveData<MutableList<Booking>>{
+    fun getBookings(): LiveData<MutableList<Booking>> {
         return bookings
     }
 
-    fun bookingIsAccepted(tripID: String): Boolean{
+    fun bookingIsAccepted(tripID: String): Boolean {
         val possibleBooking = Booking(tripID, account.value?.email!!)
-        Log.d("AAABBB","$possibleBooking")
+        Log.d("AAABBB", "$possibleBooking")
         return bookings.value?.contains(possibleBooking)!!
 
     }
+
 }
 
 data class User(val name: String = "", val nickname: String = "",

@@ -50,7 +50,7 @@ class OthersTripListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_others_trip_list, container, false)
         emptyTextView = view.findViewById(R.id.emptyTextView)
-        recyclerView = view.findViewById(R.id.otherstripListRecyclerView)
+        recyclerView = view.findViewById(R.id.othersTripListRecyclerView)
 
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
