@@ -32,6 +32,8 @@ class SharedViewModel : ViewModel() {
     // FAKE MAIL USED IN THE APP
     private val user = MutableLiveData<User>()
 
+    private val otherUser = MutableLiveData<User>()
+
     // MAIL FROM WHICH YOU ARE LOGGED IN
     private val account = MutableLiveData<GoogleSignInAccount>()
 
@@ -68,6 +70,14 @@ class SharedViewModel : ViewModel() {
 
     fun getUser(): MutableLiveData<User> {
         return user
+    }
+
+    fun setOtherUser(email: User){
+        //retrieve from db the otherUser, based on information passed
+    }
+
+    fun getOtherUser(): MutableLiveData<User> {
+        return otherUser
     }
 
     fun setAccount(account: GoogleSignInAccount) {
