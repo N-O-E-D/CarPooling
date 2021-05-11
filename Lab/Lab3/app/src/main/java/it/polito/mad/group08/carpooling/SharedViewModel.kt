@@ -236,9 +236,6 @@ class SharedViewModel : ViewModel() {
             }
             tripToUpdate.interestedUsers.remove(userTarget)
         }
-        if(accepted){
-            tripToUpdate.availableSeats++
-        }
 
         if(accepted)
             tripToUpdate.availableSeats++
