@@ -17,6 +17,7 @@
     <string name="car_name">Nome Macchina</string>
     <string name="driver_name">Nome Guidatore</string>
     <string name="show_hide">Mostra Nascondi</string>
+    <string name="delete_trip">Cancella viaggio</string>
     <string name="estimated_duration">Stima della durata</string>
     <string name="trip_description">Descrizione del viaggio</string>
     <string name="seat_price">Costo posto</string>
@@ -41,6 +42,8 @@
     <string name="date">Data</string>
 
     <string name="changes_applied_successfully">Modifiche applicate correttamente</string>
+    <string name="delete_trip_title">Cancella viaggio</string>
+    <string name="delete_trip_confirm">Sei sicuro di vole eliminare questo viaggio?</string>
 
     <!--Nav header sctrings-->
     <string name="navigation_drawer_open">Apri menu</string>

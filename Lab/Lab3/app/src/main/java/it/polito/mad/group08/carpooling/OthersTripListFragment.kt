@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.core.os.bundleOf
@@ -37,7 +38,15 @@ class OthersTripListFragment : Fragment() {
     private lateinit var emptyTextView: TextView
     private val model: SharedViewModel by activityViewModels()
 
-    private fun navigationClickListener(mode: Int, trip: Trip?, position: Int?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activity?.onBackPressedDispatcher?.addCallback(this, object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                activity!!.finish()
+            }
+        })
+    }
+        private fun navigationClickListener(mode: Int, trip: Trip?, position: Int?) {
         val navController = findNavController()
         if (mode == CARD_CLICKED && trip != null) {
             model.setPosition(position!!)

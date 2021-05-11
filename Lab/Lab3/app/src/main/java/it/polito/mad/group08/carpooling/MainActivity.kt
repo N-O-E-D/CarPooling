@@ -15,10 +15,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.material.navigation.NavigationView
-import org.json.JSONObject
-import java.io.FileNotFoundException
 
 
 class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
@@ -26,7 +23,6 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
     private lateinit var headerMainInfo: TextView
     private lateinit var headerSecInfo: TextView
     private lateinit var headerProfilePhoto: ImageView
-    //private lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +33,7 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         appBarConfiguration = AppBarConfiguration(
-                setOf(R.id.showProfileFragment, R.id.tripListFragment, R.id.othersTripListFragment), drawerLayout
+                setOf(R.id.tripListFragment, R.id.othersTripListFragment), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
@@ -45,14 +41,11 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
         headerMainInfo = navigationView.getHeaderView(0).findViewById(R.id.nav_main_info)
         headerSecInfo = navigationView.getHeaderView(0).findViewById(R.id.nav_sec_info)
         headerProfilePhoto = navigationView.getHeaderView(0).findViewById(R.id.nav_profile_photo)
-        /*sharedPref = getPreferences(Context.MODE_PRIVATE)!!
 
-        val jsonObject = sharedPref.getString("profile", null)
-        if (jsonObject != null) {
-            val deserializedJSON = JSONObject(jsonObject)
-            updateTexts(deserializedJSON.getString("fullName"), deserializedJSON.getString("email"))
-
-        }*/
+        headerProfilePhoto.setOnClickListener {
+            navController.navigate(R.id.showProfileFragment)
+            drawerLayout.closeDrawers()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -68,12 +61,4 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
     override fun updatePhoto(bitmap: Bitmap) {
         headerProfilePhoto.setImageBitmap(bitmap)
     }
-
-    /*override fun onBackPressed() {
-        val fragment =
-                this.supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container)
-        (fragment as? IOnBackPressed)?.onBackPressed()?.not()?.let {
-            super.onBackPressed()
-        }
-    }*/
 }
