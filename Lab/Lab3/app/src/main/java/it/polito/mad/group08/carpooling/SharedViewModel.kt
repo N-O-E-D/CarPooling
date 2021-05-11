@@ -193,6 +193,15 @@ class SharedViewModel : ViewModel() {
         return othersTrips
     }
 
+    fun deleteTrip(tripID: String){
+        db.collection("trips").document(tripID).delete().addOnSuccessListener {
+            Log.d("AAAA", "TRIP DELETED SUCCESSFULLY")
+        }
+        .addOnFailureListener {
+            Log.d("AAAA", "ERROR DELETING TRIP")
+         }
+    }
+
     fun userIsInterested(tripToCheck: Trip): Boolean {
         val myself = User(email = account.value?.email!!, name = account.value?.displayName!!)
         return tripToCheck.interestedUsers.contains(myself)
