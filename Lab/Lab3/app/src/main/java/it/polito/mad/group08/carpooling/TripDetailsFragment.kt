@@ -206,6 +206,11 @@ class TripDetailsFragment : Fragment() {
             }
             j++
         }
+
+        //DELETE OPTION (ONLY FOR OWNER)
+        deleteTripButton.setOnClickListener{
+            showAlertDialog()
+        }
     }
 
     private fun calcDuration(dep: CheckPoint, arr: CheckPoint): String {
@@ -299,6 +304,7 @@ class TripDetailsFragment : Fragment() {
                                         showInterestFab.hide()
                                     interestedUsersRecyclerView.visibility = View.GONE
                                     interestedUsersShowHideButton.visibility = View.GONE
+                                    deleteTripButton.visibility = View.GONE
                                 })
                             })
                 }
@@ -307,11 +313,6 @@ class TripDetailsFragment : Fragment() {
                 }
             }
         })
-
-        deleteTripButton.setOnClickListener{
-            showAlertDialog()
-        }
-
     }
 
     private fun showAlertDialog(){
