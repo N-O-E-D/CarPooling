@@ -128,7 +128,6 @@ class TripDetailsFragment : Fragment() {
         seatPrice.text = getString(R.string.seat_price_msg, trip.seatPrice.toString())
         description.text = trip.description
 
-        //TODO do it in landscape
         //TODO would be nice change color too
 
         // FAB (FOR USER != OWNER)
@@ -179,7 +178,12 @@ class TripDetailsFragment : Fragment() {
         if(trip.interestedUsers.isNotEmpty()){
             interestedUsersShowHideButton.text = getString(R.string.show_interested_users)
             interestedUsersShowHideButton.visibility = View.VISIBLE
-            interestedUsersRecyclerView.adapter = InterestedUserAdapter(trip.interestedUsers, model, trip, findNavController())
+            interestedUsersRecyclerView.adapter = InterestedUserAdapter(
+                    trip.interestedUsers,
+                    model,
+                    trip,
+                    findNavController()
+            )
         }
         else{
             interestedUsersShowHideButton.visibility = View.GONE
@@ -257,7 +261,7 @@ class TripDetailsFragment : Fragment() {
         seatPrice = view.findViewById(R.id.seatPrice)
         description = view.findViewById(R.id.tripDescription)
 
-        intermediateTripsShowHideButton = view.findViewById<Button>(R.id.showHideIntermediateSteps)
+        intermediateTripsShowHideButton = view.findViewById(R.id.showHideIntermediateSteps)
 
         showInterestFab = view.findViewById(R.id.show_interest_fab)
 
@@ -271,25 +275,25 @@ class TripDetailsFragment : Fragment() {
                 MY_TRIPS_IS_PARENT -> {
                     model.getTrips()
                             .observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
-                        // POPULATE VIEW WITH DATA
-                        setTripInformation(tripsDB[parentPosition])
-                        showInterestFab.hide()
-                    })
+                                // POPULATE VIEW WITH DATA
+                                setTripInformation(tripsDB[parentPosition])
+                                showInterestFab.hide()
+                            })
                 }
                 OTHER_TRIPS_PARENT -> {
                     model.getOthersTrips()
                             .observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
-                        // POPULATE VIEW WITH DATA
-                        model.getBookings().observe(viewLifecycleOwner, Observer<MutableList<Booking>> {
-                            setTripInformation(tripsDB[parentPosition])
-                            if(tripsDB[parentPosition].availableSeats > 0 || model.bookingIsAccepted(tripsDB[parentPosition].id))
-                                showInterestFab.show()
-                            else
-                                showInterestFab.hide()
-                            interestedUsersRecyclerView.visibility = View.GONE
-                            interestedUsersShowHideButton.visibility = View.GONE
-                        })
-                    })
+                                // POPULATE VIEW WITH DATA
+                                model.getBookings().observe(viewLifecycleOwner, Observer<MutableList<Booking>> {
+                                    setTripInformation(tripsDB[parentPosition])
+                                    if(tripsDB[parentPosition].availableSeats > 0 || model.bookingIsAccepted(tripsDB[parentPosition].id))
+                                        showInterestFab.show()
+                                    else
+                                        showInterestFab.hide()
+                                    interestedUsersRecyclerView.visibility = View.GONE
+                                    interestedUsersShowHideButton.visibility = View.GONE
+                                })
+                            })
                 }
                 else -> {
                     Toast.makeText(context, "Error in laod the Trip!", Toast.LENGTH_SHORT).show()
@@ -382,7 +386,8 @@ class InterestedUserAdapter(
         private val users: List<User>,
         private val model: SharedViewModel,
         private val targetTrip: Trip,
-        private val navController: NavController): RecyclerView.Adapter<InterestedUserAdapter.UserViewHolder>(){
+        private val navController: NavController
+): RecyclerView.Adapter<InterestedUserAdapter.UserViewHolder>(){
     class UserViewHolder(v: View) : RecyclerView.ViewHolder(v){
         private val userImage = v.findViewById<ImageButton>(R.id.userImage)
         private val userName = v.findViewById<TextView>(R.id.userName)
@@ -392,10 +397,12 @@ class InterestedUserAdapter(
 
         fun bind(u: User, model: SharedViewModel, targetTrip: Trip, navController: NavController) {
             userImage.setImageResource(R.drawable.photo_default)
-            //TODO return email to showProfileUser in show/hide Interested User
             userImage.setOnClickListener {
                 model.setOtherUser(u.email)
-                navController.navigate(R.id.action_tripDetailsFragment_to_showProfileFragment,bundleOf("parent" to "OTHERUSER"))
+                navController.navigate(
+                        R.id.action_tripDetailsFragment_to_showProfileFragment,
+                        bundleOf("parent" to "OTHERUSER")
+                )
             }
             userName.text = u.name
             userEmail.text = u.email
@@ -404,7 +411,6 @@ class InterestedUserAdapter(
             }
             rejectButton.setOnClickListener {
                 model.updateTripInterestedUser(targetTrip, false, u)
-                //TODO should I prevent this user to express her preferences again?
             }
         }
 
@@ -415,7 +421,15 @@ class InterestedUserAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        val layout = LayoutInflater.from(parent.context).inflate(R.layout.user_item, parent, false)
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val layout = when (viewType) {
+            R.layout.user_accepted_item -> {
+                layoutInflater.inflate(R.layout.user_accepted_item, parent, false)
+            }
+            else -> { //R.layout.user_item -> {
+                layoutInflater.inflate(R.layout.user_item, parent, false)
+            }
+        }
         return UserViewHolder(layout)
     }
 
@@ -428,5 +442,13 @@ class InterestedUserAdapter(
     override fun onViewRecycled(holder: UserViewHolder) {
         super.onViewRecycled(holder)
         holder.unbind()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        if(users[position].isAccepted){
+            return R.layout.user_accepted_item
+        }
+
+        return R.layout.user_item
     }
 }
