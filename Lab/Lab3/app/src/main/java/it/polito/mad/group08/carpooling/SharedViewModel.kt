@@ -193,20 +193,52 @@ class SharedViewModel : ViewModel() {
         return othersTrips
     }
 
+    fun deleteTrip(tripID: String){
+        db.collection("trips").document(tripID).delete().addOnSuccessListener {
+            Log.d("AAAA", "TRIP DELETED SUCCESSFULLY")
+        }
+        .addOnFailureListener {
+            Log.d("AAAA", "ERROR DELETING TRIP")
+         }
+    }
+
     fun userIsInterested(tripToCheck: Trip): Boolean {
         val myself = User(email = account.value?.email!!, name = account.value?.displayName!!)
         return tripToCheck.interestedUsers.contains(myself)
+    }
+
+    fun removeFromBookings(bookingID: String){
+        db.collection("bookings")
+                .document(bookingID)
+                .delete()
+                .addOnSuccessListener {
+                    Log.d("AAAA", "removeFromBooking $bookingID with success")
+                }.addOnFailureListener {
+                    Log.d("AAAA", "removeFromBooking $bookingID with success")
+                }
     }
 
     fun updateTripInterestedUser(tripToUpdate: Trip, isInterested: Boolean, userToUpdate: User?) {
         var userTarget: User? = null
         val myself = User(email = account.value?.email!!, name = account.value?.displayName!!)
         userTarget = userToUpdate ?: myself
+        var accepted = false
 
         if (isInterested)
             tripToUpdate.interestedUsers.add(userTarget)
-        else
+        else {
+            tripToUpdate.interestedUsers.map {
+                if(it.email == userTarget.email && it.isAccepted){
+                    it.isAccepted = false //it's useless because it will be removed from the list
+                    accepted = true
+                    removeFromBookings("${tripToUpdate.id}_${userTarget.email}")
+                }
+            }
             tripToUpdate.interestedUsers.remove(userTarget)
+        }
+
+        if(accepted)
+            tripToUpdate.availableSeats++
 
         db.collection("trips")
                 .document(tripToUpdate.id)
@@ -226,25 +258,34 @@ class SharedViewModel : ViewModel() {
                 .set(booking)
                 .addOnSuccessListener {
                     Log.d("AAAA", "acceptUser with success")
-                    updateTripInterestedUser(targetTrip, false, targetUser)
+                    targetTrip.interestedUsers.map {
+                        if(it.email == targetUser.email)
+                            it.isAccepted = true
+                    }
+
+                    targetTrip.availableSeats--
+
+                    if(targetTrip.availableSeats <= 0){
+                        val tmpInterestedUsers = mutableListOf<User>()
+                        targetTrip.interestedUsers.map {
+                            if (it.isAccepted)
+                                tmpInterestedUsers.add(it)
+                        }
+                        targetTrip.interestedUsers = tmpInterestedUsers
+                    }
+
+                    db.collection("trips")
+                            .document(targetTrip.id)
+                            .set(targetTrip)
+                            .addOnSuccessListener {
+                                Log.d("AAAA", "update available seat with success")
+                            }
+                            .addOnFailureListener {
+                                Log.d("AAAA", "Error in update available seat")
+                            }
                 }
                 .addOnFailureListener {
                     Log.d("AAAA", "acceptUser with error")
-                }
-        targetTrip.availableSeats--
-
-        if(targetTrip.availableSeats == 0){
-            targetTrip.interestedUsers = mutableListOf()
-        }
-
-        db.collection("trips")
-                .document(targetTrip.id)
-                .set(targetTrip)
-                .addOnSuccessListener {
-                    Log.d("AAAA", "update available seat with success")
-                }
-                .addOnFailureListener {
-                    Log.d("AAAA", "Error in update available seat")
                 }
     }
 
@@ -280,7 +321,8 @@ class SharedViewModel : ViewModel() {
 
 data class User(val name: String = "", val nickname: String = "",
                 val email: String = "", val location: String = "",
-                val phone_number: String = "", val rating: Float = 0f)
+                val phone_number: String = "", val rating: Float = 0f,
+                var isAccepted: Boolean = false)
 
 data class CheckPoint(var location: String = "", var timestamp: String = "")
 

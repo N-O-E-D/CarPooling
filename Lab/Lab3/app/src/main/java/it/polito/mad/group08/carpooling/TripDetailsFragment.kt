@@ -1,6 +1,7 @@
 package it.polito.mad.group08.carpooling
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -18,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
@@ -25,7 +28,7 @@ import java.util.*
 
 
 const val MY_TRIPS_IS_PARENT = "TRIPS"
-const val OTHER_TRIPS_PARENT = "OTHERS_TRIPS"
+const val OTHER_TRIPS_IS_PARENT = "OTHERS_TRIPS"
 
 class TripDetailsFragment : Fragment() {
     private lateinit var carPhotoPath: ImageView
@@ -45,6 +48,9 @@ class TripDetailsFragment : Fragment() {
     private lateinit var description: TextView
 
     private lateinit var showInterestFab: FloatingActionButton
+
+    private lateinit var deleteTripButton: Button
+    private var currentTrip: Trip? = null
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -128,7 +134,6 @@ class TripDetailsFragment : Fragment() {
         seatPrice.text = getString(R.string.seat_price_msg, trip.seatPrice.toString())
         description.text = trip.description
 
-        //TODO do it in landscape
         //TODO would be nice change color too
 
         // FAB (FOR USER != OWNER)
@@ -179,7 +184,12 @@ class TripDetailsFragment : Fragment() {
         if(trip.interestedUsers.isNotEmpty()){
             interestedUsersShowHideButton.text = getString(R.string.show_interested_users)
             interestedUsersShowHideButton.visibility = View.VISIBLE
-            interestedUsersRecyclerView.adapter = InterestedUserAdapter(trip.interestedUsers, model, trip, findNavController())
+            interestedUsersRecyclerView.adapter = InterestedUserAdapter(
+                    trip.interestedUsers,
+                    model,
+                    trip,
+                    findNavController()
+            )
         }
         else{
             interestedUsersShowHideButton.visibility = View.GONE
@@ -196,6 +206,11 @@ class TripDetailsFragment : Fragment() {
                 interestedUsersRecyclerView.visibility = View.GONE
             }
             j++
+        }
+
+        //DELETE OPTION (ONLY FOR OWNER)
+        deleteTripButton.setOnClickListener{
+            showAlertDialog()
         }
     }
 
@@ -257,12 +272,14 @@ class TripDetailsFragment : Fragment() {
         seatPrice = view.findViewById(R.id.seatPrice)
         description = view.findViewById(R.id.tripDescription)
 
-        intermediateTripsShowHideButton = view.findViewById<Button>(R.id.showHideIntermediateSteps)
+        intermediateTripsShowHideButton = view.findViewById(R.id.showHideIntermediateSteps)
 
         showInterestFab = view.findViewById(R.id.show_interest_fab)
 
         interestedUsersRecyclerView = view.findViewById(R.id.interestedUserRecyclerView)
         interestedUsersShowHideButton = view.findViewById(R.id.showHideInterestedUsers)
+
+        deleteTripButton = view.findViewById(R.id.deleteTripButton)
 
         // INITIALIZE DATA
         //NOTE: please notice the nested call. You can access parentPosition only when it's returned
@@ -271,25 +288,31 @@ class TripDetailsFragment : Fragment() {
                 MY_TRIPS_IS_PARENT -> {
                     model.getTrips()
                             .observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
-                        // POPULATE VIEW WITH DATA
-                        setTripInformation(tripsDB[parentPosition])
-                        showInterestFab.hide()
-                    })
+                                // POPULATE VIEW WITH DATA
+                                setTripInformation(tripsDB[parentPosition])
+                                showInterestFab.hide()
+                            })
                 }
-                OTHER_TRIPS_PARENT -> {
+                OTHER_TRIPS_IS_PARENT -> {
                     model.getOthersTrips()
                             .observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
-                        // POPULATE VIEW WITH DATA
-                        model.getBookings().observe(viewLifecycleOwner, Observer<MutableList<Booking>> {
-                            setTripInformation(tripsDB[parentPosition])
-                            if(tripsDB[parentPosition].availableSeats > 0 || model.bookingIsAccepted(tripsDB[parentPosition].id))
-                                showInterestFab.show()
-                            else
-                                showInterestFab.hide()
-                            interestedUsersRecyclerView.visibility = View.GONE
-                            interestedUsersShowHideButton.visibility = View.GONE
-                        })
-                    })
+                                // POPULATE VIEW WITH DATA
+                                model.getBookings().observe(viewLifecycleOwner, Observer<MutableList<Booking>> {
+                                    if((currentTrip!= null) && (tripsDB[parentPosition].id != currentTrip!!.id))
+                                        activity?.onBackPressed()
+
+                                    currentTrip = tripsDB[parentPosition]
+
+                                    setTripInformation(tripsDB[parentPosition])
+                                    if(tripsDB[parentPosition].availableSeats > 0 || model.bookingIsAccepted(tripsDB[parentPosition].id))
+                                        showInterestFab.show()
+                                    else
+                                        showInterestFab.hide()
+                                    interestedUsersRecyclerView.visibility = View.GONE
+                                    interestedUsersShowHideButton.visibility = View.GONE
+                                    deleteTripButton.visibility = View.GONE
+                                })
+                            })
                 }
                 else -> {
                     Toast.makeText(context, "Error in laod the Trip!", Toast.LENGTH_SHORT).show()
@@ -297,6 +320,38 @@ class TripDetailsFragment : Fragment() {
             }
         })
     }
+
+    private fun showAlertDialog(){
+        MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.delete_trip_title))
+                .setMessage(getString(R.string.delete_trip_confirm))
+                .setPositiveButton(android.R.string.ok) { dialog, which ->
+                    Toast.makeText(requireContext(),android.R.string.ok, Toast.LENGTH_SHORT).show()
+                    activity?.onBackPressed()
+
+                    //delete this trip
+                    model.getPosition().observe(viewLifecycleOwner, Observer<Int> {parentPosition ->
+                        model.getTrips().observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
+                            tripsDB[parentPosition].interestedUsers.forEach { item ->
+                                if(item.isAccepted){
+                                    model.removeFromBookings("${tripsDB[parentPosition].id}_${item.email}")
+                                }
+                            }
+                            //tripsDB[parentPosition].interestedUsers.isAccepted -> lista di utenti accettati -> eliminare da db.bookings
+                            //in questo modo db.collection("bookings").document("${targetTrip.id}_${targetUser.email}")
+                            tripsDB[parentPosition].interestedUsers = mutableListOf()  //infine rimpiazza tutto con una lista vuota
+                            model.deleteTrip("${tripsDB[parentPosition].id}")
+                        })
+                    })
+
+                }
+                .setNegativeButton(android.R.string.cancel) { dialog, which ->
+                    Toast.makeText(requireContext(),android.R.string.cancel, Toast.LENGTH_SHORT).show()
+
+                }
+                .show()
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         if(arguments?.getString("parent").equals(MY_TRIPS_IS_PARENT))
@@ -382,7 +437,8 @@ class InterestedUserAdapter(
         private val users: List<User>,
         private val model: SharedViewModel,
         private val targetTrip: Trip,
-        private val navController: NavController): RecyclerView.Adapter<InterestedUserAdapter.UserViewHolder>(){
+        private val navController: NavController
+): RecyclerView.Adapter<InterestedUserAdapter.UserViewHolder>(){
     class UserViewHolder(v: View) : RecyclerView.ViewHolder(v){
         private val userImage = v.findViewById<ImageButton>(R.id.userImage)
         private val userName = v.findViewById<TextView>(R.id.userName)
@@ -392,10 +448,12 @@ class InterestedUserAdapter(
 
         fun bind(u: User, model: SharedViewModel, targetTrip: Trip, navController: NavController) {
             userImage.setImageResource(R.drawable.photo_default)
-            //TODO return email to showProfileUser in show/hide Interested User
             userImage.setOnClickListener {
                 model.setOtherUser(u.email)
-                navController.navigate(R.id.action_tripDetailsFragment_to_showProfileFragment,bundleOf("parent" to "OTHERUSER"))
+                navController.navigate(
+                        R.id.action_tripDetailsFragment_to_showProfileFragment,
+                        bundleOf("parent" to "OTHERUSER")
+                )
             }
             userName.text = u.name
             userEmail.text = u.email
@@ -404,7 +462,6 @@ class InterestedUserAdapter(
             }
             rejectButton.setOnClickListener {
                 model.updateTripInterestedUser(targetTrip, false, u)
-                //TODO should I prevent this user to express her preferences again?
             }
         }
 
@@ -415,7 +472,15 @@ class InterestedUserAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        val layout = LayoutInflater.from(parent.context).inflate(R.layout.user_item, parent, false)
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val layout = when (viewType) {
+            R.layout.user_accepted_item -> {
+                layoutInflater.inflate(R.layout.user_accepted_item, parent, false)
+            }
+            else -> { //R.layout.user_item -> {
+                layoutInflater.inflate(R.layout.user_item, parent, false)
+            }
+        }
         return UserViewHolder(layout)
     }
 
@@ -428,5 +493,13 @@ class InterestedUserAdapter(
     override fun onViewRecycled(holder: UserViewHolder) {
         super.onViewRecycled(holder)
         holder.unbind()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        if(users[position].isAccepted){
+            return R.layout.user_accepted_item
+        }
+
+        return R.layout.user_item
     }
 }
