@@ -28,7 +28,7 @@ import java.util.*
 
 
 const val MY_TRIPS_IS_PARENT = "TRIPS"
-const val OTHER_TRIPS_PARENT = "OTHERS_TRIPS"
+const val OTHER_TRIPS_IS_PARENT = "OTHERS_TRIPS"
 
 class TripDetailsFragment : Fragment() {
     private lateinit var carPhotoPath: ImageView
@@ -50,6 +50,7 @@ class TripDetailsFragment : Fragment() {
     private lateinit var showInterestFab: FloatingActionButton
 
     private lateinit var deleteTripButton: Button
+    private var currentTrip: Trip? = null
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -292,11 +293,15 @@ class TripDetailsFragment : Fragment() {
                                 showInterestFab.hide()
                             })
                 }
-                OTHER_TRIPS_PARENT -> {
+                OTHER_TRIPS_IS_PARENT -> {
                     model.getOthersTrips()
                             .observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
                                 // POPULATE VIEW WITH DATA
                                 model.getBookings().observe(viewLifecycleOwner, Observer<MutableList<Booking>> {
+                                    if((currentTrip!= null) && (tripsDB[parentPosition].id != currentTrip!!.id))
+                                        activity?.onBackPressed()
+
+                                    currentTrip = tripsDB[parentPosition]
                                     setTripInformation(tripsDB[parentPosition])
                                     if(tripsDB[parentPosition].availableSeats > 0 || model.bookingIsAccepted(tripsDB[parentPosition].id))
                                         showInterestFab.show()
@@ -321,7 +326,7 @@ class TripDetailsFragment : Fragment() {
                 .setMessage(getString(R.string.delete_trip_confirm))
                 .setPositiveButton(android.R.string.ok) { dialog, which ->
                     Toast.makeText(requireContext(),android.R.string.ok, Toast.LENGTH_SHORT).show()
-                    activity?.onBackPressed()
+                    activity?.onBackPressed()  //vado indietro
 
                     //delete this trip
                     model.getPosition().observe(viewLifecycleOwner, Observer<Int> {parentPosition ->

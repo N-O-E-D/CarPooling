@@ -222,6 +222,7 @@ class SharedViewModel : ViewModel() {
         var userTarget: User? = null
         val myself = User(email = account.value?.email!!, name = account.value?.displayName!!)
         userTarget = userToUpdate ?: myself
+        var accepted = false
 
         if (isInterested)
             tripToUpdate.interestedUsers.add(userTarget)
@@ -229,10 +230,14 @@ class SharedViewModel : ViewModel() {
             tripToUpdate.interestedUsers.map {
                 if(it.email == userTarget.email && it.isAccepted){
                     it.isAccepted = false //it's useless because it will be removed from the list
+                    accepted = true
                     removeFromBookings("${tripToUpdate.id}_${userTarget.email}")
                 }
             }
             tripToUpdate.interestedUsers.remove(userTarget)
+        }
+        if(accepted){
+            tripToUpdate.availableSeats++
         }
 
         db.collection("trips")
