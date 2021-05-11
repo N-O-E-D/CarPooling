@@ -193,6 +193,15 @@ class SharedViewModel : ViewModel() {
         return othersTrips
     }
 
+    fun deleteTrip(tripID: String){
+        db.collection("trips").document(tripID).delete().addOnSuccessListener {
+            Log.d("AAAA", "TRIP DELETED SUCCESSFULLY")
+        }
+        .addOnFailureListener {
+            Log.d("AAAA", "ERROR DELETING TRIP")
+         }
+    }
+
     fun userIsInterested(tripToCheck: Trip): Boolean {
         val myself = User(email = account.value?.email!!, name = account.value?.displayName!!)
         return tripToCheck.interestedUsers.contains(myself)
@@ -280,7 +289,8 @@ class SharedViewModel : ViewModel() {
 
 data class User(val name: String = "", val nickname: String = "",
                 val email: String = "", val location: String = "",
-                val phone_number: String = "", val rating: Float = 0f)
+                val phone_number: String = "", val rating: Float = 0f,
+                var isAccepted: Boolean = false)
 
 data class CheckPoint(var location: String = "", var timestamp: String = "")
 

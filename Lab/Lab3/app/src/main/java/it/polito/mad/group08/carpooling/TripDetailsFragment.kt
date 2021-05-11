@@ -1,6 +1,7 @@
 package it.polito.mad.group08.carpooling
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -18,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
@@ -45,6 +48,8 @@ class TripDetailsFragment : Fragment() {
     private lateinit var description: TextView
 
     private lateinit var showInterestFab: FloatingActionButton
+
+    private lateinit var deleteTripButton: Button
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -264,6 +269,8 @@ class TripDetailsFragment : Fragment() {
         interestedUsersRecyclerView = view.findViewById(R.id.interestedUserRecyclerView)
         interestedUsersShowHideButton = view.findViewById(R.id.showHideInterestedUsers)
 
+        deleteTripButton = view.findViewById(R.id.deleteTripButton)
+
         // INITIALIZE DATA
         //NOTE: please notice the nested call. You can access parentPosition only when it's returned
         model.getPosition().observe(viewLifecycleOwner, Observer<Int> {parentPosition ->
@@ -296,7 +303,44 @@ class TripDetailsFragment : Fragment() {
                 }
             }
         })
+
+        deleteTripButton.setOnClickListener{
+            showAlertDialog()
+        }
+
     }
+
+    private fun showAlertDialog(){
+        MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.delete_trip_title))
+                .setMessage(getString(R.string.delete_trip_confirm))
+                .setPositiveButton(android.R.string.ok) { dialog, which ->
+                    Toast.makeText(requireContext(),android.R.string.ok, Toast.LENGTH_SHORT).show()
+                    activity?.onBackPressed()
+
+                    //delete this trip
+                    model.getPosition().observe(viewLifecycleOwner, Observer<Int> {parentPosition ->
+                        model.getTrips().observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
+                            tripsDB[parentPosition].interestedUsers.forEach { item ->
+                                if(item.isAccepted){
+                                    model.removeFromBookings("${tripsDB[parentPosition].id}_${item.email}")
+                                }
+                            }
+                            //tripsDB[parentPosition].interestedUsers.isAccepted -> lista di utenti accettati -> eliminare da db.bookings
+                            //in questo modo db.collection("bookings").document("${targetTrip.id}_${targetUser.email}")
+                            tripsDB[parentPosition].interestedUsers = mutableListOf()  //infine rimpiazza tutto con una lista vuota
+                            model.deleteTrip("${tripsDB[parentPosition].id}")
+                        })
+                    })
+
+                }
+                .setNegativeButton(android.R.string.cancel) { dialog, which ->
+                    Toast.makeText(requireContext(),android.R.string.cancel, Toast.LENGTH_SHORT).show()
+
+                }
+                .show()
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         if(arguments?.getString("parent").equals(MY_TRIPS_IS_PARENT))

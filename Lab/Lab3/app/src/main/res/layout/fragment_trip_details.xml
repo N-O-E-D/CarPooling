@@ -190,6 +190,18 @@
                 app:strokeColor="#4CAF50"
                 app:strokeWidth="2dp" />
 
+            <Button
+                android:id="@+id/deleteTripButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/delete_trip"
+                app:backgroundTint="#F44336"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/showHideInterestedUsers" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
