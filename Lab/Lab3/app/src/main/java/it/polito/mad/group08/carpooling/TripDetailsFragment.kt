@@ -1,6 +1,7 @@
 package it.polito.mad.group08.carpooling
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
@@ -19,6 +20,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -49,24 +52,16 @@ class TripDetailsFragment : Fragment() {
     private val model: SharedViewModel by activityViewModels()
 
 
-    private fun takeSavedPhoto(name: String?) {
-        try {
-            if(name != null) {
-                view?.context?.applicationContext?.openFileInput(name).use {
-                    val imageBitmap = BitmapFactory.decodeStream(it)
-                    if (imageBitmap != null)
-                        carPhotoPath.setImageBitmap(imageBitmap)
-                }
-            }
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
+    private fun takeSavedPhoto(bitmap: Bitmap?) {
+        if(bitmap != null) {
+            carPhotoPath.setImageBitmap(bitmap)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("ShowToast")
     private fun setTripInformation(trip: Trip){
-        takeSavedPhoto(trip.carPhotoPath)
+        takeSavedPhoto(model.bitmaps[trip.id])
         carDescription.text = trip.carDescription
 
         driverName.text = trip.driverName
@@ -392,6 +387,24 @@ class InterestedUserAdapter(
 
         fun bind(u: User, model: SharedViewModel, targetTrip: Trip, navController: NavController) {
             userImage.setImageResource(R.drawable.photo_default)
+            val storage = Firebase.storage
+            val storageRef = storage.reference
+            val testRef = storageRef.child(u.email)
+            testRef.metadata.addOnSuccessListener { metadata ->
+                val size = metadata.sizeBytes
+                val ONE_MEGABYTE: Long = 1024 * 1024
+                testRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
+                    val imageBitmap = BitmapFactory.decodeByteArray(it, 0, size.toInt())
+                    if (imageBitmap != null){
+                        userImage.setImageBitmap(imageBitmap)
+                    }
+                }.addOnFailureListener {
+                    // Handle any errors
+                }
+            }.addOnFailureListener {
+                // Uh-oh, an error occurred!
+            }
+
             //TODO return email to showProfileUser in show/hide Interested User
             userImage.setOnClickListener {
                 model.setOtherUser(u.email)

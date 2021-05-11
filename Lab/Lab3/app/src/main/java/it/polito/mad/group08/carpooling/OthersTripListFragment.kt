@@ -24,6 +24,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.RangeSlider
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -82,7 +84,7 @@ class OthersTripListFragment : Fragment() {
                 emptyTextView.visibility = View.GONE
             }
 
-            adapter = TripAdapter(tripsDB) { mode: Int, tripItem: Trip, position: Int? -> navigationClickListener(mode, tripItem, position) }
+            adapter = TripAdapter(tripsDB, model) { mode: Int, tripItem: Trip, position: Int? -> navigationClickListener(mode, tripItem, position) }
             recyclerView.adapter = adapter
         })
     }
@@ -214,7 +216,9 @@ class OthersTripListFragment : Fragment() {
         }
     }
 
-    class TripAdapter(private val tripsAdapter: MutableList<Trip>, private val clickListener: (Int, Trip, Int?) -> Unit) : RecyclerView.Adapter<TripAdapter.TripViewHolder>() {
+    class TripAdapter(private val tripsAdapter: MutableList<Trip>,
+                      private val model: SharedViewModel,
+                      private val clickListener: (Int, Trip, Int?) -> Unit) : RecyclerView.Adapter<TripAdapter.TripViewHolder>() {
 
         class TripViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             private val departureLocation: TextView = itemView.findViewById(R.id.departureLocation)
@@ -225,17 +229,39 @@ class OthersTripListFragment : Fragment() {
             private val card: CardView = itemView.findViewById(R.id.card)
 
 
-            fun bind(trip: Trip, clickListener: (Int, Trip, Int?) -> Unit) {
+            fun bind(trip: Trip, model: SharedViewModel, clickListener: (Int, Trip, Int?) -> Unit) {
                 departureLocation.text = trip.checkPoints[0].location
                 arrivalLocation.text = trip.checkPoints[trip.checkPoints.size - 1].location
                 departureTimestamp.text = trip.checkPoints[0].timestamp
                 arrivalTimestamp.text = trip.checkPoints[trip.checkPoints.size - 1].timestamp
                 editButton.text = itemView.context.getString(R.string.trip_show_interest)
-                val bitmap: Bitmap? = takeSavedPhoto(trip.carPhotoPath, itemView)
-                when (itemView.context.resources.configuration.orientation) {
+                when(itemView.context.resources.configuration.orientation){
                     Configuration.ORIENTATION_PORTRAIT -> {
-                        if (bitmap != null) {
-                            itemView.findViewById<ImageView>(R.id.carPhoto).setImageBitmap(bitmap)
+                        if( model.bitmaps[trip.id] == null) {
+                            val storage = Firebase.storage
+                            val storageRef = storage.reference
+                            if(trip.carPhotoPath != null) {
+                                val testRef = storageRef.child(trip.carPhotoPath!!)
+                                testRef.metadata.addOnSuccessListener { metadata ->
+                                    val size = metadata.sizeBytes
+                                    val ONE_MEGABYTE: Long = 1024 * 1024
+                                    testRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
+                                        val imageBitmap = BitmapFactory.decodeByteArray(it, 0, size.toInt())
+                                        if (imageBitmap != null){
+                                            itemView.findViewById<ImageView>(R.id.carPhoto)
+                                                .setImageBitmap(imageBitmap)
+                                            model.bitmaps[trip.id] = imageBitmap
+                                        }
+                                    }.addOnFailureListener {
+                                        // Handle any errors
+                                    }
+                                }.addOnFailureListener {
+                                    // Uh-oh, an error occurred!
+                                }
+                            }
+                        } else {
+                            itemView.findViewById<ImageView>(R.id.carPhoto)
+                                .setImageBitmap(model.bitmaps[trip.id])
                         }
                     }
                 }
@@ -277,7 +303,7 @@ class OthersTripListFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: TripViewHolder, position: Int) {
-            holder.bind(tripsAdapter[position], clickListener)
+            holder.bind(tripsAdapter[position], model, clickListener)
         }
 
         override fun onViewRecycled(holder: TripViewHolder) {

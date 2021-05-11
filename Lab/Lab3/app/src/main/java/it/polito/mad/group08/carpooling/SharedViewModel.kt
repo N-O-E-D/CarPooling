@@ -1,5 +1,6 @@
 package it.polito.mad.group08.carpooling
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,6 +13,8 @@ class SharedViewModel : ViewModel() {
     private var db = FirebaseFirestore.getInstance()
 
     private val filter = MutableLiveData<Filter>(Filter())
+
+    val bitmaps: MutableMap<String, Bitmap> = mutableMapOf()
 
     private val trips: MutableLiveData<MutableList<Trip>> by lazy {
         MutableLiveData<MutableList<Trip>>().also {
@@ -48,6 +51,11 @@ class SharedViewModel : ViewModel() {
             }
         }
     }
+
+    fun setUserBitmap(bitmap: Bitmap) {
+        this.user.value?.bitmap = bitmap
+    }
+
 
     fun editUser(user: User) {
         db.collection("users").document(account.value?.email!!).set(user)
@@ -280,7 +288,7 @@ class SharedViewModel : ViewModel() {
 
 data class User(val name: String = "", val nickname: String = "",
                 val email: String = "", val location: String = "",
-                val phone_number: String = "", val rating: Float = 0f)
+                val phone_number: String = "", val rating: Float = 0f, var bitmap: Bitmap? = null)
 
 data class CheckPoint(var location: String = "", var timestamp: String = "")
 

@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -16,6 +17,7 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.activity.result.ActivityResultCallback
@@ -28,9 +30,14 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -185,7 +192,7 @@ class TripEditFragment : Fragment() {
             adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
             recyclerView.adapter = adapter
 
-            takeSavedPhoto(filename, imageView)
+            takeSavedPhoto(filename, imageView, model.bitmaps[trip.id])
         }
     }
 
@@ -235,7 +242,7 @@ class TripEditFragment : Fragment() {
             // EDIT EXISTING TRIP VIEW
             trip = model.getTrips().value!![position]
 
-            filename = trip.carPhotoPath
+            //filename = trip.carPhotoPath
             carNameET.setText(trip.carDescription)
             driverNameET.setText(trip.driverName)
             seatPriceET.setText(trip.seatPrice.toString())
@@ -250,7 +257,7 @@ class TripEditFragment : Fragment() {
             adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
             recyclerView.adapter = adapter
 
-            takeSavedPhoto(filename, imageView)
+            takeSavedPhoto(filename, imageView, model.bitmaps[trip.id])
 
     }
 
@@ -306,6 +313,25 @@ class TripEditFragment : Fragment() {
                     return true
                 }
 
+                val storage = Firebase.storage
+                val storageRef = storage.reference
+                val testRef = storageRef.child(filename!!)
+
+                if(filename != null) {
+                    activity?.applicationContext?.openFileInput(filename).use {
+                        var bitmap = (imageView.drawable as BitmapDrawable).bitmap
+                        val baos = ByteArrayOutputStream()
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                        val data = baos.toByteArray()
+                        var uploadTask = testRef.putBytes(data)
+                        uploadTask.addOnFailureListener {
+                            Log.d("ABCDE", "Failure $it")
+                        }.addOnSuccessListener { taskSnapshot ->
+                            Log.d("ABCDE", "Success $taskSnapshot")
+                        }
+                    }
+                }
+
                 trip.carPhotoPath = filename
                 trip.carDescription = carNameET.text.toString()
                 trip.driverName = driverNameET.text.toString()
@@ -323,7 +349,12 @@ class TripEditFragment : Fragment() {
         }
     }
 
-    private fun takeSavedPhoto(name: String?, imageView: ImageView) {
+    private fun takeSavedPhoto(name: String?, imageView: ImageView, bitmap: Bitmap?) {
+        println("LOL" + name)
+        if(name == null && bitmap != null) {
+            println("LOL")
+            imageView.setImageBitmap(bitmap)
+        }
         try {
             if(name != null) {
                 activity?.applicationContext?.openFileInput(name).use {
@@ -335,6 +366,7 @@ class TripEditFragment : Fragment() {
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
+
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {

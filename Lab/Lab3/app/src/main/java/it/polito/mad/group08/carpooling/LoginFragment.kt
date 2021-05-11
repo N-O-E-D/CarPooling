@@ -1,12 +1,14 @@
 package it.polito.mad.group08.carpooling
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -17,6 +19,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 
 
 class LoginFragment : Fragment() {
@@ -64,11 +68,36 @@ class LoginFragment : Fragment() {
         super.onResume()
         if(account != null) {
             model.setAccount(account!!)
-            model.setUser(User(name = account!!.displayName.toString(), email = account!!.email.toString()))
-            (activity as? ShowProfileFragment.InfoManager)?.
-            updateTexts(account!!.displayName.toString(), account!!.email.toString())
+            model.setUser(
+                User(
+                    name = account!!.displayName.toString(),
+                    email = account!!.email.toString()
+                )
+            )
+            (activity as? ShowProfileFragment.InfoManager)?.updateTexts(
+                account!!.displayName.toString(),
+                account!!.email.toString()
+            )
             Log.d("BBBB", "on resume")
             findNavController().navigate(R.id.action_loginFragment_to_othersTripListFragment)
+            val storage = Firebase.storage
+            val storageRef = storage.reference
+            val testRef = storageRef.child(account!!.email!!)
+            testRef.metadata.addOnSuccessListener { metadata ->
+                val size = metadata.sizeBytes
+                val ONE_MEGABYTE: Long = 1024 * 1024
+                testRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
+                    val imageBitmap = BitmapFactory.decodeByteArray(it, 0, size.toInt())
+                    if (imageBitmap != null) {
+                        model.setUserBitmap(imageBitmap)
+                        (activity as? ShowProfileFragment.InfoManager)?.updatePhoto(imageBitmap)
+                    }
+                }.addOnFailureListener {
+                    // Handle any errors
+                }
+            }.addOnFailureListener {
+                // Uh-oh, an error occurred!
+            }
         }
     }
 

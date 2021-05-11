@@ -13,6 +13,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import org.json.JSONObject
 import java.io.FileNotFoundException
 
@@ -60,6 +62,7 @@ class ShowProfileFragment : Fragment() {
                 phonenumberTV.visibility = View.GONE
                 view.findViewById<ImageView>(R.id.locationIcon).visibility = View.GONE
                 view.findViewById<ImageView>(R.id.phonenumberIcon).visibility = View.GONE
+                retrieveUserImage("other")
             })
         }
         else{
@@ -70,10 +73,9 @@ class ShowProfileFragment : Fragment() {
                 //TODO: set location & phone number visibility SHOW
                 locationTV.text = if (userDB.location == "") "Location" else userDB.location
                 phonenumberTV.text = if (userDB.phone_number == "") "#" else userDB.phone_number
+                retrieveUserImage("self")
             })
         }
-
-        retrieveUserImage()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -92,18 +94,29 @@ class ShowProfileFragment : Fragment() {
         }
     }
 
-    private fun retrieveUserImage(){
-        try{
-            requireActivity().applicationContext.openFileInput("userProfileImage").use{
-                val bitmap: Bitmap? = BitmapFactory.decodeStream(it)
-                if(bitmap != null){
-                    photoIV.setImageBitmap(bitmap)
-                    (activity as? InfoManager)?.updatePhoto(bitmap)
-                }
+    private fun retrieveUserImage(mode: String){
+        if(mode == "self") {
+            if (model.getUser().value?.bitmap != null) {
+                photoIV.setImageBitmap(model.getUser().value?.bitmap)
             }
-        }
-        catch(e: FileNotFoundException){
-            e.printStackTrace()
+        } else if(mode == "other") {
+            val storage = Firebase.storage
+            val storageRef = storage.reference
+            val testRef = storageRef.child(model.getOtherUser().value?.email!!)
+            testRef.metadata.addOnSuccessListener { metadata ->
+                val size = metadata.sizeBytes
+                val ONE_MEGABYTE: Long = 1024 * 1024
+                testRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
+                    val imageBitmap = BitmapFactory.decodeByteArray(it, 0, size.toInt())
+                    if (imageBitmap != null) {
+                        photoIV.setImageBitmap(imageBitmap)
+                    }
+                }.addOnFailureListener {
+                    // Handle any errors
+                }
+            }.addOnFailureListener {
+                // Uh-oh, an error occurred!
+            }
         }
     }
 }

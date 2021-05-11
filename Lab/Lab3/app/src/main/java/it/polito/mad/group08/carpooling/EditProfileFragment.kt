@@ -1,5 +1,6 @@
 package it.polito.mad.group08.carpooling
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -8,12 +9,14 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.graphics.Matrix
+import android.graphics.drawable.BitmapDrawable
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.ImageButton
@@ -27,6 +30,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -169,6 +175,7 @@ class EditProfileFragment : Fragment() {
 
 
     // listeners for the save button
+    @SuppressLint("WrongThread")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.saveButton -> {
@@ -180,17 +187,23 @@ class EditProfileFragment : Fragment() {
                     "phonenumber" to phonenumberET.text.toString()
                 )*/
 
+                val storage = Firebase.storage
+                val storageRef = storage.reference
+                val testRef = storageRef.child(model.getAccount().email!!)
 
                 if(bitmap != null){
                     // it saves the bitmap into the internal storage
-                    try{
-                        requireActivity().applicationContext.openFileOutput("userProfileImage", Context.MODE_PRIVATE).use{
-                            bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, it)
-                        }
+                    val baos = ByteArrayOutputStream()
+                    bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                    val data = baos.toByteArray()
+                    var uploadTask = testRef.putBytes(data)
+                    uploadTask.addOnFailureListener {
+                        Log.d("ABCDE", "Failure $it")
+                    }.addOnSuccessListener { taskSnapshot ->
+                        Log.d("ABCDE", "Success $taskSnapshot")
                     }
-                    catch(e: IOException){
-                        Toast.makeText(activity, "Not enough space to store the photo!", Toast.LENGTH_LONG).show()
-                    }
+                    model.setUserBitmap(bitmap!!)
+                    (activity as? ShowProfileFragment.InfoManager)?.updatePhoto(bitmap!!)
                 }
                 model.editUser(User(fullNameET.text.toString(), nicknameET.text.toString(),
                     emailET.text.toString(), locationET.text.toString(),
@@ -204,17 +217,8 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun retrieveUserImage(){
-        try{
-            requireActivity().applicationContext.openFileInput("userProfileImage").use{
-                bitmap = BitmapFactory.decodeStream(it)
-                if(bitmap != null){
-                    photoIV.setImageBitmap(bitmap)
-                }
-            }
-        }
-        catch(e: FileNotFoundException){
-            e.printStackTrace()
-        }
+        if(model.getUser().value?.bitmap != null)
+            photoIV.setImageBitmap(model.getUser().value?.bitmap)
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
