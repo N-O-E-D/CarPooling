@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -37,7 +38,7 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         appBarConfiguration = AppBarConfiguration(
-                setOf(R.id.showProfileFragment, R.id.tripListFragment, R.id.othersTripListFragment), drawerLayout
+                setOf(/*R.id.showProfileFragment,*/ R.id.tripListFragment, R.id.othersTripListFragment), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
@@ -46,6 +47,11 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
         headerSecInfo = navigationView.getHeaderView(0).findViewById(R.id.nav_sec_info)
         headerProfilePhoto = navigationView.getHeaderView(0).findViewById(R.id.nav_profile_photo)
         sharedPref = getPreferences(Context.MODE_PRIVATE)!!
+
+        headerProfilePhoto.setOnClickListener {
+            navController.navigate(R.id.showProfileFragment)
+            drawerLayout.closeDrawers()
+        }
 
         val jsonObject = sharedPref.getString("profile", null)
         if (jsonObject != null) {
@@ -82,12 +88,4 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
             e.printStackTrace()
         }
     }
-
-    /*override fun onBackPressed() {
-        val fragment =
-                this.supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container)
-        (fragment as? IOnBackPressed)?.onBackPressed()?.not()?.let {
-            super.onBackPressed()
-        }
-    }*/
 }
