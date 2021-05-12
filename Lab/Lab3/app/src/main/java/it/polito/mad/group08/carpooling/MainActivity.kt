@@ -1,9 +1,6 @@
 package it.polito.mad.group08.carpooling
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView

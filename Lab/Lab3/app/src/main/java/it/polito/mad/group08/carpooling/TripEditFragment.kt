@@ -30,8 +30,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
@@ -96,8 +94,8 @@ class TripEditFragment : Fragment() {
             if(imageUri != null) {
                 val bitmap = when {
                     Build.VERSION.SDK_INT < 28 -> MediaStore.Images.Media.getBitmap(
-                        activity?.contentResolver,
-                        imageUri
+                            activity?.contentResolver,
+                            imageUri
                     )
                     else -> {
                         val source = ImageDecoder.createSource(activity?.contentResolver!!, imageUri)
@@ -231,40 +229,40 @@ class TripEditFragment : Fragment() {
     }
 
     private fun loadTrip(){
-            position = model.getPosition().value!!
-            if(position == model.getTrips().value?.size){ // ADD EMPTY VIEW
-                trip = Trip()
-                adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
-                recyclerView.adapter = adapter
-                return
-            }
-
-            // EDIT EXISTING TRIP VIEW
-            trip = model.getTrips().value!![position]
-
-            //filename = trip.carPhotoPath
-            carNameET.setText(trip.carDescription)
-            driverNameET.setText(trip.driverName)
-            seatPriceET.setText(trip.seatPrice.toString())
-            availableSeatsET.setText(trip.availableSeats.toString())
-            informationsET.setText(trip.description)
-            ratingBar.rating = trip.driverRate
-
-            //adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
-            for (item in trip.checkPoints) {
-                tmp_checkpoints.add(CheckPoint(item.location, item.timestamp))
-            }
+        position = model.getPosition().value!!
+        if(position == model.getTrips().value?.size){ // ADD EMPTY VIEW
+            trip = Trip()
             adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
             recyclerView.adapter = adapter
+            return
+        }
 
-            takeSavedPhoto(filename, imageView, model.bitmaps[trip.id])
+        // EDIT EXISTING TRIP VIEW
+        trip = model.getTrips().value!![position]
+
+        //filename = trip.carPhotoPath
+        carNameET.setText(trip.carDescription)
+        driverNameET.setText(trip.driverName)
+        seatPriceET.setText(trip.seatPrice.toString())
+        availableSeatsET.setText(trip.availableSeats.toString())
+        informationsET.setText(trip.description)
+        ratingBar.rating = trip.driverRate
+
+        //adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
+        for (item in trip.checkPoints) {
+            tmp_checkpoints.add(CheckPoint(item.location, item.timestamp))
+        }
+        adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
+        recyclerView.adapter = adapter
+
+        takeSavedPhoto(filename, imageView, model.bitmaps[trip.id])
 
     }
 
     override fun onCreateContextMenu(
-        menu: ContextMenu,
-        v: View,
-        menuInfo: ContextMenu.ContextMenuInfo?
+            menu: ContextMenu,
+            v: View,
+            menuInfo: ContextMenu.ContextMenuInfo?
     ) {
         super.onCreateContextMenu(menu, v, menuInfo)
         activity?.menuInflater?.inflate(R.menu.floating_menu, menu)
@@ -433,15 +431,15 @@ class ItemEditAdapter(private val items: MutableList<CheckPoint>,
             })
             timestamp.setText(i.timestamp)
             timestamp.setOnClickListener {
-                    DatePickerDialog(timestamp.context,
-                            dateSetListener,
-                            // set DatePickerDialog to point to today's date when it loads up
-                            cal.get(Calendar.YEAR),
-                            cal.get(Calendar.MONTH),
-                            cal.get(Calendar.DAY_OF_MONTH))
-                            .apply {
-                                datePicker.minDate = System.currentTimeMillis() - 1000
-                            }.show()
+                DatePickerDialog(timestamp.context,
+                        dateSetListener,
+                        // set DatePickerDialog to point to today's date when it loads up
+                        cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH),
+                        cal.get(Calendar.DAY_OF_MONTH))
+                        .apply {
+                            datePicker.minDate = System.currentTimeMillis() - 1000
+                        }.show()
             }
             timestamp.addTextChangedListener(object: TextWatcher{
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {

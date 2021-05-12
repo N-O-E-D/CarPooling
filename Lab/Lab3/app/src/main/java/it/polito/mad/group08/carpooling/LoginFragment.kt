@@ -7,8 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -33,16 +31,16 @@ class LoginFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build()
+                .requestEmail()
+                .build()
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso);
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_login, container, false)
@@ -69,14 +67,14 @@ class LoginFragment : Fragment() {
         if(account != null) {
             model.setAccount(account!!)
             model.setUser(
-                User(
-                    name = account!!.displayName.toString(),
-                    email = account!!.email.toString()
-                )
+                    User(
+                            name = account!!.displayName.toString(),
+                            email = account!!.email.toString()
+                    )
             )
             (activity as? ShowProfileFragment.InfoManager)?.updateTexts(
-                account!!.displayName.toString(),
-                account!!.email.toString()
+                    account!!.displayName.toString(),
+                    account!!.email.toString()
             )
             Log.d("BBBB", "on resume")
             findNavController().navigate(R.id.action_loginFragment_to_othersTripListFragment)
@@ -118,7 +116,7 @@ class LoginFragment : Fragment() {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
             val task =
-                GoogleSignIn.getSignedInAccountFromIntent(data)
+                    GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
         }
     }
@@ -131,7 +129,7 @@ class LoginFragment : Fragment() {
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             account =
-                completedTask.getResult(ApiException::class.java)
+                    completedTask.getResult(ApiException::class.java)
             // Signed in successfully, show authenticated UI.
             //updateUI(account)
             /*model.setAccount(account!!)

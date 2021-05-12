@@ -2,17 +2,14 @@ package it.polito.mad.group08.carpooling
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.content.DialogInterface
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -25,7 +22,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -133,7 +129,7 @@ class TripDetailsFragment : Fragment() {
 
         // FAB (FOR USER != OWNER)
         if(trip.driverEmail != model.getAccount().email){
-
+            //TODO
             val scrollView = requireView().findViewById<ScrollView>(R.id.scrollView)
             scrollView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
                 if (scrollY > oldScrollY && showInterestFab.visibility == View.VISIBLE) {
@@ -143,7 +139,7 @@ class TripDetailsFragment : Fragment() {
                 }
             }
 
-            if(model.bookingIsAccepted(trip.id)){ //user alredy show favorite and owner accepted
+            if(model.bookingIsAccepted(trip.id)){ //user already show favorite and owner accepted
                 showInterestFab.setImageResource(R.drawable.check)
                 showInterestFab.setOnClickListener {
                     Toast.makeText(context, "You already booked this trip!", Toast.LENGTH_LONG).show()
@@ -332,10 +328,8 @@ class TripDetailsFragment : Fragment() {
                                     model.removeFromBookings("${tripsDB[parentPosition].id}_${item.email}")
                                 }
                             }
-                            //tripsDB[parentPosition].interestedUsers.isAccepted -> lista di utenti accettati -> eliminare da db.bookings
-                            //in questo modo db.collection("bookings").document("${targetTrip.id}_${targetUser.email}")
-                            tripsDB[parentPosition].interestedUsers = mutableListOf()  //infine rimpiazza tutto con una lista vuota
-                            model.deleteTrip("${tripsDB[parentPosition].id}")
+                            tripsDB[parentPosition].interestedUsers = mutableListOf()
+                            model.deleteTrip(tripsDB[parentPosition].id)
                         })
                     })
 
@@ -461,7 +455,6 @@ class InterestedUserAdapter(
                 // Uh-oh, an error occurred!
             }
 
-            //TODO return email to showProfileUser in show/hide Interested User
             userImage.setOnClickListener {
                 model.setOtherUser(u.email)
                 navController.navigate(

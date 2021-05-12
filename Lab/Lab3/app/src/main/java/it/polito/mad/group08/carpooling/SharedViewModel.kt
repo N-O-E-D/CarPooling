@@ -221,9 +221,9 @@ class SharedViewModel : ViewModel() {
         db.collection("trips").document(tripID).delete().addOnSuccessListener {
             Log.d("AAAA", "TRIP DELETED SUCCESSFULLY")
         }
-        .addOnFailureListener {
-            Log.d("AAAA", "ERROR DELETING TRIP")
-         }
+                .addOnFailureListener {
+                    Log.d("AAAA", "ERROR DELETING TRIP")
+                }
     }
 
     fun userIsInterested(tripToCheck: Trip): Boolean {
@@ -337,8 +337,11 @@ class SharedViewModel : ViewModel() {
     fun bookingIsAccepted(tripID: String): Boolean {
         val possibleBooking = Booking(tripID, account.value?.email!!)
         Log.d("AAABBB", "$possibleBooking")
-        return bookings.value?.contains(possibleBooking)!!
-
+        Log.d("AAABBB", "${bookings.value}")
+        return if(bookings.value != null)
+            bookings.value?.contains(possibleBooking)!!
+        else
+            false
     }
 
 }

@@ -2,14 +2,12 @@ package it.polito.mad.group08.carpooling
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.graphics.Matrix
-import android.graphics.drawable.BitmapDrawable
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
@@ -18,14 +16,13 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.*
-import androidx.fragment.app.Fragment
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
-import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
@@ -34,11 +31,9 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.jvm.Throws
 
 
 private const val OPEN_CAMERA_REQUEST_CODE = 1
@@ -141,9 +136,9 @@ class EditProfileFragment : Fragment() {
                 // Continue only if the File was successfully created
                 photoFile?.also {
                     photoURI = FileProvider.getUriForFile(
-                        requireActivity(),
-                        "it.polito.mad.group08.carpooling",
-                        it
+                            requireActivity(),
+                            "it.polito.mad.group08.carpooling",
+                            it
                     )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                     startActivityForResult(takePictureIntent, OPEN_CAMERA_REQUEST_CODE)
@@ -158,9 +153,9 @@ class EditProfileFragment : Fragment() {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
         val storageDir: File? = activity?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(
-            "JPEG_${timeStamp}_", /* prefix */
-            ".jpg", /* suffix */
-            storageDir /* directory */
+                "JPEG_${timeStamp}_", /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
         ).apply {
             // Save a file: path for use with ACTION_VIEW intents
             currentPhotoPath = absolutePath
@@ -206,8 +201,8 @@ class EditProfileFragment : Fragment() {
                     (activity as? ShowProfileFragment.InfoManager)?.updatePhoto(bitmap!!)
                 }
                 model.editUser(User(fullNameET.text.toString(), nicknameET.text.toString(),
-                    emailET.text.toString(), locationET.text.toString(),
-                    phonenumberET.text.toString(), user.rating))
+                        emailET.text.toString(), locationET.text.toString(),
+                        phonenumberET.text.toString(), user.rating))
                 findNavController().navigate(R.id.action_editProfileFragment_to_showProfileFragment)
                 Snackbar.make(view?.findViewById(R.id.fullNameET)!!,R.string.changes_applied_successfully,Snackbar.LENGTH_SHORT).show()
                 true
@@ -264,8 +259,8 @@ class EditProfileFragment : Fragment() {
 
             bitmap = when {
                 Build.VERSION.SDK_INT < 28 -> MediaStore.Images.Media.getBitmap(
-                    activity?.contentResolver,
-                    imageUri
+                        activity?.contentResolver,
+                        imageUri
                 )
                 else -> {
                     val source = ImageDecoder.createSource(requireActivity().contentResolver, imageUri)
@@ -284,7 +279,7 @@ class EditProfileFragment : Fragment() {
         val matrix = Matrix()
         matrix.postRotate(angle)
         return Bitmap.createBitmap(source, 0, 0, source.width, source.height,
-            matrix, true)
+                matrix, true)
     }
 
 
@@ -292,7 +287,7 @@ class EditProfileFragment : Fragment() {
     private fun rotateAndSet(imageBitmap: Bitmap){
         val ei = ExifInterface(currentPhotoPath)
         val orientation: Int = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-            ExifInterface.ORIENTATION_UNDEFINED)
+                ExifInterface.ORIENTATION_UNDEFINED)
 
         val rotatedBitmap: Bitmap? = when (orientation) {
             ExifInterface.ORIENTATION_ROTATE_90 -> rotateImage(imageBitmap, 90f)
