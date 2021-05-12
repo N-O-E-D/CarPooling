@@ -150,7 +150,7 @@ class TripListFragment : Fragment() {
                 //val bitmap: Bitmap? = takeSavedPhoto(trip.carPhotoPath, itemView)
                 when(itemView.context.resources.configuration.orientation){
                     Configuration.ORIENTATION_PORTRAIT -> {
-                        if( model.bitmaps[trip.id] == null) {
+                        if (model.bitmaps[trip.id] == null) {
                             val storage = Firebase.storage
                             val storageRef = storage.reference
                             if(trip.carPhotoPath != null) {

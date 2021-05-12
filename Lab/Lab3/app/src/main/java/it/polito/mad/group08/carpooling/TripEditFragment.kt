@@ -313,12 +313,11 @@ class TripEditFragment : Fragment() {
                     return true
                 }
 
-                val storage = Firebase.storage
-                val storageRef = storage.reference
-                val testRef = storageRef.child(filename!!)
-
                 if(filename != null) {
                     activity?.applicationContext?.openFileInput(filename).use {
+                        val storage = Firebase.storage
+                        val storageRef = storage.reference
+                        val testRef = storageRef.child(filename!!)
                         var bitmap = (imageView.drawable as BitmapDrawable).bitmap
                         val baos = ByteArrayOutputStream()
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
@@ -327,22 +326,32 @@ class TripEditFragment : Fragment() {
                         uploadTask.addOnFailureListener {
                             Log.d("ABCDE", "Failure $it")
                         }.addOnSuccessListener { taskSnapshot ->
-                            Log.d("ABCDE", "Success $taskSnapshot")
+                            model.bitmaps[trip.id] = null
+                            trip.carPhotoPath = filename
+                            trip.carDescription = carNameET.text.toString()
+                            trip.driverName = driverNameET.text.toString()
+                            trip.driverEmail = model.getAccount().email!!
+                            trip.availableSeats = availableSeatsET.text.toString().toInt()
+                            trip.seatPrice = seatPriceET.text.toString().toFloat()
+                            trip.description = informationsET.text.toString()
+                            trip.checkPoints = tmp_checkpoints
+
+                            model.addOrReplaceTrip(trip)
+                            findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
                         }
                     }
+                } else {
+                    trip.carDescription = carNameET.text.toString()
+                    trip.driverName = driverNameET.text.toString()
+                    trip.driverEmail = model.getAccount().email!!
+                    trip.availableSeats = availableSeatsET.text.toString().toInt()
+                    trip.seatPrice = seatPriceET.text.toString().toFloat()
+                    trip.description = informationsET.text.toString()
+                    trip.checkPoints = tmp_checkpoints
+
+                    model.addOrReplaceTrip(trip)
+                    findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
                 }
-
-                trip.carPhotoPath = filename
-                trip.carDescription = carNameET.text.toString()
-                trip.driverName = driverNameET.text.toString()
-                trip.driverEmail = model.getAccount().email!!
-                trip.availableSeats = availableSeatsET.text.toString().toInt()
-                trip.seatPrice = seatPriceET.text.toString().toFloat()
-                trip.description = informationsET.text.toString()
-                trip.checkPoints = tmp_checkpoints
-
-                model.addOrReplaceTrip(trip)
-                findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
                 true
             }
             else -> super.onOptionsItemSelected(item)

@@ -14,7 +14,7 @@ class SharedViewModel : ViewModel() {
 
     private val filter = MutableLiveData<Filter>(Filter())
 
-    val bitmaps: MutableMap<String, Bitmap> = mutableMapOf()
+    val bitmaps: MutableMap<String, Bitmap?> = mutableMapOf()
 
     private val trips: MutableLiveData<MutableList<Trip>> by lazy {
         MutableLiveData<MutableList<Trip>>().also {
@@ -162,9 +162,25 @@ class SharedViewModel : ViewModel() {
 
                     if (tasks != null) {
                         val tmpTrips = mutableListOf<Trip>()
-                        for (document in tasks.documents) {
+                        /*for (document in tasks.documents) {
                             Log.d("OTHERTRIPSAAAA", document.id + " => " + document.data)
                             val tmp = document.toObject(Trip::class.java)!!
+
+                            Log.d("OTHERTRIPSAAAA", tmp.toString())
+                            tmpTrips.add(tmp)
+                        }*/
+                        tasks.documents.forEachIndexed { index, document ->
+                            Log.d("OTHERTRIPSAAAA", document.id + " => " + document.data)
+                            val tmp = document.toObject(Trip::class.java)!!
+                            if(othersTrips.value != null) {
+                                for (trip in othersTrips.value!!) {
+                                    if (tmp.id == trip.id &&
+                                            tmp.carPhotoPath != trip.carPhotoPath) {
+                                        bitmaps[tmp.id] == null
+                                        break
+                                    }
+                                }
+                            }
                             Log.d("OTHERTRIPSAAAA", tmp.toString())
                             tmpTrips.add(tmp)
                         }
