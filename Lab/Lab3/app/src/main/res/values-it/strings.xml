@@ -58,6 +58,7 @@
     <string name="car_photo_description">Fotografia della macchina</string>
     <string name="trip_added_successfully">Viaggio aggiunto!</string>
     <string name="trip_edited_successfully">Viaggio modificato!</string>
+    <string name="trip_removed_successfully">Viaggio eliminato!</string>
     <string name="trip_show_interest">Mostra interesse</string>
     <string name="trip_remove_interest">Rimuovi interest</string>
     <string name="trip_already_booked">Già Prenotato!</string>

@@ -48,7 +48,6 @@ class TripDetailsFragment : Fragment() {
 
     private lateinit var showInterestFab: FloatingActionButton
 
-    private lateinit var deleteTripButton: Button
     private var currentTrip: Trip? = null
 
     private val model: SharedViewModel by activityViewModels()
@@ -198,11 +197,6 @@ class TripDetailsFragment : Fragment() {
             }
             j++
         }
-
-        //DELETE OPTION (ONLY FOR OWNER)
-        deleteTripButton.setOnClickListener{
-            showAlertDialog()
-        }
     }
 
     private fun calcDuration(dep: CheckPoint, arr: CheckPoint): String {
@@ -270,8 +264,6 @@ class TripDetailsFragment : Fragment() {
         interestedUsersRecyclerView = view.findViewById(R.id.interestedUserRecyclerView)
         interestedUsersShowHideButton = view.findViewById(R.id.showHideInterestedUsers)
 
-        deleteTripButton = view.findViewById(R.id.deleteTripButton)
-
         // INITIALIZE DATA
         //NOTE: please notice the nested call. You can access parentPosition only when it's returned
         model.getPosition().observe(viewLifecycleOwner, Observer<Int> {parentPosition ->
@@ -301,7 +293,6 @@ class TripDetailsFragment : Fragment() {
                                         showInterestFab.hide()
                                     interestedUsersRecyclerView.visibility = View.GONE
                                     interestedUsersShowHideButton.visibility = View.GONE
-                                    deleteTripButton.visibility = View.GONE
                                 })
                             })
                 }
@@ -317,7 +308,7 @@ class TripDetailsFragment : Fragment() {
                 .setTitle(getString(R.string.delete_trip_title))
                 .setMessage(getString(R.string.delete_trip_confirm))
                 .setPositiveButton(android.R.string.ok) { dialog, which ->
-                    Toast.makeText(requireContext(),android.R.string.ok, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.trip_removed_successfully), Toast.LENGTH_SHORT).show()
                     activity?.onBackPressed()
 
                     //delete this trip
@@ -335,16 +326,18 @@ class TripDetailsFragment : Fragment() {
 
                 }
                 .setNegativeButton(android.R.string.cancel) { dialog, which ->
-                    Toast.makeText(requireContext(),android.R.string.cancel, Toast.LENGTH_SHORT).show()
-
                 }
                 .show()
     }
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if(arguments?.getString("parent").equals(MY_TRIPS_IS_PARENT))
+        if(arguments?.getString("parent").equals(MY_TRIPS_IS_PARENT)) {
             inflater.inflate(R.menu.edit_menu, menu)    //Edit menu button only in MY trip details
+            val item: MenuItem? = menu.findItem(R.id.deleteButton)
+            item?.isVisible = true
+        }
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 
