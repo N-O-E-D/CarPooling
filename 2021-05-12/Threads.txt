@@ -1,0 +1,87 @@
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.delay
+
+fun p(s: String){
+    println("${Thread.currentThread().name} -> $s")
+}
+
+
+suspend fun f(millis: Long){
+    p("Entering f")
+    delay(millis)
+    p("After delay")
+}
+
+suspend fun f1(millis: Long): Long{
+    p("Entering f")
+    delay(millis)
+    p("After delay")
+    return millis
+}
+
+fun main() {
+    
+    // f() ERROR. MAIN IS NOT SUSPEND
+    
+    /*runBlocking{ // COROUTINE CREATION FUNCTION. It permit to call suspend function from not suspending one (main) in blocking way
+        f()
+        println("after f")
+        p("main finished")
+    	Thread.sleep(5000)
+    }*/
+    
+    /*GlobalScope.launch { // COROUTINE CREATION FUNCTION. Invoke suspend function but not block main!
+        f(2000)
+        p("after f")
+    }
+    
+    GlobalScope.launch { // COROUTINE CREATION FUNCTION. Invoke suspend function but not block main!
+        f(1000)
+        p("after f")
+        
+        p("main finished")
+    	Thread.sleep(5000)
+    }*/
+    
+    /*runBlocking{ // ALL IN THE SAME THREAD
+        launch { // COROUTINE CREATION FUNCTION. Invoke suspend function but not block main!
+            f(2000)
+            p("after f")
+        }
+    	p("Betweekn the two launch invocaiton")
+    	launch { // COROUTINE CREATION FUNCTION. Invoke suspend function but not block main!
+            f(1000)
+            p("after f")
+        }
+    }*/
+    
+    /*runBlocking{ // ALL IN THE SAME THREAD
+        launch { // COROUTINE CREATION FUNCTION. Invoke suspend function but not block main!
+            val v = f1(2000)
+            p("after f$v")
+        }
+    	p("Betweekn the two launch invocaiton")
+    	launch { // COROUTINE CREATION FUNCTION. Invoke suspend function but not block main!
+            val v = f1(1000)
+            p("after f$v")
+        }
+    }*/
+    
+    runBlocking{ // ALL IN THE SAME THREAD
+        launch { // COROUTINE CREATION FUNCTION. Invoke suspend function but not block main!
+            val v = f1(2000)
+            p("after f$v")
+        }
+    	p("Betweekn the two launch invocaiton")
+    	launch { // COROUTINE CREATION FUNCTION. Invoke suspend function but not block main!
+            withContext(Dispatchers.IO){  //new thread              
+            	val v = f1(1000)
+            	p("after f$v")
+            }
+        }
+    }
+        
+}
