@@ -1,0 +1,4 @@
+#Thu May 13 10:00:31 CEST 2021
+base.0=D\:\\1_Documenti\\1Enrico\\University\\_Magistrale\\POLITO\\ANNO_II\\Mobile-Application-Development\\git\\MAD-GAAS\\2021-05-13\\app\\build\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

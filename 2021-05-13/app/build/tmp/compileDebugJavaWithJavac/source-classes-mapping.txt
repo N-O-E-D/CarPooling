@@ -1,0 +1,2 @@
+it/polito/s279434/livedataapplication/BuildConfig.java
+ it.polito.s279434.livedataapplication.BuildConfig
