@@ -1,0 +1,2 @@
+it/polito/s279434/clockview/test/BuildConfig.java
+ it.polito.s279434.clockview.test.BuildConfig
