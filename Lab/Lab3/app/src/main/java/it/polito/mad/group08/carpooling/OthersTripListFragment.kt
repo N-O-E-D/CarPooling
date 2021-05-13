@@ -259,7 +259,7 @@ class TripAdapter(private val tripsAdapter: MutableList<Trip>,
                     if (model.bitmaps[trip.id] == null) {
                         val storage = Firebase.storage
                         val storageRef = storage.reference
-                        if(trip.carPhotoPath != null) {
+                        if(trip.carPhotoPath != null && trip.carPhotoPath != "") {
                             val testRef = storageRef.child(trip.carPhotoPath!!)
                             testRef.metadata.addOnSuccessListener { metadata ->
                                 val size = metadata.sizeBytes

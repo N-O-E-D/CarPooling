@@ -1,5 +1,6 @@
 package it.polito.mad.group08.carpooling
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -106,10 +107,6 @@ class TripEditFragment : Fragment() {
                 imageView.setImageBitmap(bitmap)
 
                 filename = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-
-                activity?.applicationContext?.openFileOutput(filename, Context.MODE_PRIVATE).use {
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
-                }
             }
         }
 
@@ -156,10 +153,6 @@ class TripEditFragment : Fragment() {
             imageView.setImageBitmap(bitmap)
 
             filename = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-
-            activity?.applicationContext?.openFileOutput(filename, Context.MODE_PRIVATE).use {
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
-            }
         }
 
         takeImageLauncher = registerForActivityResult(takeImageContract, takeImageCallback)
@@ -291,6 +284,14 @@ class TripEditFragment : Fragment() {
         return false
     }
 
+    private fun checkCheckpointFormat(): Boolean {
+        for (checkpoint in tmp_checkpoints)
+            if(checkpoint.timestamp.length != 16)
+                return true
+        return false
+    }
+
+    @SuppressLint("WrongThread")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.saveButton -> {
@@ -306,38 +307,42 @@ class TripEditFragment : Fragment() {
                     return true
                 }
 
+                if (checkCheckpointFormat()) {
+                    Toast.makeText(activity?.applicationContext, "Please insert also the time!", Toast.LENGTH_SHORT).show()
+                    return true
+                }
+
                 if (checkCheckpointCoherency()) {
                     Toast.makeText(activity?.applicationContext, "Please make sure the dates are in chronological order!", Toast.LENGTH_SHORT).show()
                     return true
                 }
 
                 if(filename != null) {
-                    activity?.applicationContext?.openFileInput(filename).use {
-                        val storage = Firebase.storage
-                        val storageRef = storage.reference
-                        val testRef = storageRef.child(filename!!)
-                        var bitmap = (imageView.drawable as BitmapDrawable).bitmap
-                        val baos = ByteArrayOutputStream()
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                        val data = baos.toByteArray()
-                        var uploadTask = testRef.putBytes(data)
-                        uploadTask.addOnFailureListener {
-                            Log.d("ABCDE", "Failure $it")
-                        }.addOnSuccessListener { taskSnapshot ->
-                            model.bitmaps[trip.id] = null
-                            trip.carPhotoPath = filename
-                            trip.carDescription = carNameET.text.toString()
-                            trip.driverName = driverNameET.text.toString()
-                            trip.driverEmail = model.getAccount().email!!
-                            trip.availableSeats = availableSeatsET.text.toString().toInt()
-                            trip.seatPrice = seatPriceET.text.toString().toFloat()
-                            trip.description = informationsET.text.toString()
-                            trip.checkPoints = tmp_checkpoints
+                    val storage = Firebase.storage
+                    val storageRef = storage.reference
+                    val testRef = storageRef.child(filename!!)
+                    var bitmap = (imageView.drawable as BitmapDrawable).bitmap
+                    val baos = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                    val data = baos.toByteArray()
+                    var uploadTask = testRef.putBytes(data)
+                    uploadTask.addOnFailureListener {
+                        Log.d("ABCDE", "Failure $it")
+                    }.addOnSuccessListener { taskSnapshot ->
 
-                            model.addOrReplaceTrip(trip)
-                            findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
-                        }
                     }
+                    model.bitmaps[trip.id] = bitmap
+                    trip.carPhotoPath = filename
+                    trip.carDescription = carNameET.text.toString()
+                    trip.driverName = driverNameET.text.toString()
+                    trip.driverEmail = model.getAccount().email!!
+                    trip.availableSeats = availableSeatsET.text.toString().toInt()
+                    trip.seatPrice = seatPriceET.text.toString().toFloat()
+                    trip.description = informationsET.text.toString()
+                    trip.checkPoints = tmp_checkpoints
+
+                    model.addOrReplaceTrip(trip)
+                    findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
                 } else {
                     trip.carDescription = carNameET.text.toString()
                     trip.driverName = driverNameET.text.toString()
