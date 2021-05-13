@@ -357,6 +357,10 @@ class TripDetailsFragment : Fragment() {
                         )
                 true
             }
+            R.id.deleteButton -> {
+                showAlertDialog()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
