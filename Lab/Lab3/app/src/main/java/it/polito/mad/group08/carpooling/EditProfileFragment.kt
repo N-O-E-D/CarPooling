@@ -203,7 +203,8 @@ class EditProfileFragment : Fragment() {
                 model.editUser(User(fullNameET.text.toString(), nicknameET.text.toString(),
                         emailET.text.toString(), locationET.text.toString(),
                         phonenumberET.text.toString(), user.rating))
-                findNavController().navigate(R.id.action_editProfileFragment_to_showProfileFragment)
+                //findNavController().navigate(R.id.action_editProfileFragment_to_showProfileFragment)
+                findNavController().popBackStack()
                 Snackbar.make(view?.findViewById(R.id.fullNameET)!!,R.string.changes_applied_successfully,Snackbar.LENGTH_SHORT).show()
                 true
             }
