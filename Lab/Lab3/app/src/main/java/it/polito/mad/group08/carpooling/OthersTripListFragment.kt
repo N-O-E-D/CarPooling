@@ -289,7 +289,6 @@ class TripAdapter(private val tripsAdapter: MutableList<Trip>,
 
             //SHOW INTEREST BUTTON
             if(model.bookingIsAccepted(trip.id)){ //user already show favorite and owner accepted
-                //TODO TEST IT
                 showInterestButton.text = itemView.context.getString(R.string.trip_already_booked)
                 showInterestButton.setOnClickListener { null }
             }else{
