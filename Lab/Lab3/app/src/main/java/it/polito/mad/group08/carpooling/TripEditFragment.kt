@@ -338,7 +338,7 @@ class TripEditFragment : Fragment() {
                         trip.checkPoints = tmp_checkpoints
                         model.addOrReplaceTrip(trip)
                         if (findNavController().currentDestination!!.id == R.id.tripEditFragment)
-                                findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
+                            findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
                     }
                 } else {
                     trip.carDescription = carNameET.text.toString()
