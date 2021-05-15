@@ -142,7 +142,16 @@ class SharedViewModel : ViewModel() {
     }
 
     fun addOrReplaceTrip(newTrip: Trip) {
-        newTrip.id = "${auth.currentUser!!.email!!}_${position.value}"
+        if(newTrip.id == "") {
+            var max = -1
+            for (trip in trips.value!!) {
+                val num = trip.id.split("_")[1].toInt()
+                if (num > max)
+                    max = num
+            }
+            newTrip.id = "${auth.currentUser!!.email!!}_${++max}"
+        }
+
         db.collection("trips")
                 .document(newTrip.id)
                 .set(newTrip)
