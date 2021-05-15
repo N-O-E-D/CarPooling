@@ -34,7 +34,7 @@
     <fragment
         android:id="@+id/tripListFragment"
         android:name="it.polito.mad.group08.carpooling.TripListFragment"
-        android:label="Trip list"
+        android:label="My Trips"
         tools:layout="@layout/fragment_trip_list">
         <action
             android:id="@+id/action_tripListFragment_to_tripDetailsFragment"
@@ -54,7 +54,7 @@
     <fragment
         android:id="@+id/tripDetailsFragment"
         android:name="it.polito.mad.group08.carpooling.TripDetailsFragment"
-        android:label="Trip details"
+        android:label="Trip Details"
         tools:layout="@layout/fragment_trip_details">
         <action
             android:id="@+id/action_tripDetailsFragment_to_tripEditFragment"
@@ -74,7 +74,7 @@
     <fragment
         android:id="@+id/tripEditFragment"
         android:name="it.polito.mad.group08.carpooling.TripEditFragment"
-        android:label="Edit trip"
+        android:label="Edit Trip"
         tools:layout="@layout/fragment_trip_edit">
         <action
             android:id="@+id/action_tripEditFragment_to_tripListFragment"
@@ -90,8 +90,8 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="it.polito.mad.group08.carpooling.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" >
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_othersTripListFragment"
             app:destination="@id/othersTripListFragment"
@@ -103,7 +103,7 @@
     <fragment
         android:id="@+id/othersTripListFragment"
         android:name="it.polito.mad.group08.carpooling.OthersTripListFragment"
-        android:label="OthersTripListFragment" >
+        android:label="Trips Advertisement">
         <action
             android:id="@+id/action_othersTripListFragment_to_tripDetailsFragment"
             app:destination="@id/tripDetailsFragment"
