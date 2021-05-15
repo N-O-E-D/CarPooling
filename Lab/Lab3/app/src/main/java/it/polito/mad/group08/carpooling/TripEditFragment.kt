@@ -327,20 +327,19 @@ class TripEditFragment : Fragment() {
                     val uploadTask = testRef.putBytes(data)
                     uploadTask.addOnFailureListener {
                     }.addOnSuccessListener { taskSnapshot ->
-
+                        model.bitmaps[trip.id] = bitmap
+                        trip.carPhotoPath = filename
+                        trip.carDescription = carNameET.text.toString()
+                        trip.driverName = driverNameET.text.toString()
+                        trip.driverEmail = model.auth.currentUser!!.email!!
+                        trip.availableSeats = availableSeatsET.text.toString().toInt()
+                        trip.seatPrice = seatPriceET.text.toString().toFloat()
+                        trip.description = informationsET.text.toString()
+                        trip.checkPoints = tmp_checkpoints
+                        model.addOrReplaceTrip(trip)
+                        if (findNavController().currentDestination!!.id == R.id.tripEditFragment)
+                                findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
                     }
-                    model.bitmaps[trip.id] = bitmap
-                    trip.carPhotoPath = filename
-                    trip.carDescription = carNameET.text.toString()
-                    trip.driverName = driverNameET.text.toString()
-                    trip.driverEmail = model.auth.currentUser!!.email!!
-                    trip.availableSeats = availableSeatsET.text.toString().toInt()
-                    trip.seatPrice = seatPriceET.text.toString().toFloat()
-                    trip.description = informationsET.text.toString()
-                    trip.checkPoints = tmp_checkpoints
-
-                    model.addOrReplaceTrip(trip)
-                    findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
                 } else {
                     trip.carDescription = carNameET.text.toString()
                     trip.driverName = driverNameET.text.toString()
