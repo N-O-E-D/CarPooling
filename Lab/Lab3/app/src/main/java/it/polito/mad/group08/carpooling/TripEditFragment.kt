@@ -198,9 +198,10 @@ class TripEditFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val button: ImageButton = view.findViewById(R.id.imageButton)
         button.setOnClickListener {
-            registerForContextMenu(it);
-            activity?.openContextMenu(it);
-            unregisterForContextMenu(it);}
+            registerForContextMenu(it)
+            activity?.openContextMenu(it)
+            unregisterForContextMenu(it)
+        }
 
         carNameET = view.findViewById(R.id.carNameET)
         driverNameET = view.findViewById(R.id.driverNameET)
@@ -233,7 +234,6 @@ class TripEditFragment : Fragment() {
         // EDIT EXISTING TRIP VIEW
         trip = model.getTrips().value!![position]
 
-        //filename = trip.carPhotoPath
         carNameET.setText(trip.carDescription)
         driverNameET.setText(trip.driverName)
         seatPriceET.setText(trip.seatPrice.toString())
@@ -241,7 +241,6 @@ class TripEditFragment : Fragment() {
         informationsET.setText(trip.description)
         ratingBar.rating = trip.driverRate
 
-        //adapter = ItemEditAdapter(trip.checkPoints){position -> removeAt(position)}
         for (item in trip.checkPoints) {
             tmp_checkpoints.add(CheckPoint(item.location, item.timestamp))
         }
@@ -321,13 +320,12 @@ class TripEditFragment : Fragment() {
                     val storage = Firebase.storage
                     val storageRef = storage.reference
                     val testRef = storageRef.child(filename!!)
-                    var bitmap = (imageView.drawable as BitmapDrawable).bitmap
+                    val bitmap = (imageView.drawable as BitmapDrawable).bitmap
                     val baos = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
                     val data = baos.toByteArray()
-                    var uploadTask = testRef.putBytes(data)
+                    val uploadTask = testRef.putBytes(data)
                     uploadTask.addOnFailureListener {
-                        Log.d("ABCDE", "Failure $it")
                     }.addOnSuccessListener { taskSnapshot ->
 
                     }
@@ -335,7 +333,7 @@ class TripEditFragment : Fragment() {
                     trip.carPhotoPath = filename
                     trip.carDescription = carNameET.text.toString()
                     trip.driverName = driverNameET.text.toString()
-                    trip.driverEmail = model.getAccount().email!!
+                    trip.driverEmail = model.auth.currentUser!!.email!!
                     trip.availableSeats = availableSeatsET.text.toString().toInt()
                     trip.seatPrice = seatPriceET.text.toString().toFloat()
                     trip.description = informationsET.text.toString()
@@ -346,7 +344,7 @@ class TripEditFragment : Fragment() {
                 } else {
                     trip.carDescription = carNameET.text.toString()
                     trip.driverName = driverNameET.text.toString()
-                    trip.driverEmail = model.getAccount().email!!
+                    trip.driverEmail = model.auth.currentUser!!.email!!
                     trip.availableSeats = availableSeatsET.text.toString().toInt()
                     trip.seatPrice = seatPriceET.text.toString().toFloat()
                     trip.description = informationsET.text.toString()
@@ -362,9 +360,7 @@ class TripEditFragment : Fragment() {
     }
 
     private fun takeSavedPhoto(name: String?, imageView: ImageView, bitmap: Bitmap?) {
-        println("LOL" + name)
         if(name == null && bitmap != null) {
-            println("LOL")
             imageView.setImageBitmap(bitmap)
         }
         try {

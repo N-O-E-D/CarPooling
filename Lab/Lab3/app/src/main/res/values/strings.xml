@@ -70,4 +70,6 @@
     <string name="arrival_address">Arrival address</string>
     <string name="departure_date">Departure date</string>
     <string name="arrival_date">Arrival date</string>
+
+    <string name="token_id">886522778931-698f6bkmod6af65ed18ogmvomkregduh.apps.googleusercontent.com</string>
 </resources>
