@@ -3,6 +3,7 @@ package it.polito.mad.group08.carpooling
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
@@ -65,7 +66,6 @@ class ShowProfileFragment : Fragment() {
                 fullNameTV.text = if (userDB.name == "") "Full Name" else userDB.name
                 nicknameTV.text = if (userDB.nickname == "") "Nickname" else userDB.nickname
                 emailTV.text = if (userDB.email == "") "Email" else userDB.email
-                //TODO: set location & phone number visibility SHOW
                 locationTV.text = if (userDB.location == "") "Location" else userDB.location
                 phonenumberTV.text = if (userDB.phone_number == "") "#" else userDB.phone_number
                 retrieveUserImage("self")

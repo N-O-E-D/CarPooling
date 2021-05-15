@@ -84,8 +84,6 @@ class OthersTripListFragment : Fragment() {
         // DECOUPLE DATA FROM UI
         model.getOthersTrips().observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
             // update UI
-
-            Log.d("OTHERSAAAA", tripsDB.toString())
             if (tripsDB.isEmpty()) {
                 recyclerView.visibility = View.GONE
                 emptyTextView.visibility = View.VISIBLE
@@ -196,7 +194,6 @@ class OthersTripListFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        //TODO filter icon
         inflater.inflate(R.menu.search_menu, menu)
     }
 
@@ -259,7 +256,7 @@ class TripAdapter(private val tripsAdapter: MutableList<Trip>,
                     if (model.bitmaps[trip.id] == null) {
                         val storage = Firebase.storage
                         val storageRef = storage.reference
-                        if(trip.carPhotoPath != null) {
+                        if(trip.carPhotoPath != null && trip.carPhotoPath != "") {
                             val testRef = storageRef.child(trip.carPhotoPath!!)
                             testRef.metadata.addOnSuccessListener { metadata ->
                                 val size = metadata.sizeBytes

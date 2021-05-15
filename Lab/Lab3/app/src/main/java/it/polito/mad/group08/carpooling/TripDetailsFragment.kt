@@ -1,8 +1,10 @@
 package it.polito.mad.group08.carpooling
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.*
@@ -124,11 +126,8 @@ class TripDetailsFragment : Fragment() {
         seatPrice.text = getString(R.string.seat_price_msg, trip.seatPrice.toString())
         description.text = trip.description
 
-        //TODO would be nice change color too
-
         // FAB (FOR USER != OWNER)
-        if(trip.driverEmail != model.getAccount().email){
-            //TODO
+        if(trip.driverEmail != model.auth.currentUser!!.email){
             val scrollView = requireView().findViewById<ScrollView>(R.id.scrollView)
             scrollView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
                 if (scrollY > oldScrollY && showInterestFab.visibility == View.VISIBLE) {
@@ -151,7 +150,7 @@ class TripDetailsFragment : Fragment() {
                 }
 
                 showInterestFab.setOnClickListener {
-                    val anim: Animation = AnimationUtils.loadAnimation(showInterestFab.context, R.anim.zoom)
+                    val anim: Animation = AnimationUtils.loadAnimation(showInterestFab.context, R.anim.shake)
                     anim.duration = 150
                     showInterestFab.startAnimation(anim)
 
@@ -211,7 +210,6 @@ class TripDetailsFragment : Fragment() {
         val minutes = seconds / 60
         val hours = minutes / 60
         val days = hours / 24
-        //println("$days $hours $minutes")
         return concatenate(days.toInt(), hours.toInt(), minutes.toInt())
     }
 

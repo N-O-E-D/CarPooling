@@ -34,6 +34,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.jvm.Throws
 
 
 private const val OPEN_CAMERA_REQUEST_CODE = 1
@@ -184,18 +185,16 @@ class EditProfileFragment : Fragment() {
 
                 val storage = Firebase.storage
                 val storageRef = storage.reference
-                val testRef = storageRef.child(model.getAccount().email!!)
+                val testRef = storageRef.child(model.auth.currentUser!!.email!!)
 
                 if(bitmap != null){
                     // it saves the bitmap into the internal storage
                     val baos = ByteArrayOutputStream()
                     bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, baos)
                     val data = baos.toByteArray()
-                    var uploadTask = testRef.putBytes(data)
+                    val uploadTask = testRef.putBytes(data)
                     uploadTask.addOnFailureListener {
-                        Log.d("ABCDE", "Failure $it")
                     }.addOnSuccessListener { taskSnapshot ->
-                        Log.d("ABCDE", "Success $taskSnapshot")
                     }
                     model.setUserBitmap(bitmap!!)
                     (activity as? ShowProfileFragment.InfoManager)?.updatePhoto(bitmap!!)
@@ -203,7 +202,8 @@ class EditProfileFragment : Fragment() {
                 model.editUser(User(fullNameET.text.toString(), nicknameET.text.toString(),
                         emailET.text.toString(), locationET.text.toString(),
                         phonenumberET.text.toString(), user.rating))
-                findNavController().navigate(R.id.action_editProfileFragment_to_showProfileFragment)
+                //findNavController().navigate(R.id.action_editProfileFragment_to_showProfileFragment)
+                findNavController().popBackStack()
                 Snackbar.make(view?.findViewById(R.id.fullNameET)!!,R.string.changes_applied_successfully,Snackbar.LENGTH_SHORT).show()
                 true
             }

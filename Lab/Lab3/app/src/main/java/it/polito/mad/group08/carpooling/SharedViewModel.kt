@@ -6,10 +6,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 
 
 class SharedViewModel : ViewModel() {
+
+    var auth: FirebaseAuth = Firebase.auth
+
     private var db = FirebaseFirestore.getInstance()
 
     private val filter = MutableLiveData<Filter>(Filter())
@@ -38,9 +44,12 @@ class SharedViewModel : ViewModel() {
     private val user = MutableLiveData<User>()
 
     fun setUser(user: User) {
-        db.collection("users").document(account.value?.email!!).addSnapshotListener { userDB, err ->
-            if (err != null)
-                Log.d("BBBB", "Error getting documents.", err)
+        Log.d("PROVA", user.toString())
+        Log.d("PROVA", auth.currentUser!!.email!!)
+        db.collection("users").document(auth.currentUser!!.email!!).addSnapshotListener { userDB, err ->
+            /*if (err != null) {
+
+            }*/
             if (userDB != null) {
                 if (userDB.data == null) {
                     db.collection("users").document(user.email).set(user)
@@ -58,7 +67,7 @@ class SharedViewModel : ViewModel() {
 
 
     fun editUser(user: User) {
-        db.collection("users").document(account.value?.email!!).set(user)
+        db.collection("users").document(auth.currentUser!!.email!!).set(user)
                 .addOnSuccessListener {}
     }
 
@@ -70,8 +79,9 @@ class SharedViewModel : ViewModel() {
 
     fun setOtherUser(email: String) {
         db.collection("users").document(email).addSnapshotListener { userDB, err ->
-            if (err != null)
-                Log.d("BBBB", "Error getting documents.", err)
+            /*if (err != null) {
+
+            }*/
             if (userDB != null) {
                 this.otherUser.value = userDB.toObject(User::class.java)
             }
@@ -83,17 +93,16 @@ class SharedViewModel : ViewModel() {
     }
 
     // MAIL FROM WHICH YOU ARE LOGGED IN
-    private val account = MutableLiveData<GoogleSignInAccount>()
+    //private val account = MutableLiveData<GoogleSignInAccount>()
 
-    fun setAccount(account: GoogleSignInAccount) {
+    /*fun setAccount(account: GoogleSignInAccount) {
         this.account.value = account
     }
 
     fun getAccount(): GoogleSignInAccount {
         return account.value!!
-    }
+    }*/
 
-    //TODO I'm not sure position should be managed by means of sharedViewModel. Bundle is better
     private val position = MutableLiveData(0)
 
     fun getPosition(): LiveData<Int> {
@@ -114,10 +123,9 @@ class SharedViewModel : ViewModel() {
         return filter.value
     }
 
-    //TODO merge loadTrips() with loadOtherTrips()
     //TODO handle error case
     private fun loadTrips() {         // Do an asynchronous operation to fetch trips.
-        db.collection("trips").whereEqualTo("driverEmail", account.value?.email)
+        db.collection("trips").whereEqualTo("driverEmail", auth.currentUser!!.email)
                 .addSnapshotListener { tasks, error ->
                     if (error != null)
                         Log.w("AAAA", "Error getting documents.", error)
@@ -125,27 +133,22 @@ class SharedViewModel : ViewModel() {
                     if (tasks != null) {
                         val tmpTrips = mutableListOf<Trip>()
                         for (document in tasks.documents) {
-                            Log.d("AAAA", document.id + " => " + document.data)
                             val tmp = document.toObject(Trip::class.java)!!
-                            Log.d("AAAA", tmp.toString())
                             tmpTrips.add(tmp)
                         }
                         trips.value = tmpTrips
-                    } else
-                        Log.d("AAAA", "success but empty trips")
+                    }
                 }
     }
 
     fun addOrReplaceTrip(newTrip: Trip) {
-        newTrip.id = "${account.value?.email!!}_${position.value}"
+        newTrip.id = "${auth.currentUser!!.email!!}_${position.value}"
         db.collection("trips")
                 .document(newTrip.id)
                 .set(newTrip)
                 .addOnSuccessListener {
-                    Log.d("AAAA", "DATO AGGIORNATO")
                 }
                 .addOnFailureListener {
-                    Log.d("AAAA", "ERROREEE")
                 }
     }
 
@@ -155,33 +158,24 @@ class SharedViewModel : ViewModel() {
 
     private fun loadOthersTrips() {         // Do an asynchronous operation to fetch trips.
         db.collection("trips")
-                .whereNotEqualTo("driverEmail", account.value?.email)
+                .whereNotEqualTo("driverEmail", auth.currentUser!!.email)
                 .addSnapshotListener { tasks, error ->
                     if (error != null)
                         Log.w("OTHERTRIPSAAAA", "Error getting documents.", error)
 
                     if (tasks != null) {
                         val tmpTrips = mutableListOf<Trip>()
-                        /*for (document in tasks.documents) {
-                            Log.d("OTHERTRIPSAAAA", document.id + " => " + document.data)
-                            val tmp = document.toObject(Trip::class.java)!!
-
-                            Log.d("OTHERTRIPSAAAA", tmp.toString())
-                            tmpTrips.add(tmp)
-                        }*/
                         tasks.documents.forEachIndexed { index, document ->
-                            Log.d("OTHERTRIPSAAAA", document.id + " => " + document.data)
                             val tmp = document.toObject(Trip::class.java)!!
-                            if(othersTrips.value != null) {
+                            if (othersTrips.value != null) {
                                 for (trip in othersTrips.value!!) {
                                     if (tmp.id == trip.id &&
                                             tmp.carPhotoPath != trip.carPhotoPath) {
-                                        bitmaps[tmp.id] == null
+                                        bitmaps[tmp.id] = null
                                         break
                                     }
                                 }
                             }
-                            Log.d("OTHERTRIPSAAAA", tmp.toString())
                             tmpTrips.add(tmp)
                         }
                         //othersTrips.value = tmpTrips
@@ -208,8 +202,7 @@ class SharedViewModel : ViewModel() {
                         }.filter {
                             it.seatPrice <= filter.value?.maxPrice!! && it.seatPrice >= filter.value?.minPrice!!
                         }.toMutableList()
-                    } else
-                        Log.d("OTHERTRIPSAAAA", "success but empty trips")
+                    }
                 }
     }
 
@@ -217,34 +210,30 @@ class SharedViewModel : ViewModel() {
         return othersTrips
     }
 
-    fun deleteTrip(tripID: String){
+    fun deleteTrip(tripID: String) {
         db.collection("trips").document(tripID).delete().addOnSuccessListener {
-            Log.d("AAAA", "TRIP DELETED SUCCESSFULLY")
         }
                 .addOnFailureListener {
-                    Log.d("AAAA", "ERROR DELETING TRIP")
                 }
     }
 
     fun userIsInterested(tripToCheck: Trip): Boolean {
-        val myself = User(email = account.value?.email!!, name = account.value?.displayName!!)
+        val myself = User(email = auth.currentUser!!.email!!, name = auth.currentUser!!.displayName!!)
         return tripToCheck.interestedUsers.contains(myself)
     }
 
-    fun removeFromBookings(bookingID: String){
+    fun removeFromBookings(bookingID: String) {
         db.collection("bookings")
                 .document(bookingID)
                 .delete()
                 .addOnSuccessListener {
-                    Log.d("AAAA", "removeFromBooking $bookingID with success")
                 }.addOnFailureListener {
-                    Log.d("AAAA", "removeFromBooking $bookingID with success")
                 }
     }
 
     fun updateTripInterestedUser(tripToUpdate: Trip, isInterested: Boolean, userToUpdate: User?) {
-        var userTarget: User? = null
-        val myself = User(email = account.value?.email!!, name = account.value?.displayName!!)
+        val userTarget: User?
+        val myself = User(email = auth.currentUser!!.email!!, name = auth.currentUser!!.displayName!!)
         userTarget = userToUpdate ?: myself
         var accepted = false
 
@@ -252,7 +241,7 @@ class SharedViewModel : ViewModel() {
             tripToUpdate.interestedUsers.add(userTarget)
         else {
             tripToUpdate.interestedUsers.map {
-                if(it.email == userTarget.email && it.isAccepted){
+                if (it.email == userTarget.email && it.isAccepted) {
                     it.isAccepted = false //it's useless because it will be removed from the list
                     accepted = true
                     removeFromBookings("${tripToUpdate.id}_${userTarget.email}")
@@ -261,17 +250,15 @@ class SharedViewModel : ViewModel() {
             tripToUpdate.interestedUsers.remove(userTarget)
         }
 
-        if(accepted)
+        if (accepted)
             tripToUpdate.availableSeats++
 
         db.collection("trips")
                 .document(tripToUpdate.id)
                 .set(tripToUpdate)
                 .addOnSuccessListener {
-                    Log.d("AAAA", "updateTripInterestedUser with success")
                 }
                 .addOnFailureListener {
-                    Log.d("AAAA", "updateTripInterestedUser with error")
                 }
     }
 
@@ -281,15 +268,14 @@ class SharedViewModel : ViewModel() {
                 .document("${targetTrip.id}_${targetUser.email}")
                 .set(booking)
                 .addOnSuccessListener {
-                    Log.d("AAAA", "acceptUser with success")
                     targetTrip.interestedUsers.map {
-                        if(it.email == targetUser.email)
+                        if (it.email == targetUser.email)
                             it.isAccepted = true
                     }
 
                     targetTrip.availableSeats--
 
-                    if(targetTrip.availableSeats <= 0){
+                    if (targetTrip.availableSeats <= 0) {
                         val tmpInterestedUsers = mutableListOf<User>()
                         targetTrip.interestedUsers.map {
                             if (it.isAccepted)
@@ -302,14 +288,11 @@ class SharedViewModel : ViewModel() {
                             .document(targetTrip.id)
                             .set(targetTrip)
                             .addOnSuccessListener {
-                                Log.d("AAAA", "update available seat with success")
                             }
                             .addOnFailureListener {
-                                Log.d("AAAA", "Error in update available seat")
                             }
                 }
                 .addOnFailureListener {
-                    Log.d("AAAA", "acceptUser with error")
                 }
     }
 
@@ -335,10 +318,8 @@ class SharedViewModel : ViewModel() {
     }
 
     fun bookingIsAccepted(tripID: String): Boolean {
-        val possibleBooking = Booking(tripID, account.value?.email!!)
-        Log.d("AAABBB", "$possibleBooking")
-        Log.d("AAABBB", "${bookings.value}")
-        return if(bookings.value != null)
+        val possibleBooking = Booking(tripID, auth.currentUser!!.email!!)
+        return if (bookings.value != null)
             bookings.value?.contains(possibleBooking)!!
         else
             false
