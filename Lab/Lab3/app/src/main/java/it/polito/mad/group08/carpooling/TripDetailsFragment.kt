@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -309,6 +310,15 @@ class TripDetailsFragment : Fragment() {
                     Toast.makeText(requireContext(), getString(R.string.trip_removed_successfully), Toast.LENGTH_SHORT).show()
                     activity?.onBackPressed()
 
+                    if (currentTrip?.carPhotoPath != null) {
+                        val storage = Firebase.storage
+                        val storageRef = storage.reference
+                        val imageRef = storageRef.child(currentTrip!!.carPhotoPath!!)
+                        imageRef.delete()
+                                .addOnSuccessListener { Log.d("PROVA", "OnSuccess")  }
+                                .addOnFailureListener { Log.d("PROVA", "OnFailure") }
+                    }
+
                     //delete this trip
                     model.getPosition().observe(viewLifecycleOwner, Observer<Int> {parentPosition ->
                         model.getTrips().observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
@@ -318,6 +328,14 @@ class TripDetailsFragment : Fragment() {
                                 }
                             }
                             tripsDB[parentPosition].interestedUsers = mutableListOf()
+                            if (tripsDB[parentPosition].carPhotoPath != null) {
+                                val storage = Firebase.storage
+                                val storageRef = storage.reference
+                                val imageRef = storageRef.child(tripsDB[parentPosition].carPhotoPath!!)
+                                imageRef.delete()
+                                        .addOnSuccessListener { Log.d("PROVA", "OnSuccess")  }
+                                        .addOnFailureListener { Log.d("PROVA", "OnFailure") }
+                            }
                             model.deleteTrip(tripsDB[parentPosition].id)
                         })
                     })
