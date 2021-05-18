@@ -60,6 +60,7 @@
     <string name="trip_show_interest">Show interest</string>
     <string name="trip_remove_interest">Remove interest</string>
     <string name="trip_already_booked">Already Booked!</string>
+    <string name="trip_no_seats">No seats available</string>
 
     <string name="filters">Filters</string>
     <string name="apply_filters">Apply</string>
