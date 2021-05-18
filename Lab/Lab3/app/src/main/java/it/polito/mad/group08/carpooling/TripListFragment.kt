@@ -134,53 +134,35 @@ class TripListFragment : Fragment() {
                 arrivalLocation.text = trip.checkPoints[trip.checkPoints.size - 1].location
                 departureTimestamp.text = trip.checkPoints[0].timestamp
                 arrivalTimestamp.text = trip.checkPoints[trip.checkPoints.size-1].timestamp
-                //val bitmap: Bitmap? = takeSavedPhoto(trip.carPhotoPath, itemView)
-                when(itemView.context.resources.configuration.orientation){
-                    Configuration.ORIENTATION_PORTRAIT -> {
-                        if (model.bitmaps[trip.id] == null) {
-                            /*val storage = Firebase.storage
-                            val storageRef = storage.reference
-                            if(trip.carPhotoPath != null && trip.carPhotoPath != "") {
-                                val testRef = storageRef.child(trip.carPhotoPath!!)
-                                testRef.metadata.addOnSuccessListener { metadata ->
-                                    val size = metadata.sizeBytes
-                                    val ONE_MEGABYTE: Long = 1024 * 1024
-                                    testRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
-                                        val imageBitmap = BitmapFactory.decodeByteArray(it, 0, size.toInt())
-                                        if (imageBitmap != null){
-                                            itemView.findViewById<ImageView>(R.id.carPhoto)
-                                                    .setImageBitmap(imageBitmap)
-                                            model.bitmaps[trip.id] = imageBitmap
-                                        }
-                                    }.addOnFailureListener {
-                                        // Handle any errors
-                                    }
-                                }.addOnFailureListener {
-                                    // Uh-oh, an error occurred!
-                                }*/
-                            if(trip.carPhotoPath != null && trip.carPhotoPath != "") {
-                                MainScope().launch {
-                                    val size = withContext(Dispatchers.IO) {
-                                        model.downloadMetadataPhoto(trip.carPhotoPath!!).sizeBytes
-                                    }
-                                    val bitmap = withContext(Dispatchers.IO) {
-                                        model.downloadPhoto(size, trip.carPhotoPath!!)
-                                    }
+
+                if (model.bitmaps[trip.id] == null) {
+                    if(trip.carPhotoPath != null && trip.carPhotoPath != "") {
+                        MainScope().launch {
+                            val size = withContext(Dispatchers.IO) {
+                                model.downloadMetadataPhoto(trip.carPhotoPath!!).sizeBytes
+                            }
+                            val bitmap = withContext(Dispatchers.IO) {
+                                model.downloadPhoto(size, trip.carPhotoPath!!)
+                            }
+
+                            model.bitmaps[trip.id] = bitmap
+
+                            when(itemView.context.resources.configuration.orientation){
+                                Configuration.ORIENTATION_PORTRAIT -> {
                                     itemView.findViewById<ImageView>(R.id.carPhoto)
-                                            .setImageBitmap(bitmap)
-                                    model.bitmaps[trip.id] = bitmap
+                                            .setImageBitmap(model.bitmaps[trip.id])
                                 }
                             }
-                                /*val bitmap = withContext(Dispatchers.IO) {
-                                    model.downloadPhoto(size, trip.carPhotoPath!!)
-                                }*/
-                        } else {
+                        }
+                    }
+                } else {
+                    when(itemView.context.resources.configuration.orientation){
+                        Configuration.ORIENTATION_PORTRAIT -> {
                             itemView.findViewById<ImageView>(R.id.carPhoto)
                                     .setImageBitmap(model.bitmaps[trip.id])
                         }
                     }
                 }
-
 
                 card.setOnClickListener {
                     clickListener(CARD_CLICKED, trip, bindingAdapterPosition)

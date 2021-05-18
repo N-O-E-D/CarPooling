@@ -47,8 +47,6 @@ class SharedViewModel : ViewModel() {
     private val user = MutableLiveData<User>()
 
     fun setUser(user: User) {
-        Log.d("PROVA", user.toString())
-        Log.d("PROVA", auth.currentUser!!.email!!)
         db.collection("users").document(auth.currentUser!!.email!!).addSnapshotListener { userDB, err ->
             /*if (err != null) {
 

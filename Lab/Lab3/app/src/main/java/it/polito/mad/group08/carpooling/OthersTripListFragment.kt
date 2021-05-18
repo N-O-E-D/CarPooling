@@ -255,23 +255,29 @@ class TripAdapter(private val tripsAdapter: MutableList<Trip>,
             departureTimestamp.text = trip.checkPoints[0].timestamp
             arrivalTimestamp.text = trip.checkPoints[trip.checkPoints.size - 1].timestamp
             showInterestButton.text = itemView.context.getString(R.string.trip_show_interest)
-            when(itemView.context.resources.configuration.orientation){
-                Configuration.ORIENTATION_PORTRAIT -> {
-                    if (model.bitmaps[trip.id] == null) {
-                        if(trip.carPhotoPath != null && trip.carPhotoPath != "") {
-                            MainScope().launch {
-                                val size = withContext(Dispatchers.IO) {
-                                    model.downloadMetadataPhoto(trip.carPhotoPath!!).sizeBytes
-                                }
-                                val bitmap = withContext(Dispatchers.IO) {
-                                    model.downloadPhoto(size, trip.carPhotoPath!!)
-                                }
+            if (model.bitmaps[trip.id] == null) {
+                if(trip.carPhotoPath != null && trip.carPhotoPath != "") {
+                    MainScope().launch {
+                        val size = withContext(Dispatchers.IO) {
+                            model.downloadMetadataPhoto(trip.carPhotoPath!!).sizeBytes
+                        }
+                        val bitmap = withContext(Dispatchers.IO) {
+                            model.downloadPhoto(size, trip.carPhotoPath!!)
+                        }
+
+                        model.bitmaps[trip.id] = bitmap
+
+                        when(itemView.context.resources.configuration.orientation){
+                            Configuration.ORIENTATION_PORTRAIT -> {
                                 itemView.findViewById<ImageView>(R.id.carPhoto)
-                                        .setImageBitmap(bitmap)
-                                model.bitmaps[trip.id] = bitmap
+                                        .setImageBitmap(model.bitmaps[trip.id])
                             }
                         }
-                    } else {
+                    }
+                }
+            } else {
+                when(itemView.context.resources.configuration.orientation){
+                    Configuration.ORIENTATION_PORTRAIT -> {
                         itemView.findViewById<ImageView>(R.id.carPhoto)
                                 .setImageBitmap(model.bitmaps[trip.id])
                     }
