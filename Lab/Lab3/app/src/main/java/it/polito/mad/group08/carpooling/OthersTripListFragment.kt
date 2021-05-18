@@ -29,6 +29,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.RangeSlider
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -254,25 +258,17 @@ class TripAdapter(private val tripsAdapter: MutableList<Trip>,
             when(itemView.context.resources.configuration.orientation){
                 Configuration.ORIENTATION_PORTRAIT -> {
                     if (model.bitmaps[trip.id] == null) {
-                        val storage = Firebase.storage
-                        val storageRef = storage.reference
                         if(trip.carPhotoPath != null && trip.carPhotoPath != "") {
-                            val testRef = storageRef.child(trip.carPhotoPath!!)
-                            testRef.metadata.addOnSuccessListener { metadata ->
-                                val size = metadata.sizeBytes
-                                val ONE_MEGABYTE: Long = 1024 * 1024
-                                testRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
-                                    val imageBitmap = BitmapFactory.decodeByteArray(it, 0, size.toInt())
-                                    if (imageBitmap != null){
-                                        itemView.findViewById<ImageView>(R.id.carPhoto)
-                                                .setImageBitmap(imageBitmap)
-                                        model.bitmaps[trip.id] = imageBitmap
-                                    }
-                                }.addOnFailureListener {
-                                    // Handle any errors
+                            MainScope().launch {
+                                val size = withContext(Dispatchers.IO) {
+                                    model.downloadMetadataPhoto(trip.carPhotoPath!!).sizeBytes
                                 }
-                            }.addOnFailureListener {
-                                // Uh-oh, an error occurred!
+                                val bitmap = withContext(Dispatchers.IO) {
+                                    model.downloadPhoto(size, trip.carPhotoPath!!)
+                                }
+                                itemView.findViewById<ImageView>(R.id.carPhoto)
+                                        .setImageBitmap(bitmap)
+                                model.bitmaps[trip.id] = bitmap
                             }
                         }
                     } else {

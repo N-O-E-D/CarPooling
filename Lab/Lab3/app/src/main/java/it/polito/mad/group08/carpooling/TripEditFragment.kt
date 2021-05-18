@@ -104,9 +104,16 @@ class TripEditFragment : Fragment() {
                     }
                 }
 
-                imageView.setImageBitmap(bitmap)
-
                 filename = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+
+                requireContext().openFileOutput(filename, Context.MODE_PRIVATE).use {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+                }
+                /*requireContext().openFileOutput(filename, Context.MODE_PRIVATE).use {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+                }*/
+
+                imageView.setImageBitmap(bitmap)
             }
         }
 
@@ -140,8 +147,10 @@ class TripEditFragment : Fragment() {
                 return Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             }
             override fun parseResult(resultCode: Int, intent: Intent?): Bitmap? {
-                if(resultCode != Activity.RESULT_OK || intent == null)
+                if(resultCode != Activity.RESULT_OK || intent == null) {
+                    currentPhotoPath = ""
                     return null
+                }
                 return intent.getParcelableExtra("data")
             }
 
@@ -149,16 +158,18 @@ class TripEditFragment : Fragment() {
         }
 
         takeImageCallback = ActivityResultCallback {
-            val bitmap = BitmapFactory.decodeFile(currentPhotoPath)
-            imageView.setImageBitmap(bitmap)
+            if (currentPhotoPath != "") {
+                val bitmap = BitmapFactory.decodeFile(currentPhotoPath)
+                imageView.setImageBitmap(bitmap)
 
-            filename = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                filename = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+            }
         }
 
         takeImageLauncher = registerForActivityResult(takeImageContract, takeImageCallback)
     }
 
-    fun removeAt(position: Int) {
+    private fun removeAt(position: Int) {
         tmp_checkpoints.removeAt(position)
         adapter.onItemEditDeleted(position)
     }
@@ -183,7 +194,7 @@ class TripEditFragment : Fragment() {
             adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
             recyclerView.adapter = adapter
 
-            takeSavedPhoto(filename, imageView, model.bitmaps[trip.id])
+            takeSavedPhoto(filename, currentPhotoPath, imageView, model.bitmaps[trip.id])
         }
     }
 
@@ -247,7 +258,7 @@ class TripEditFragment : Fragment() {
         adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
         recyclerView.adapter = adapter
 
-        takeSavedPhoto(filename, imageView, model.bitmaps[trip.id])
+        takeSavedPhoto(filename, currentPhotoPath, imageView, model.bitmaps[trip.id])
 
     }
 
@@ -326,20 +337,20 @@ class TripEditFragment : Fragment() {
                     val data = baos.toByteArray()
                     val uploadTask = testRef.putBytes(data)
                     uploadTask.addOnFailureListener {
-                    }.addOnSuccessListener { taskSnapshot ->
-                        model.bitmaps[trip.id] = bitmap
+                    }.addOnSuccessListener {
                         trip.carPhotoPath = filename
-                        trip.carDescription = carNameET.text.toString()
-                        trip.driverName = driverNameET.text.toString()
-                        trip.driverEmail = model.auth.currentUser!!.email!!
-                        trip.availableSeats = availableSeatsET.text.toString().toInt()
-                        trip.seatPrice = seatPriceET.text.toString().toFloat()
-                        trip.description = informationsET.text.toString()
-                        trip.checkPoints = tmp_checkpoints
                         model.addOrReplaceTrip(trip)
-                        if (findNavController().currentDestination!!.id == R.id.tripEditFragment)
-                            findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
                     }
+                    model.bitmaps[trip.id] = bitmap
+                    trip.carDescription = carNameET.text.toString()
+                    trip.driverName = driverNameET.text.toString()
+                    trip.driverEmail = model.auth.currentUser!!.email!!
+                    trip.availableSeats = availableSeatsET.text.toString().toInt()
+                    trip.seatPrice = seatPriceET.text.toString().toFloat()
+                    trip.description = informationsET.text.toString()
+                    trip.checkPoints = tmp_checkpoints
+                    model.addOrReplaceTrip(trip)
+                    findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
                 } else {
                     trip.carDescription = carNameET.text.toString()
                     trip.driverName = driverNameET.text.toString()
@@ -358,13 +369,16 @@ class TripEditFragment : Fragment() {
         }
     }
 
-    private fun takeSavedPhoto(name: String?, imageView: ImageView, bitmap: Bitmap?) {
-        if(name == null && bitmap != null) {
+    private fun takeSavedPhoto(file_name: String?, cur_photo_path: String?, imageView: ImageView, bitmap: Bitmap?) {
+        if(cur_photo_path == "" && filename == null && bitmap != null) {
             imageView.setImageBitmap(bitmap)
         }
         try {
-            if(name != null) {
-                activity?.applicationContext?.openFileInput(name).use {
+            if(cur_photo_path != "") {
+                val bitmap = BitmapFactory.decodeFile(currentPhotoPath)
+                imageView.setImageBitmap(bitmap)
+            } else if (file_name != null) {
+                requireContext().openFileInput(file_name).use {
                     val imageBitmap = BitmapFactory.decodeStream(it)
                     if (imageBitmap != null)
                         imageView.setImageBitmap(imageBitmap)

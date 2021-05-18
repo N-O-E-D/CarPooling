@@ -1,15 +1,18 @@
 package it.polito.mad.group08.carpooling
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageMetadata
+import com.google.firebase.storage.ktx.storage
 
 
 class SharedViewModel : ViewModel() {
@@ -143,13 +146,15 @@ class SharedViewModel : ViewModel() {
 
     fun addOrReplaceTrip(newTrip: Trip) {
         if(newTrip.id == "") {
-            var max = -1
+            var max = 0
             for (trip in trips.value!!) {
-                val num = trip.id.split("_")[1].toInt()
-                if (num > max)
-                    max = num
+                val num = trip.id.split("_").last().toInt()
+                if (num != max) {
+                    //max = num
+                    break
+                } else max++
             }
-            newTrip.id = "${auth.currentUser!!.email!!}_${++max}"
+            newTrip.id = "${auth.currentUser!!.email!!}_${max}"
         }
 
         db.collection("trips")
@@ -332,6 +337,22 @@ class SharedViewModel : ViewModel() {
             bookings.value?.contains(possibleBooking)!!
         else
             false
+    }
+
+    fun downloadMetadataPhoto(path: String): StorageMetadata {
+        val storage = Firebase.storage
+        val storageRef = storage.reference
+        val testRef = storageRef.child(path)
+        return Tasks.await(testRef.metadata)
+    }
+
+    fun downloadPhoto(size: Long, path: String): Bitmap  {
+        val storage = Firebase.storage
+        val storageRef = storage.reference
+        val testRef = storageRef.child(path)
+        val ONE_MEGABYTE: Long = 1024 * 1024
+        val byteArray = Tasks.await(testRef.getBytes(ONE_MEGABYTE))
+        return BitmapFactory.decodeByteArray(byteArray, 0, size.toInt())
     }
 
 }

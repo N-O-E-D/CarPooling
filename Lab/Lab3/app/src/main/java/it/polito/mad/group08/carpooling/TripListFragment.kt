@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.*
 import java.io.FileNotFoundException
 
 const val CARD_BUTTON_CLICKED = 1 //Edit in MyTrips; ShowInterest in OtherTripList
@@ -137,7 +138,7 @@ class TripListFragment : Fragment() {
                 when(itemView.context.resources.configuration.orientation){
                     Configuration.ORIENTATION_PORTRAIT -> {
                         if (model.bitmaps[trip.id] == null) {
-                            val storage = Firebase.storage
+                            /*val storage = Firebase.storage
                             val storageRef = storage.reference
                             if(trip.carPhotoPath != null && trip.carPhotoPath != "") {
                                 val testRef = storageRef.child(trip.carPhotoPath!!)
@@ -156,8 +157,23 @@ class TripListFragment : Fragment() {
                                     }
                                 }.addOnFailureListener {
                                     // Uh-oh, an error occurred!
+                                }*/
+                            if(trip.carPhotoPath != null && trip.carPhotoPath != "") {
+                                MainScope().launch {
+                                    val size = withContext(Dispatchers.IO) {
+                                        model.downloadMetadataPhoto(trip.carPhotoPath!!).sizeBytes
+                                    }
+                                    val bitmap = withContext(Dispatchers.IO) {
+                                        model.downloadPhoto(size, trip.carPhotoPath!!)
+                                    }
+                                    itemView.findViewById<ImageView>(R.id.carPhoto)
+                                            .setImageBitmap(bitmap)
+                                    model.bitmaps[trip.id] = bitmap
                                 }
                             }
+                                /*val bitmap = withContext(Dispatchers.IO) {
+                                    model.downloadPhoto(size, trip.carPhotoPath!!)
+                                }*/
                         } else {
                             itemView.findViewById<ImageView>(R.id.carPhoto)
                                     .setImageBitmap(model.bitmaps[trip.id])
