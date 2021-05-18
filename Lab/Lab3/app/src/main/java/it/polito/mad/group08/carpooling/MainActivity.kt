@@ -58,14 +58,14 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
         outState.putString("name", headerMainInfo.text.toString())
         outState.putString("email", headerSecInfo.text.toString())
         val bitmap = (headerProfilePhoto.drawable as BitmapDrawable).bitmap
-        val cacheFile = File.createTempFile("cacheImage",null, applicationContext.cacheDir)
+        val cacheFile = File.createTempFile("cacheImageHeader",null, applicationContext.cacheDir)
         bitmap?.compress(Bitmap.CompressFormat.PNG, 100, cacheFile.outputStream())
-        outState.putString("cacheFilePath", cacheFile.name)
+        outState.putString("cacheFilePathHeader", cacheFile.name)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        val cacheFile = File(applicationContext.cacheDir, savedInstanceState.getString("cacheFilePath")!!)
+        val cacheFile = File(applicationContext.cacheDir, savedInstanceState.getString("cacheFilePathHeader")!!)
         val bitmap = BitmapFactory.decodeFile(cacheFile.path)
         if(bitmap!=null)
             headerProfilePhoto.setImageBitmap(bitmap)
