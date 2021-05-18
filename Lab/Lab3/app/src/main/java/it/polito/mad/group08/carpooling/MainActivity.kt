@@ -1,11 +1,14 @@
 package it.polito.mad.group08.carpooling
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,6 +16,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import java.io.File
 
 
 class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
@@ -20,6 +24,10 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
     private lateinit var headerMainInfo: TextView
     private lateinit var headerSecInfo: TextView
     private lateinit var headerProfilePhoto: ImageView
+
+    private lateinit var headerProfilePhotoBitmap: Bitmap
+    private lateinit var headerNameText: String
+    private lateinit var headerEmailText: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +51,27 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
             navController.navigate(R.id.showProfileFragment)
             drawerLayout.closeDrawers()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("name", headerMainInfo.text.toString())
+        outState.putString("email", headerSecInfo.text.toString())
+        val bitmap = (headerProfilePhoto.drawable as BitmapDrawable).bitmap
+        val cacheFile = File.createTempFile("cacheImage",null, applicationContext.cacheDir)
+        bitmap?.compress(Bitmap.CompressFormat.PNG, 100, cacheFile.outputStream())
+        outState.putString("cacheFilePath", cacheFile.name)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val cacheFile = File(applicationContext.cacheDir, savedInstanceState.getString("cacheFilePath")!!)
+        val bitmap = BitmapFactory.decodeFile(cacheFile.path)
+        if(bitmap!=null)
+            headerProfilePhoto.setImageBitmap(bitmap)
+        headerMainInfo.text = savedInstanceState.getString("name")
+        headerSecInfo.text = savedInstanceState.getString("email")
+        cacheFile.delete()
     }
 
     override fun onSupportNavigateUp(): Boolean {
