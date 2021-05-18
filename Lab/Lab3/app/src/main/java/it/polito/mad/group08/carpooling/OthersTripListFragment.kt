@@ -255,6 +255,7 @@ class TripAdapter(private val tripsAdapter: MutableList<Trip>,
             departureTimestamp.text = trip.checkPoints[0].timestamp
             arrivalTimestamp.text = trip.checkPoints[trip.checkPoints.size - 1].timestamp
             showInterestButton.text = itemView.context.getString(R.string.trip_show_interest)
+
             if (model.bitmaps[trip.id] == null) {
                 if(trip.carPhotoPath != null && trip.carPhotoPath != "") {
                     MainScope().launch {
@@ -292,7 +293,7 @@ class TripAdapter(private val tripsAdapter: MutableList<Trip>,
             //SHOW INTEREST BUTTON
             if(model.bookingIsAccepted(trip.id)){ //user already show favorite and owner accepted
                 showInterestButton.text = itemView.context.getString(R.string.trip_already_booked)
-                showInterestButton.setOnClickListener { null }
+                showInterestButton.isClickable = false
             }else{
                 if(model.userIsInterested(trip)){
                     showInterestButton.text = itemView.context.getString(R.string.trip_remove_interest)
@@ -310,6 +311,11 @@ class TripAdapter(private val tripsAdapter: MutableList<Trip>,
                         showInterestButton.text = itemView.context.getString(R.string.trip_remove_interest)
                     }
                 }
+
+                if(trip.availableSeats == 0){
+                    showInterestButton.text = itemView.context.getString(R.string.trip_no_seats)
+                    showInterestButton.isClickable = false
+                }
             }
         }
 
@@ -317,20 +323,6 @@ class TripAdapter(private val tripsAdapter: MutableList<Trip>,
             card.setOnClickListener { null }
             showInterestButton.setOnClickListener { null }
         }
-
-//        private fun takeSavedPhoto(name: String?, v: View): Bitmap? {
-//            var imageBitmap: Bitmap? = null
-//            try {
-//                if (name != null) {
-//                    v.context.applicationContext?.openFileInput(name).use {
-//                        imageBitmap = BitmapFactory.decodeStream(it)
-//                    }
-//                }
-//            } catch (e: FileNotFoundException) {
-//                e.printStackTrace()
-//            }
-//            return imageBitmap
-//        }
     }
 
     override fun getItemCount() = tripsAdapter.size
@@ -348,15 +340,5 @@ class TripAdapter(private val tripsAdapter: MutableList<Trip>,
         super.onViewRecycled(holder)
         holder.unbind()
     }
-
-//    fun onItemChange(tripEdited: Trip, position: Int) {
-//        tripsAdapter[position] = tripEdited
-//        notifyItemChanged(position)
-//    }
-//
-//    fun onItemAdded(tripAdded: Trip) {
-//        tripsAdapter.add(tripAdded)
-//        notifyItemInserted(tripsAdapter.size - 1)
-//    }
 }
 
