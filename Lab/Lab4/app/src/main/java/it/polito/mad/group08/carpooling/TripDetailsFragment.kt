@@ -130,7 +130,7 @@ class TripDetailsFragment : Fragment() {
         // FAB (FOR USER != OWNER)
         if(trip.driverEmail != model.auth.currentUser!!.email){
             val scrollView = requireView().findViewById<ScrollView>(R.id.scrollView)
-            scrollView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            scrollView.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
                 if (scrollY > oldScrollY && showInterestFab.visibility == View.VISIBLE) {
                     showInterestFab.hide()
                 } else if (scrollY < oldScrollY && showInterestFab.visibility != View.VISIBLE) {
@@ -306,7 +306,7 @@ class TripDetailsFragment : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.delete_trip_title))
                 .setMessage(getString(R.string.delete_trip_confirm))
-                .setPositiveButton(android.R.string.ok) { dialog, which ->
+                .setPositiveButton(android.R.string.ok) { _, _ ->
                     Toast.makeText(requireContext(), getString(R.string.trip_removed_successfully), Toast.LENGTH_SHORT).show()
                     activity?.onBackPressed()
 
@@ -341,7 +341,7 @@ class TripDetailsFragment : Fragment() {
                     })
 
                 }
-                .setNegativeButton(android.R.string.cancel) { dialog, which ->
+                .setNegativeButton(android.R.string.cancel) { _, _ ->
                 }
                 .show()
     }

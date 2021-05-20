@@ -132,14 +132,14 @@ class OthersTripListFragment : Fragment() {
             timestamp.setText(sdf.format(cal.time))
         }
 
-        val dateDepartureSetListener = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+        val dateDepartureSetListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
             cal.set(Calendar.YEAR, year)
             cal.set(Calendar.MONTH, monthOfYear)
             cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
             updateDateInView(dateDepartureET!!, cal)
         }
 
-        val dateArrivalSetListener = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+        val dateArrivalSetListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
             cal.set(Calendar.YEAR, year)
             cal.set(Calendar.MONTH, monthOfYear)
             cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
@@ -210,13 +210,13 @@ class OthersTripListFragment : Fragment() {
             R.id.searchButton -> {
                 val dialogFilter = MaterialAlertDialogBuilder(requireContext())
                         .setView(dialogView)
-                        .setNegativeButton(getString(R.string.reset_filters)){dialog, which ->
+                        .setNegativeButton(getString(R.string.reset_filters)){ _, _ ->
                             model.setFilter(Filter())
                         }
-                        .setNeutralButton(getString(R.string.cancel_filters)) { dialog, which ->
+                        .setNeutralButton(getString(R.string.cancel_filters)) { _, _ ->
                             // Respond to neutral button press
                         }
-                        .setPositiveButton(getString(R.string.apply_filters)) { dialog, which ->
+                        .setPositiveButton(getString(R.string.apply_filters)) { _, _ ->
                             filterListener(dialogView)
                         }
                         .show()

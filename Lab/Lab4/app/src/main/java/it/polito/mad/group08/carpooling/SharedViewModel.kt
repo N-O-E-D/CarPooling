@@ -177,7 +177,7 @@ class SharedViewModel : ViewModel() {
 
                     if (tasks != null) {
                         val tmpTrips = mutableListOf<Trip>()
-                        tasks.documents.forEachIndexed { index, document ->
+                        tasks.documents.forEachIndexed { _, document ->
                             val tmp = document.toObject(Trip::class.java)!!
                             if (othersTrips.value != null) {
                                 for (trip in othersTrips.value!!) {

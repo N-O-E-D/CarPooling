@@ -81,7 +81,7 @@ class TripListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val addFab: FloatingActionButton = view.findViewById(R.id.add_fab)
 
-        recyclerView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+        recyclerView.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
             if (scrollY > oldScrollY && addFab.visibility == View.VISIBLE) {
                 addFab.hide()
             } else if (scrollY < oldScrollY && addFab.visibility != View.VISIBLE) {

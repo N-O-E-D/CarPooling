@@ -415,12 +415,12 @@ class ItemEditAdapter(private val items: MutableList<CheckPoint>,
         private val delete_button = v.findViewById<ImageButton>(R.id.imageButton)
         private val cal = Calendar.getInstance()
 
-        private val timeSetListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+        private val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
             cal.set(Calendar.HOUR, hourOfDay)
             cal.set(Calendar.MINUTE, minute)
             updateTimeInView(timestamp, cal)
         }
-        private val dateSetListener = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+        private val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
             cal.set(Calendar.YEAR, year)
             cal.set(Calendar.MONTH, monthOfYear)
             cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
@@ -522,13 +522,13 @@ class ItemEditAdapter(private val items: MutableList<CheckPoint>,
     override fun getItemViewType(position: Int): Int {
         return when (position) {
             0 -> {
-                return R.layout.departure_item_edit
+                R.layout.departure_item_edit
             }
             items.size - 1 -> {
-                return R.layout.arrival_item_edit
+                R.layout.arrival_item_edit
             }
             else -> {
-                return R.layout.intermediate_item_edit
+                R.layout.intermediate_item_edit
             }
         }
     }
