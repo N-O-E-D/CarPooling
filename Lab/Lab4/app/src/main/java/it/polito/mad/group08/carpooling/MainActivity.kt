@@ -38,7 +38,8 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         appBarConfiguration = AppBarConfiguration(
-                setOf(R.id.tripListFragment, R.id.othersTripListFragment), drawerLayout
+                setOf(R.id.tripListFragment, R.id.othersTripListFragment,
+                R.id.tripsOfInterestListFragment, R.id.boughtTripsListFragment), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)

@@ -13,6 +13,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class SharedViewModel : ViewModel() {
@@ -35,6 +39,46 @@ class SharedViewModel : ViewModel() {
         MutableLiveData<MutableList<Trip>>().also {
             loadOthersTrips()
         }
+    }
+
+    private val myBookedTrips: MutableLiveData<Resource<List<Trip>>> by lazy {
+        MutableLiveData<Resource<List<Trip>>>().also {
+            MainScope().launch {
+                loadBookedTrips()
+            }
+        }
+    }
+
+    private suspend fun loadBookedTrips() {
+        withContext(Dispatchers.IO) {
+            try {
+                //Return loading at beginning (while DB not finish)
+                myBookedTrips.postValue(Resource.Loading())
+
+                //Return Success/Failure when DB finish
+                db.collection("trips")
+                    .addSnapshotListener { tripsDB, error ->
+                        if (error != null)
+                            myBookedTrips.postValue(Resource.Failure(error))
+
+                        if (tripsDB != null) {
+                            val tmpBookedTrips = mutableListOf<Trip>()
+                            for (document in tripsDB.documents) {
+                                val tmp = document.toObject(Trip::class.java)!!
+                                tmpBookedTrips.add(tmp)
+                            }
+                            //myBookedTrips.value = Resource.Success(tmpBookedTrips)
+                            myBookedTrips.postValue(Resource.Success(tmpBookedTrips))
+                        }
+                    }
+            } catch (e: Exception) {
+                myBookedTrips.postValue(Resource.Failure(e))
+            }
+        }
+    }
+
+    fun getMyBookedTrips(): LiveData<Resource<List<Trip>>> {
+        return myBookedTrips
     }
 
     private val bookings: MutableLiveData<MutableList<Booking>> by lazy {
@@ -66,7 +110,6 @@ class SharedViewModel : ViewModel() {
         this.user.value?.bitmap = bitmap
     }
 
-
     fun editUser(user: User) {
         db.collection("users").document(auth.currentUser!!.email!!).set(user)
                 .addOnSuccessListener {}
@@ -93,17 +136,6 @@ class SharedViewModel : ViewModel() {
         return otherUser
     }
 
-    // MAIL FROM WHICH YOU ARE LOGGED IN
-    //private val account = MutableLiveData<GoogleSignInAccount>()
-
-    /*fun setAccount(account: GoogleSignInAccount) {
-        this.account.value = account
-    }
-
-    fun getAccount(): GoogleSignInAccount {
-        return account.value!!
-    }*/
-
     private val position = MutableLiveData(0)
 
     fun getPosition(): LiveData<Int> {
@@ -113,7 +145,6 @@ class SharedViewModel : ViewModel() {
     fun setPosition(pos: Int) {
         position.value = pos
     }
-
 
     fun setFilter(filter: Filter) {
         this.filter.value = filter
@@ -384,3 +415,42 @@ data class Filter(var departureLocation: String? = null,
                   var arrivalDate: String? = null,
                   var minPrice: Float = 0f,
                   var maxPrice: Float = 100f)
+
+sealed class Resource<out T> {
+    class Loading<out T> : Resource<T>()
+    data class Success<out T>(val data: T) : Resource<T>()
+    data class Failure<out T>(val throwable: Throwable) : Resource<T>()
+}
+
+///**
+// * Observable manager for saving the cart's resource information.
+// */
+//class TripManager : LiveData<Resource<Trip?>>() {
+//
+//    init {
+//        value = Resource.Success(null)
+//    }
+//
+//    /**
+//     * Set the [Trip] value and notifies observers.
+//     */
+//    internal fun set(trip: Trip) {
+//        val resource = Resource.Success(trip)
+//        postValue(resource)
+//    }
+//
+//    internal fun clear() {
+//        val resource = Resource.Success(null)
+//        postValue(resource)
+//    }
+//
+//    internal fun loading() {
+//        val resource: Resource<Trip?> = Resource.Loading()
+//        postValue(resource)
+//    }
+//
+//    internal fun error(t: Throwable) {
+//        val resource: Resource<Trip?> = Resource.Failure(t)
+//        postValue(resource)
+//    }
+//}

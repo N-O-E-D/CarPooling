@@ -53,6 +53,8 @@
     <string name="menu_profile">Profilo</string>
     <string name="menu_trips">Miei viaggi</string>
     <string name="menu_others_trips">Altri viaggi</string>
+    <string name="menu_interested_trips">Viaggi di interesse</string>
+    <string name="menu_booked_trips">Viaggi acquistati</string>
 
     <string name="no_trips">Nessun viaggio disponibile!</string>
     <string name="car_photo_description">Fotografia della macchina</string>
