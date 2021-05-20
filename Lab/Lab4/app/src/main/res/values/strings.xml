@@ -1,0 +1,76 @@
+<resources>
+    <string name="app_name">Move-me</string>
+    <string name="edit">Edit</string>
+    <string name="photo">Photo</string>
+    <string name="change_photo">Change photo</string>
+    <string name="fullName">Full Name</string>
+    <string name="nickname">Nickname</string>
+    <string name="email">Email</string>
+    <string name="location">Location</string>
+    <string name="openGallery">Open gallery</string>
+    <string name="openCamera">Open camera</string>
+    <string name="save">Save</string>
+    <string name="phone_number">Phone Number</string>
+
+    <string name="car_photo">Car Photo</string>
+    <string name="car_name">Car Name</string>
+    <string name="driver_name">Driver Name</string>
+    <string name="show_hide">Show Hide</string>
+    <string name="delete_trip">Delete trip</string>
+    <string name="estimated_duration">Estimated Duration</string>
+    <string name="trip_description">Trip Description</string>
+    <string name="seat_price">Seat Price</string>
+    <string name="available_seats">Available Seats</string>
+    <string name="show_intermediate_stops">Show intermediate stops</string>
+    <string name="hide_intermediate_stops">Hide intermediate stops</string>
+    <string name="show_interested_users">Show interested users</string>
+    <string name="hide_interested_users">Hide interested users</string>
+    <string name="user_image">User Image</string>
+    <string name="user_accept_button">Accept</string>
+    <string name="estimated_duration_msg">"Estimated duration: %1$s</string>
+    <string name="available_seats_msg">"Available Seats: %1$d</string>
+    <string name="seat_price_msg">"Price/Person: €%1$s</string>
+    <string name="south_arrow">South Arrow</string>
+    <string name="location_image">Start location image</string>
+    <string name="time">Time</string>
+    <string name="clock_image">Clock</string>
+    <string name="delete_item">Remove</string>
+
+    <string name="add_new_stop">Add New Stop</string>
+    <string name="address">Address</string>
+    <string name="date">Date</string>
+
+    <string name="changes_applied_successfully">Changes applied successfully</string>
+    <string name="delete_trip_title">Delete trip</string>
+    <string name="delete_trip_confirm">Are you sure you want to delete this trip?</string>
+    <!--Nav header strings-->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="menu_profile">Profile</string>
+    <string name="menu_trips">My trips</string>
+    <string name="menu_others_trips">Others trips</string>
+
+    <string name="no_trips">No trips available!</string>
+    <string name="car_photo_description">Car photo</string>
+    <string name="trip_added_successfully">Trip added successfully!</string>
+    <string name="trip_edited_successfully">Trip edited successfully!</string>
+    <string name="trip_removed_successfully">Trip removed successfully!</string>
+    <string name="trip_show_interest">Show interest</string>
+    <string name="trip_remove_interest">Remove interest</string>
+    <string name="trip_already_booked">Already Booked!</string>
+    <string name="trip_no_seats">No seats available</string>
+
+    <string name="filters">Filters</string>
+    <string name="apply_filters">Apply</string>
+    <string name="cancel_filters">Cancel</string>
+    <string name="reset_filters">Reset</string>
+    <string name="price_range">Price\nRange</string>
+    <string name="departure_address">Departure address</string>
+    <string name="arrival_address">Arrival address</string>
+    <string name="departure_date">Departure date</string>
+    <string name="arrival_date">Arrival date</string>
+
+    <string name="token_id">886522778931-698f6bkmod6af65ed18ogmvomkregduh.apps.googleusercontent.com</string>
+</resources>

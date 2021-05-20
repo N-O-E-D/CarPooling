@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/filterTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:text="@string/filters"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="#131212"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/startLocationImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:contentDescription="@string/location_image"
+        app:layout_constraintBottom_toBottomOf="@+id/departureET_layout"
+        app:layout_constraintHorizontal_weight="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/departureET_layout"
+        app:srcCompat="@drawable/ic_baseline_location_start"
+        tools:ignore="VectorDrawableCompat" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/departureET_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="@string/departure_address"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toStartOf="@+id/dateDepartureET_layout"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/startLocationImage"
+        app:layout_constraintTop_toBottomOf="@+id/filterTitle">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/departureET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textAutoCorrect|textPersonName|textCapWords|textMultiLine"
+            android:lines="2" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dateDepartureET_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="@string/departure_date"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/departureET_layout"
+        app:layout_constraintTop_toTopOf="@+id/departureET_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/dateDepartureET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:inputType="textAutoCorrect|textPersonName|textCapWords|textMultiLine"
+            android:lines="2" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <ImageView
+        android:id="@+id/endLocationImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:contentDescription="@string/location_image"
+        app:layout_constraintHorizontal_weight="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/arrivalET_layout"
+        app:layout_constraintBottom_toBottomOf="@+id/arrivalET_layout"
+        app:srcCompat="@drawable/ic_baseline_location_arrival"
+        tools:ignore="VectorDrawableCompat" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/arrivalET_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="@string/arrival_address"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toStartOf="@+id/dateArrivalET_layout"
+        app:layout_constraintStart_toEndOf="@+id/endLocationImage"
+        app:layout_constraintTop_toBottomOf="@+id/departureET_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/arrivalET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textAutoCorrect|textPersonName|textCapWords|textMultiLine"
+            android:lines="2" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dateArrivalET_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="@string/arrival_date"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/arrivalET_layout"
+        app:layout_constraintTop_toBottomOf="@+id/dateDepartureET_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/dateArrivalET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:inputType="textAutoCorrect|textPersonName|textCapWords|textMultiLine"
+            android:lines="2" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/sliderLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Price\nRange"
+        android:textSize="14sp"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rangeSlider"
+        app:layout_constraintTop_toTopOf="@+id/rangeSlider"
+        app:layout_constraintBottom_toBottomOf="@id/rangeSlider"
+        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp" />
+
+    <com.google.android.material.slider.RangeSlider
+        android:id="@+id/rangeSlider"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:valueFrom="0.0"
+        android:valueTo="100.0"
+        android:stepSize="5.00"
+        app:values="@array/initial_slider_values"
+        app:layout_constraintTop_toBottomOf="@+id/arrivalET_layout"
+        app:layout_constraintStart_toEndOf="@id/sliderLabel"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
