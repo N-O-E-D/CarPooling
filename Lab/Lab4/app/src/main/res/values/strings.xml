@@ -75,6 +75,6 @@
     <string name="arrival_date">Arrival date</string>
 
     <string name="token_id">886522778931-698f6bkmod6af65ed18ogmvomkregduh.apps.googleusercontent.com</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="error_occur">An Error occur. Please try later.</string>
 </resources>

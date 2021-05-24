@@ -56,19 +56,41 @@ class SharedViewModel : ViewModel() {
                 myBookedTrips.postValue(Resource.Loading())
 
                 //Return Success/Failure when DB finish
-                db.collection("trips")
-                    .addSnapshotListener { tripsDB, error ->
-                        if (error != null)
-                            myBookedTrips.postValue(Resource.Failure(error))
 
-                        if (tripsDB != null) {
-                            val tmpBookedTrips = mutableListOf<Trip>()
-                            for (document in tripsDB.documents) {
-                                val tmp = document.toObject(Trip::class.java)!!
-                                tmpBookedTrips.add(tmp)
+                db.collection("bookings")
+                    .whereEqualTo("userEmail", auth.currentUser!!.email!!)
+                    .addSnapshotListener{ bookingsDB, errorBookings ->
+                        if (errorBookings != null)
+                            myBookedTrips.postValue(Resource.Failure(errorBookings))
+
+                        if(bookingsDB != null){
+                            val tmpTripID = mutableListOf<String>()
+                            for (document in bookingsDB.documents){
+                                val tmp = document.toObject(Booking::class.java)
+                                if(tmp != null)
+                                    tmpTripID.add(tmp.tripID)
                             }
-                            //myBookedTrips.value = Resource.Success(tmpBookedTrips)
-                            myBookedTrips.postValue(Resource.Success(tmpBookedTrips))
+                            Log.d("AAAA", tmpTripID.toString())
+                            if(tmpTripID.isEmpty())
+                                myBookedTrips.postValue(Resource.Success(listOf()))
+                            else{
+                                db.collection("trips")
+                                    .whereIn("id", tmpTripID)
+                                    .addSnapshotListener { tripsDB, errorTrips ->
+                                        if (errorTrips != null)
+                                            myBookedTrips.postValue(Resource.Failure(errorTrips))
+
+                                        if (tripsDB != null) {
+                                            val tmpBookedTrips = mutableListOf<Trip>()
+                                            for (document in tripsDB.documents) {
+                                                val tmp = document.toObject(Trip::class.java)
+                                                if(tmp != null)
+                                                    tmpBookedTrips.add(tmp)
+                                            }
+                                            myBookedTrips.postValue(Resource.Success(tmpBookedTrips))
+                                        }
+                                    }
+                            }
                         }
                     }
             } catch (e: Exception) {

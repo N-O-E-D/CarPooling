@@ -77,4 +77,6 @@
     <string name="arrival_date">Data arrivo</string>
 
     <string name="token_id">886522778931-698f6bkmod6af65ed18ogmvomkregduh.apps.googleusercontent.com</string>
+
+    <string name="error_occur">Si è verificato un errore. Riprova più tardi.</string>
 </resources>

@@ -36,6 +36,9 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
+//used for TripAdapter (Edit vs interest button)
+const val TRIP_LIST_IS_PARENT = "TRIP_LIST_IS_PARENT"
+const val OTHER_TRIP_LIST_IS_PARENT = "OTHER_TRIP_LIST_IS_PARENT" // Other, booked, interested
 
 class OthersTripListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
@@ -45,24 +48,28 @@ class OthersTripListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.onBackPressedDispatcher?.addCallback(this, object: OnBackPressedCallback(true){
+        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 activity!!.finish()
             }
         })
     }
+
     private fun navigationClickListener(mode: Int, trip: Trip?, position: Int?) {
         val navController = findNavController()
         if (mode == CARD_CLICKED && trip != null) {
             model.setPosition(position!!)
-            navController.navigate(R.id.action_othersTripListFragment_to_tripDetailsFragment, bundleOf("parent" to "OTHERS_TRIPS"))
+            navController.navigate(
+                R.id.action_othersTripListFragment_to_tripDetailsFragment,
+                bundleOf("parent" to "OTHERS_TRIPS")
+            )
             //Toast.makeText(context, "DETAILS: From ${trip.departureLocation} to ${trip.arrivalLocation}!", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_others_trip_list, container, false)
         emptyTextView = view.findViewById(R.id.emptyTextView)
@@ -96,7 +103,17 @@ class OthersTripListFragment : Fragment() {
                 emptyTextView.visibility = View.GONE
             }
 
-            adapter = TripAdapter(tripsDB, model) { mode: Int, tripItem: Trip, position: Int? -> navigationClickListener(mode, tripItem, position) }
+            adapter = TripAdapter( //TODO change in List
+                tripsDB,
+                model,
+                OTHER_TRIP_LIST_IS_PARENT
+            ) { mode: Int, tripItem: Trip, position: Int? ->
+                navigationClickListener(
+                    mode,
+                    tripItem,
+                    position
+                )
+            }
             recyclerView.adapter = adapter
         })
     }
@@ -112,16 +129,16 @@ class OthersTripListFragment : Fragment() {
 
         val filter: Filter = model.getFilter()!!
 
-        if(filter.departureLocation != null)
+        if (filter.departureLocation != null)
             departureET?.setText(filter.departureLocation)
 
-        if(filter.arrivalLocation != null)
+        if (filter.arrivalLocation != null)
             arrivalET?.setText(filter.arrivalLocation)
 
-        if(filter.departureDate != null)
+        if (filter.departureDate != null)
             dateDepartureET?.setText(filter.departureDate)
 
-        if(filter.arrivalDate != null)
+        if (filter.arrivalDate != null)
             dateArrivalET?.setText(filter.arrivalDate)
 
         rangeSlider?.values = listOf(filter.minPrice, filter.maxPrice)
@@ -132,42 +149,48 @@ class OthersTripListFragment : Fragment() {
             timestamp.setText(sdf.format(cal.time))
         }
 
-        val dateDepartureSetListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-            cal.set(Calendar.YEAR, year)
-            cal.set(Calendar.MONTH, monthOfYear)
-            cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-            updateDateInView(dateDepartureET!!, cal)
-        }
+        val dateDepartureSetListener =
+            DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                cal.set(Calendar.YEAR, year)
+                cal.set(Calendar.MONTH, monthOfYear)
+                cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                updateDateInView(dateDepartureET!!, cal)
+            }
 
-        val dateArrivalSetListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-            cal.set(Calendar.YEAR, year)
-            cal.set(Calendar.MONTH, monthOfYear)
-            cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-            updateDateInView(dateArrivalET!!, cal)
-        }
+        val dateArrivalSetListener =
+            DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                cal.set(Calendar.YEAR, year)
+                cal.set(Calendar.MONTH, monthOfYear)
+                cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                updateDateInView(dateArrivalET!!, cal)
+            }
 
         dateDepartureET?.setOnClickListener {
-            DatePickerDialog(it.context,
-                    dateDepartureSetListener,
-                    // set DatePickerDialog to point to today's date when it loads up
-                    cal.get(Calendar.YEAR),
-                    cal.get(Calendar.MONTH),
-                    cal.get(Calendar.DAY_OF_MONTH))
-                    .apply {
-                        datePicker.minDate = System.currentTimeMillis() - 1000
-                    }.show()
+            DatePickerDialog(
+                it.context,
+                dateDepartureSetListener,
+                // set DatePickerDialog to point to today's date when it loads up
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)
+            )
+                .apply {
+                    datePicker.minDate = System.currentTimeMillis() - 1000
+                }.show()
         }
 
         dateArrivalET?.setOnClickListener {
-            DatePickerDialog(it.context,
-                    dateArrivalSetListener,
-                    // set DatePickerDialog to point to today's date when it loads up
-                    cal.get(Calendar.YEAR),
-                    cal.get(Calendar.MONTH),
-                    cal.get(Calendar.DAY_OF_MONTH))
-                    .apply {
-                        datePicker.minDate = System.currentTimeMillis() - 1000
-                    }.show()
+            DatePickerDialog(
+                it.context,
+                dateArrivalSetListener,
+                // set DatePickerDialog to point to today's date when it loads up
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)
+            )
+                .apply {
+                    datePicker.minDate = System.currentTimeMillis() - 1000
+                }.show()
         }
 
         rangeSlider?.setLabelFormatter { value: Float ->
@@ -186,10 +209,14 @@ class OthersTripListFragment : Fragment() {
         val dateArrivalET: EditText? = dialogView.findViewById(R.id.dateArrivalET)
 
         val filter = Filter()
-        filter.departureLocation = if(departureET?.text.toString() == "") null else departureET?.text.toString()
-        filter.arrivalLocation = if(arrivalET?.text.toString() == "") null else arrivalET?.text.toString()
-        filter.departureDate = if(dateDepartureET?.text.toString() == "") null else dateDepartureET?.text.toString()
-        filter.arrivalDate = if(dateArrivalET?.text.toString() == "") null else dateArrivalET?.text.toString()
+        filter.departureLocation =
+            if (departureET?.text.toString() == "") null else departureET?.text.toString()
+        filter.arrivalLocation =
+            if (arrivalET?.text.toString() == "") null else arrivalET?.text.toString()
+        filter.departureDate =
+            if (dateDepartureET?.text.toString() == "") null else dateDepartureET?.text.toString()
+        filter.arrivalDate =
+            if (dateArrivalET?.text.toString() == "") null else dateArrivalET?.text.toString()
         filter.minPrice = rangeSlider?.values?.first()!!
         filter.maxPrice = rangeSlider.values.last()!!
 
@@ -209,17 +236,17 @@ class OthersTripListFragment : Fragment() {
         return when (item.itemId) {
             R.id.searchButton -> {
                 val dialogFilter = MaterialAlertDialogBuilder(requireContext())
-                        .setView(dialogView)
-                        .setNegativeButton(getString(R.string.reset_filters)){ _, _ ->
-                            model.setFilter(Filter())
-                        }
-                        .setNeutralButton(getString(R.string.cancel_filters)) { _, _ ->
-                            // Respond to neutral button press
-                        }
-                        .setPositiveButton(getString(R.string.apply_filters)) { _, _ ->
-                            filterListener(dialogView)
-                        }
-                        .show()
+                    .setView(dialogView)
+                    .setNegativeButton(getString(R.string.reset_filters)) { _, _ ->
+                        model.setFilter(Filter())
+                    }
+                    .setNeutralButton(getString(R.string.cancel_filters)) { _, _ ->
+                        // Respond to neutral button press
+                    }
+                    .setPositiveButton(getString(R.string.apply_filters)) { _, _ ->
+                        filterListener(dialogView)
+                    }
+                    .show()
                 initDialog(dialogFilter)
                 true
             }
@@ -229,15 +256,17 @@ class OthersTripListFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if(activity?.isChangingConfigurations == false){
+        if (activity?.isChangingConfigurations == false) {
             model.setFilter(Filter())
         }
     }
 }
 
-class TripAdapter(private val tripsAdapter: MutableList<Trip>,
-                  private val model: SharedViewModel,
-                  private val clickListener: (Int, Trip, Int?) -> Unit
+class TripAdapter(
+    private val tripsAdapter: List<Trip>,
+    private val model: SharedViewModel,
+    private val parent: String,
+    private val clickListener: (Int, Trip, Int?) -> Unit
 ) : RecyclerView.Adapter<TripAdapter.TripViewHolder>() {
 
     class TripViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -245,19 +274,27 @@ class TripAdapter(private val tripsAdapter: MutableList<Trip>,
         private val arrivalLocation: TextView = itemView.findViewById(R.id.arrivalLocation)
         private val departureTimestamp: TextView = itemView.findViewById(R.id.departureTimestamp)
         private val arrivalTimestamp: TextView = itemView.findViewById(R.id.arrivalTimestamp)
-        private val showInterestButton: Button = itemView.findViewById(R.id.editButton)
+        private val cardButton: Button = itemView.findViewById(R.id.editButton)
         private val card: CardView = itemView.findViewById(R.id.card)
 
-
-        fun bind(trip: Trip, model: SharedViewModel, clickListener: (Int, Trip, Int?) -> Unit) {
+        fun bind(
+            trip: Trip,
+            model: SharedViewModel,
+            parent: String,
+            clickListener: (Int, Trip, Int?) -> Unit
+        ) {
             departureLocation.text = trip.checkPoints[0].location
             arrivalLocation.text = trip.checkPoints[trip.checkPoints.size - 1].location
             departureTimestamp.text = trip.checkPoints[0].timestamp
             arrivalTimestamp.text = trip.checkPoints[trip.checkPoints.size - 1].timestamp
-            showInterestButton.text = itemView.context.getString(R.string.trip_show_interest)
+
+            if (parent == OTHER_TRIP_LIST_IS_PARENT)
+                cardButton.text = itemView.context.getString(R.string.trip_show_interest)
+            else
+                cardButton.text = itemView.context.getString(R.string.edit)
 
             if (model.bitmaps[trip.id] == null) {
-                if(trip.carPhotoPath != null && trip.carPhotoPath != "") {
+                if (trip.carPhotoPath != null && trip.carPhotoPath != "") {
                     MainScope().launch {
                         val size = withContext(Dispatchers.IO) {
                             model.downloadMetadataPhoto(trip.carPhotoPath!!).sizeBytes
@@ -268,72 +305,80 @@ class TripAdapter(private val tripsAdapter: MutableList<Trip>,
 
                         model.bitmaps[trip.id] = bitmap
 
-                        when(itemView.context.resources.configuration.orientation){
+                        when (itemView.context.resources.configuration.orientation) {
                             Configuration.ORIENTATION_PORTRAIT -> {
                                 itemView.findViewById<ImageView>(R.id.carPhoto)
-                                        .setImageBitmap(model.bitmaps[trip.id])
+                                    .setImageBitmap(model.bitmaps[trip.id])
                             }
                         }
                     }
                 }
             } else {
-                when(itemView.context.resources.configuration.orientation){
+                when (itemView.context.resources.configuration.orientation) {
                     Configuration.ORIENTATION_PORTRAIT -> {
                         itemView.findViewById<ImageView>(R.id.carPhoto)
-                                .setImageBitmap(model.bitmaps[trip.id])
+                            .setImageBitmap(model.bitmaps[trip.id])
                     }
                 }
             }
-
 
             card.setOnClickListener {
                 clickListener(CARD_CLICKED, trip, bindingAdapterPosition)
             }
 
-            //SHOW INTEREST BUTTON
-            if(model.bookingIsAccepted(trip.id)){ //user already show favorite and owner accepted
-                showInterestButton.text = itemView.context.getString(R.string.trip_already_booked)
-                showInterestButton.isClickable = false
-            }else{
-                if(model.userIsInterested(trip)){
-                    showInterestButton.text = itemView.context.getString(R.string.trip_remove_interest)
-                }else{
-                    showInterestButton.text = itemView.context.getString(R.string.trip_show_interest)
+            if (parent == TRIP_LIST_IS_PARENT) { //EDIT BUTTON
+                cardButton.setOnClickListener {
+                    clickListener(CARD_BUTTON_CLICKED, trip, bindingAdapterPosition)
                 }
-
-                showInterestButton.setOnClickListener {
-                    if(model.userIsInterested(trip)){ // Already interested, but she would to cancel
-                        model.updateTripInterestedUser(trip, false, null)
-                        showInterestButton.text = itemView.context.getString(R.string.trip_show_interest)
+            } else { //SHOW INTEREST BUTTON
+                if (model.bookingIsAccepted(trip.id)) { //user already show favorite and owner accepted
+                    cardButton.text = itemView.context.getString(R.string.trip_already_booked)
+                    cardButton.isClickable = false
+                } else {
+                    if (model.userIsInterested(trip)) {
+                        cardButton.text =
+                            itemView.context.getString(R.string.trip_remove_interest)
+                    } else {
+                        cardButton.text =
+                            itemView.context.getString(R.string.trip_show_interest)
                     }
-                    else {
-                        model.updateTripInterestedUser(trip, true, null)
-                        showInterestButton.text = itemView.context.getString(R.string.trip_remove_interest)
-                    }
-                }
 
-                if(trip.availableSeats == 0){
-                    showInterestButton.text = itemView.context.getString(R.string.trip_no_seats)
-                    showInterestButton.isClickable = false
+                    cardButton.setOnClickListener {
+                        if (model.userIsInterested(trip)) { // Already interested, but she would to cancel
+                            model.updateTripInterestedUser(trip, false, null)
+                            cardButton.text =
+                                itemView.context.getString(R.string.trip_show_interest)
+                        } else {
+                            model.updateTripInterestedUser(trip, true, null)
+                            cardButton.text =
+                                itemView.context.getString(R.string.trip_remove_interest)
+                        }
+                    }
+
+                    if (trip.availableSeats == 0) {
+                        cardButton.text = itemView.context.getString(R.string.trip_no_seats)
+                        cardButton.isClickable = false
+                    }
                 }
             }
         }
 
         fun unbind() {
             card.setOnClickListener { null }
-            showInterestButton.setOnClickListener { null }
+            cardButton.setOnClickListener { null }
         }
     }
 
     override fun getItemCount() = tripsAdapter.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TripViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.trip_item_layout, parent, false)
+        val v =
+            LayoutInflater.from(parent.context).inflate(R.layout.trip_item_layout, parent, false)
         return TripViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: TripViewHolder, position: Int) {
-        holder.bind(tripsAdapter[position], model, clickListener)
+        holder.bind(tripsAdapter[position], model, parent, clickListener)
     }
 
     override fun onViewRecycled(holder: TripViewHolder) {
