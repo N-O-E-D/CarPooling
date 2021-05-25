@@ -56,7 +56,6 @@ class SharedViewModel : ViewModel() {
                 myBookedTrips.postValue(Resource.Loading())
 
                 //Return Success/Failure when DB finish
-
                 db.collection("bookings")
                     .whereEqualTo("userEmail", auth.currentUser!!.email!!)
                     .addSnapshotListener{ bookingsDB, errorBookings ->
@@ -70,7 +69,7 @@ class SharedViewModel : ViewModel() {
                                 if(tmp != null)
                                     tmpTripID.add(tmp.tripID)
                             }
-                            Log.d("AAAA", tmpTripID.toString())
+
                             if(tmpTripID.isEmpty())
                                 myBookedTrips.postValue(Resource.Success(listOf()))
                             else{
@@ -101,6 +100,54 @@ class SharedViewModel : ViewModel() {
 
     fun getMyBookedTrips(): LiveData<Resource<List<Trip>>> {
         return myBookedTrips
+    }
+
+    // BOOKED_LIST sets TRIP_ID for TRIP_DETAILS
+    private val bookedTripID = MutableLiveData<String>()
+
+    fun setBookedTripID(tripID: String){
+        bookedTripID.value = tripID
+    }
+
+    // TripDetails need the target trip in observable way
+    private val bookedTrip: MutableLiveData<Resource<Trip>> by lazy {
+        MutableLiveData<Resource<Trip>>().also {
+            MainScope().launch {
+                loadBookedTrip()
+            }
+        }
+    }
+
+    private suspend fun loadBookedTrip() {
+        withContext(Dispatchers.IO) {
+            try {
+                //Return loading at beginning (while DB not finish)
+                bookedTrip.postValue(Resource.Loading())
+
+                //Return Success/Failure when DB finish
+                db.collection("trips")
+                    .whereEqualTo("id", bookedTripID.value)
+                    .addSnapshotListener { targetTrip, errorTrip ->
+                        if (errorTrip != null)
+                            bookedTrip.postValue(Resource.Failure(errorTrip))
+
+                        if (targetTrip != null) {
+                            var tmpBookedTrip: Trip? = null
+                            for (document in targetTrip.documents) {
+                                tmpBookedTrip = document.toObject(Trip::class.java)
+                            }
+                            if(tmpBookedTrip != null)
+                                bookedTrip.postValue(Resource.Success(tmpBookedTrip))
+                        }
+                    }
+            } catch (e: Exception) {
+                bookedTrip.postValue(Resource.Failure(e))
+            }
+        }
+    }
+
+    fun getBookedTrip(): LiveData<Resource<Trip>> {
+        return bookedTrip
     }
 
     private val bookings: MutableLiveData<MutableList<Booking>> by lazy {
@@ -443,36 +490,3 @@ sealed class Resource<out T> {
     data class Success<out T>(val data: T) : Resource<T>()
     data class Failure<out T>(val throwable: Throwable) : Resource<T>()
 }
-
-///**
-// * Observable manager for saving the cart's resource information.
-// */
-//class TripManager : LiveData<Resource<Trip?>>() {
-//
-//    init {
-//        value = Resource.Success(null)
-//    }
-//
-//    /**
-//     * Set the [Trip] value and notifies observers.
-//     */
-//    internal fun set(trip: Trip) {
-//        val resource = Resource.Success(trip)
-//        postValue(resource)
-//    }
-//
-//    internal fun clear() {
-//        val resource = Resource.Success(null)
-//        postValue(resource)
-//    }
-//
-//    internal fun loading() {
-//        val resource: Resource<Trip?> = Resource.Loading()
-//        postValue(resource)
-//    }
-//
-//    internal fun error(t: Throwable) {
-//        val resource: Resource<Trip?> = Resource.Failure(t)
-//        postValue(resource)
-//    }
-//}

@@ -1,10 +1,8 @@
 package it.polito.mad.group08.carpooling
 
 import android.annotation.SuppressLint
-import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -31,6 +29,7 @@ import java.util.*
 
 const val MY_TRIPS_IS_PARENT = "TRIPS"
 const val OTHER_TRIPS_IS_PARENT = "OTHERS_TRIPS"
+const val BOOKED_TRIPS_IS_PARENT = "BOOKED_TRIPS"
 
 class TripDetailsFragment : Fragment() {
     private lateinit var carPhotoPath: ImageView
@@ -264,22 +263,24 @@ class TripDetailsFragment : Fragment() {
         interestedUsersShowHideButton = view.findViewById(R.id.showHideInterestedUsers)
 
         // INITIALIZE DATA
-        //NOTE: please notice the nested call. You can access parentPosition only when it's returned
-        model.getPosition().observe(viewLifecycleOwner, Observer<Int> {parentPosition ->
-            when(arguments?.getString("parent")){
-                MY_TRIPS_IS_PARENT -> {
+        when(arguments?.getString("parent")){
+            MY_TRIPS_IS_PARENT -> {
+                //NOTE: please notice the nested call. You can access parentPosition only when it's returned
+                model.getPosition().observe(viewLifecycleOwner, Observer<Int> {parentPosition ->
                     model.getTrips()
                             .observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
                                 // POPULATE VIEW WITH DATA
                                 setTripInformation(tripsDB[parentPosition])
                                 showInterestFab.hide()
                             })
-                }
-                OTHER_TRIPS_IS_PARENT -> {
+                })
+            }
+            OTHER_TRIPS_IS_PARENT -> {
+                //NOTE: please notice the nested call. You can access parentPosition only when it's returned
+                model.getPosition().observe(viewLifecycleOwner, Observer<Int> {parentPosition ->
                     model.getOthersTrips()
                             .observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
                                 // POPULATE VIEW WITH DATA
-                                model.getBookings().observe(viewLifecycleOwner, Observer<MutableList<Booking>> {
                                     if((currentTrip!= null) && (tripsDB[parentPosition].id != currentTrip!!.id))
                                         activity?.onBackPressed()
 
@@ -292,14 +293,42 @@ class TripDetailsFragment : Fragment() {
                                         showInterestFab.hide()
                                     interestedUsersRecyclerView.visibility = View.GONE
                                     interestedUsersShowHideButton.visibility = View.GONE
-                                })
                             })
-                }
-                else -> {
-                    Toast.makeText(context, "Error in laod the Trip!", Toast.LENGTH_SHORT).show()
-                }
+                })
             }
-        })
+            BOOKED_TRIPS_IS_PARENT -> { //TODO test it when owner delete the trip
+                model.getBookedTrip()
+                    .observe(viewLifecycleOwner, Observer<Resource<Trip>> { resource ->
+                        // update UI
+                        when (resource) {
+                            is Resource.Loading -> {
+                                //TODO
+                                //boughtTripsProgressBar.visibility = View.VISIBLE
+                            }
+                            is Resource.Success -> {
+                                //boughtTripsProgressBar.visibility = View.GONE
+                                if((currentTrip!= null) && (resource.data.id != currentTrip!!.id))
+                                    activity?.onBackPressed()
+
+                                currentTrip = resource.data
+
+                                setTripInformation(resource.data)
+                                showInterestFab.show() //FAB with check since she already booked it
+                                interestedUsersRecyclerView.visibility = View.GONE
+                                interestedUsersShowHideButton.visibility = View.GONE
+                            }
+                            is Resource.Failure -> {
+                                //TODO
+                                //boughtTripsProgressBar.visibility = View.GONE
+                                //emptyTextView.text = getString(R.string.error_occur)
+                            }
+                        }
+                    })
+            }
+            else -> {
+                Toast.makeText(context, "Error in laod the Trip!", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun showAlertDialog(){

@@ -2,7 +2,6 @@ package it.polito.mad.group08.carpooling
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,6 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -29,13 +27,15 @@ class BoughtTripsListFragment : Fragment() {
     private fun navigationClickListener(mode: Int, trip: Trip?, position: Int?) {
         val navController = findNavController()
         if (mode == CARD_CLICKED && trip != null) {
-            model.setPosition(position!!)
+            model.setBookedTripID(trip.id)
             navController.navigate(
-                R.id.action_othersTripListFragment_to_tripDetailsFragment,
-                bundleOf("parent" to "OTHERS_TRIPS")
+                R.id.action_boughtTripsListFragment_to_tripDetailsFragment,
+                bundleOf("parent" to BOOKED_TRIPS_IS_PARENT)
             )
         }
     }
+
+    //TODO Should I need to re-define onBack? Is it Top View?
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
