@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import android.view.animation.Animation
@@ -27,15 +26,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import org.osmdroid.config.Configuration.*
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.*
-import org.osmdroid.views.overlay.compass.CompassOverlay
-import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
-import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import org.osmdroid.views.overlay.OverlayItem
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -242,29 +235,10 @@ class TripDetailsFragment : Fragment() {
             j++
         }
 
-        val items = ArrayList<OverlayItem>()
-        val polyline: Polyline = Polyline()
         val geoPoints = trip.geoPoints
-        for(geoPoint in geoPoints){
-            items.add(OverlayItem("s", "s", GeoPoint(geoPoint.latitude,geoPoint.longitude)))
-            polyline.addPoint(GeoPoint(geoPoint.latitude,geoPoint.longitude))
-        }
 
-        val overlay = ItemizedOverlayWithFocus<OverlayItem>(items, object :
-                ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
-            override fun onItemSingleTapUp(index: Int, item: OverlayItem): Boolean {
-                //do something
-                return true
-            }
-
-            override fun onItemLongPress(index: Int, item: OverlayItem): Boolean {
-                return false
-            }
-        }, context)
-        overlay.setFocusItemsOnTap(true)
-
-        map.overlays.add(overlay)
-        map.overlays.add(polyline)
+        val items = ArrayList<OverlayItem>()
+        GeoMap.drawPath(map, geoPoints.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, items)
     }
 
     private fun calcDuration(dep: CheckPoint, arr: CheckPoint): String {
@@ -332,41 +306,7 @@ class TripDetailsFragment : Fragment() {
         interestedUsersShowHideButton = view.findViewById(R.id.showHideInterestedUsers)
 
         map = view.findViewById(R.id.mapDetails)
-        map.setTileSource(TileSourceFactory.MAPNIK)
-
-        val controller = map.controller
-        controller.setZoom(2)
-
-        val scrollView = requireView().findViewById<ScrollView>(R.id.scrollView)
-        map.setOnTouchListener { v, event ->
-            when(event.action){
-                MotionEvent.ACTION_MOVE -> scrollView.requestDisallowInterceptTouchEvent(true)
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> scrollView.requestDisallowInterceptTouchEvent(false)
-            }
-
-            map.onTouchEvent(event)
-        }
-        //val startPoint = GeoPoint(48.8583, 2.2944);
-        //controller.setCenter(startPoint)
-
-        val locationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(context), map);
-        locationOverlay.enableMyLocation();
-        map.overlays.add(locationOverlay)
-
-        val compassOverlay = CompassOverlay(context, InternalCompassOrientationProvider(context), map)
-        compassOverlay.enableCompass()
-        map.overlays.add(compassOverlay)
-
-        val rotationGestureOverlay = RotationGestureOverlay(map)
-        rotationGestureOverlay.isEnabled
-        map.setMultiTouchControls(true)
-        map.overlays.add(rotationGestureOverlay)
-
-        val dm : DisplayMetrics = context?.resources!!.displayMetrics
-        val scaleBarOverlay = ScaleBarOverlay(map)
-        scaleBarOverlay.setCentred(true)
-        scaleBarOverlay.setScaleBarOffset(dm.widthPixels / 2, 10)
-        map.overlays.add(scaleBarOverlay)
+        GeoMap.customizeMap(map, requireView(), context)
 
         // INITIALIZE DATA
         //NOTE: please notice the nested call. You can access parentPosition only when it's returned
