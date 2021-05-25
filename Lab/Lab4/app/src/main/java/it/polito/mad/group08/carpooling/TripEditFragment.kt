@@ -18,6 +18,7 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.format.DateFormat
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import android.widget.*
@@ -36,6 +37,15 @@ import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.*
+import org.osmdroid.views.overlay.compass.CompassOverlay
+import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
+import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
@@ -74,6 +84,9 @@ class TripEditFragment : Fragment() {
     private lateinit var takeImageCallback: ActivityResultCallback<Any?>
     private lateinit var takeImageLauncher: ActivityResultLauncher<Any>
 
+    private lateinit var map: MapView
+    private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
+    private var geoPoints: MutableList<GeoPoint> = mutableListOf()
     private val model: SharedViewModel by activityViewModels()
 
     @RequiresApi(Build.VERSION_CODES.P)
@@ -231,6 +244,75 @@ class TripEditFragment : Fragment() {
         }
 
         loadTrip()
+
+        map = view.findViewById(R.id.mapEdit)
+        map.setTileSource(TileSourceFactory.MAPNIK)
+
+        val controller = map.controller
+        controller.setZoom(2)
+
+        val scrollView = requireView().findViewById<ScrollView>(R.id.scrollView)
+        map.setOnTouchListener { v, event ->
+            when(event.action){
+                MotionEvent.ACTION_MOVE -> scrollView.requestDisallowInterceptTouchEvent(true)
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> scrollView.requestDisallowInterceptTouchEvent(false)
+            }
+
+            map.onTouchEvent(event)
+        }
+
+        val locationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(context), map);
+        locationOverlay.enableMyLocation();
+        map.overlays.add(locationOverlay)
+
+        val compassOverlay = CompassOverlay(context, InternalCompassOrientationProvider(context), map)
+        compassOverlay.enableCompass()
+        map.overlays.add(compassOverlay)
+
+        val rotationGestureOverlay = RotationGestureOverlay(map)
+        rotationGestureOverlay.isEnabled
+        map.setMultiTouchControls(true)
+        map.overlays.add(rotationGestureOverlay)
+
+        val dm : DisplayMetrics = context?.resources!!.displayMetrics
+        val scaleBarOverlay = ScaleBarOverlay(map)
+        scaleBarOverlay.setCentred(true)
+        scaleBarOverlay.setScaleBarOffset(dm.widthPixels / 2, 10)
+        map.overlays.add(scaleBarOverlay)
+
+
+        val items = ArrayList<OverlayItem>()
+        map.overlays.add(object: Overlay() {
+            override fun onSingleTapConfirmed(e: MotionEvent,
+                                              mapView: MapView): Boolean {
+                val projection = mapView.projection
+                val geoPoint = projection.fromPixels(e.x.toInt(),
+                        e.y.toInt()) as GeoPoint
+
+                Log.d("ABCDE", "$geoPoint")
+
+                geoPoints.add(geoPoint)
+                items.add(OverlayItem("Ancona", "Description", geoPoint))
+
+                val overlay = ItemizedOverlayWithFocus<OverlayItem>(items, object :
+                        ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
+                    override fun onItemSingleTapUp(index: Int, item: OverlayItem): Boolean {
+                        //do something
+                        return true
+                    }
+
+                    override fun onItemLongPress(index: Int, item: OverlayItem): Boolean {
+                        return false
+                    }
+                }, context)
+                overlay.setFocusItemsOnTap(true)
+
+                map.overlays.add(overlay)
+
+                return true
+            }
+        })
+
     }
 
     private fun loadTrip(){
@@ -349,6 +431,10 @@ class TripEditFragment : Fragment() {
                     trip.seatPrice = seatPriceET.text.toString().toFloat()
                     trip.description = informationsET.text.toString()
                     trip.checkPoints = tmp_checkpoints
+                    if(geoPoints.size != 0){
+                        trip.geoPoints = geoPoints
+                    }
+
                     model.addOrReplaceTrip(trip)
                     findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
                 } else {
@@ -359,7 +445,7 @@ class TripEditFragment : Fragment() {
                     trip.seatPrice = seatPriceET.text.toString().toFloat()
                     trip.description = informationsET.text.toString()
                     trip.checkPoints = tmp_checkpoints
-
+                    trip.geoPoints = geoPoints
                     model.addOrReplaceTrip(trip)
                     findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
                 }
