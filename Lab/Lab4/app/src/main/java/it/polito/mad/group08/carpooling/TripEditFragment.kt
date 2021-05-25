@@ -432,7 +432,7 @@ class TripEditFragment : Fragment() {
                     trip.description = informationsET.text.toString()
                     trip.checkPoints = tmp_checkpoints
                     if(geoPoints.size != 0){
-                        trip.geoPoints = geoPoints
+                        trip.geoPoints = geoPoints.map { elem -> Coordinate(elem.altitude,elem.longitude) }.toMutableList()
                     }
 
                     model.addOrReplaceTrip(trip)
@@ -445,7 +445,7 @@ class TripEditFragment : Fragment() {
                     trip.seatPrice = seatPriceET.text.toString().toFloat()
                     trip.description = informationsET.text.toString()
                     trip.checkPoints = tmp_checkpoints
-                    trip.geoPoints = geoPoints
+                    trip.geoPoints = geoPoints.map { elem -> Coordinate(elem.altitude,elem.longitude) }.toMutableList()
                     model.addOrReplaceTrip(trip)
                     findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
                 }

@@ -246,8 +246,8 @@ class TripDetailsFragment : Fragment() {
         val polyline: Polyline = Polyline()
         val geoPoints = trip.geoPoints
         for(geoPoint in geoPoints){
-            items.add(OverlayItem("s", "s", geoPoint))
-            polyline.addPoint(geoPoint)
+            items.add(OverlayItem("s", "s", GeoPoint(geoPoint.latitude,geoPoint.longitude)))
+            polyline.addPoint(GeoPoint(geoPoint.latitude,geoPoint.longitude))
         }
 
         val overlay = ItemizedOverlayWithFocus<OverlayItem>(items, object :

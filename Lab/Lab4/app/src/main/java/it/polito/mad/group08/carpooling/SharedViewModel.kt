@@ -377,8 +377,10 @@ data class Trip(var id: String = "",
                 var seatPrice: Float = 0f,
                 var description: String = "",
                 var interestedUsers: MutableList<User> = mutableListOf(),
-                var geoPoints: MutableList<GeoPoint> = mutableListOf()
+                var geoPoints: MutableList<Coordinate> = mutableListOf()
 )
+
+data class Coordinate(var latitude: Double = 0.0, var longitude: Double = 0.0)
 
 data class Booking(var tripID: String = "", var userEmail: String = "")
 
