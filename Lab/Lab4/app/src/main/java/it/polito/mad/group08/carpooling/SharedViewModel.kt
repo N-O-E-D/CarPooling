@@ -3,9 +3,7 @@ package it.polito.mad.group08.carpooling
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -100,60 +98,6 @@ class SharedViewModel : ViewModel() {
 
     fun getMyBookedTrips(): LiveData<Resource<List<Trip>>> {
         return myBookedTrips
-    }
-
-    // BOOKED_LIST sets TRIP_ID for TRIP_DETAILS
-    private val bookedTripID = MutableLiveData<String>()
-
-    fun setBookedTripID(tripID: String){
-        bookedTripID.value = tripID
-    }
-
-    // TripDetails need the target trip in observable way
-    private val bookedTrip: MutableLiveData<Resource<Trip>> by lazy {
-        MutableLiveData<Resource<Trip>>().also {
-            MainScope().launch {
-                loadBookedTrip()
-            }
-        }
-    }
-
-    private suspend fun loadBookedTrip() {
-        withContext(Dispatchers.IO) {
-            try {
-                //Return loading at beginning (while DB not finish)
-                bookedTrip.postValue(Resource.Loading())
-
-                //Return Success/Failure when DB finish
-                db.collection("trips")
-                    .whereEqualTo("id", bookedTripID.value)
-                    .addSnapshotListener { targetTrip, errorTrip ->
-                        if (errorTrip != null)
-                            bookedTrip.postValue(Resource.Failure(errorTrip))
-
-                        if (targetTrip != null) {
-                            var tmpBookedTrip: Trip? = null
-                            for (document in targetTrip.documents) {
-                                tmpBookedTrip = document.toObject(Trip::class.java)
-                            }
-                            if(tmpBookedTrip != null)
-                                bookedTrip.postValue(Resource.Success(tmpBookedTrip))
-                        }
-                    }
-            } catch (e: Exception) {
-                bookedTrip.postValue(Resource.Failure(e))
-            }
-        }
-    }
-
-    fun getBookedTrip(): LiveData<Resource<Trip>> {
-        return bookedTrip
-    }
-
-    private val bookings: MutableLiveData<MutableList<Booking>> by lazy {
-        MutableLiveData<MutableList<Booking>>().also {
-            loadBookings()
-        }
     }
 
     // FAKE MAIL USED IN THE APP
@@ -408,33 +352,11 @@ class SharedViewModel : ViewModel() {
                 }
     }
 
-    private fun loadBookings() {
-        db.collection("bookings")
-                .addSnapshotListener { bookingsDB, error ->
-                    if (error != null)
-                        Log.w("AAAA", "Error loadBookings", error)
-
-                    if (bookingsDB != null) {
-                        val tmpBookings = mutableListOf<Booking>()
-                        for (document in bookingsDB.documents) {
-                            val tmp = document.toObject(Booking::class.java)!!
-                            tmpBookings.add(tmp)
-                        }
-                        bookings.value = tmpBookings
-                    }
-                }
-    }
-
-    fun getBookings(): LiveData<MutableList<Booking>> {
-        return bookings
-    }
-
-    fun bookingIsAccepted(tripID: String): Boolean {
-        val possibleBooking = Booking(tripID, auth.currentUser!!.email!!)
-        return if (bookings.value != null)
-            bookings.value?.contains(possibleBooking)!!
-        else
-            false
+    fun bookingIsAccepted(trip: Trip): Boolean {
+        var tmpBookedTrips : Resource.Success<List<Trip>> = Resource.Success(listOf())
+        if(myBookedTrips.value != null)
+            tmpBookedTrips = myBookedTrips.value as Resource.Success
+        return tmpBookedTrips.data.contains(trip)
     }
 
     fun downloadMetadataPhoto(path: String): StorageMetadata {

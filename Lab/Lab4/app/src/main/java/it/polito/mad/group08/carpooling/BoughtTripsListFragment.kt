@@ -27,7 +27,7 @@ class BoughtTripsListFragment : Fragment() {
     private fun navigationClickListener(mode: Int, trip: Trip?, position: Int?) {
         val navController = findNavController()
         if (mode == CARD_CLICKED && trip != null) {
-            model.setBookedTripID(trip.id)
+            model.setPosition(position!!)
             navController.navigate(
                 R.id.action_boughtTripsListFragment_to_tripDetailsFragment,
                 bundleOf("parent" to BOOKED_TRIPS_IS_PARENT)

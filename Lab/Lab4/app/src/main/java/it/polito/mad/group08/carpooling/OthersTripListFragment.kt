@@ -331,7 +331,7 @@ class TripAdapter(
                     clickListener(CARD_BUTTON_CLICKED, trip, bindingAdapterPosition)
                 }
             } else { //SHOW INTEREST BUTTON
-                if (model.bookingIsAccepted(trip.id)) { //user already show favorite and owner accepted
+                if (model.bookingIsAccepted(trip)) { //user already show favorite and owner accepted
                     cardButton.text = itemView.context.getString(R.string.trip_already_booked)
                     cardButton.isClickable = false
                 } else {
