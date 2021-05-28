@@ -75,11 +75,11 @@ class GeoMap {
 
             for ((index, geopoint) in geoPoints.withIndex()) {
                 if (index == 0) {
-                    items.add(OverlayItem("Partenza", "", geopoint))
+                    items.add(OverlayItem("${context?.getString(R.string.departure)}", "", geopoint))
                 } else if (index == geoPoints.size - 1) {
-                    items.add(OverlayItem("Arrivo", "", geopoint))
+                    items.add(OverlayItem("${context?.getString(R.string.arrival)}", "", geopoint))
                 } else {
-                    items.add(OverlayItem("Stop $index", "", geopoint))
+                    items.add(OverlayItem("${context?.getString(R.string.stop)} $index", "", geopoint))
                 }
 
                 polyline.addPoint(geopoint)

@@ -75,4 +75,9 @@
     <string name="arrival_date">Data arrivo</string>
 
     <string name="token_id">886522778931-698f6bkmod6af65ed18ogmvomkregduh.apps.googleusercontent.com</string>
+
+    <string name="clear_path">Rimuovi</string>
+    <string name="departure">Partenza</string>
+    <string name="arrival">Arrivo</string>
+    <string name="stop">Stop</string>
 </resources>
