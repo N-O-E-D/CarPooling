@@ -20,18 +20,24 @@ import java.util.ArrayList
 
 class GeoMap {
 
-    companion object StaticMethods{
-       fun customizeMap(map: MapView, view: View, context: Context?){
+    companion object StaticMethods {
+        fun customizeMap(map: MapView, view: View, context: Context?) {
             map.setTileSource(TileSourceFactory.MAPNIK)
 
             val controller = map.controller
-            controller.setZoom(2)
+            map.isHorizontalMapRepetitionEnabled = false
+            map.isVerticalMapRepetitionEnabled = false
+            controller.setZoom(3)
 
             val scrollView = view.findViewById<ScrollView>(R.id.scrollView)
+
+
             map.setOnTouchListener { v, event ->
-                when(event.action){
-                    MotionEvent.ACTION_MOVE -> scrollView.requestDisallowInterceptTouchEvent(true)
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> scrollView.requestDisallowInterceptTouchEvent(false)
+                when (event.action) {
+                    MotionEvent.ACTION_MOVE -> scrollView?.requestDisallowInterceptTouchEvent(true)
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> scrollView?.requestDisallowInterceptTouchEvent(
+                        false
+                    )
                 }
 
                 map.onTouchEvent(event)
@@ -41,7 +47,8 @@ class GeoMap {
             locationOverlay.enableMyLocation();
             map.overlays.add(locationOverlay)
 
-            val compassOverlay = CompassOverlay(context, InternalCompassOrientationProvider(context), map)
+            val compassOverlay =
+                CompassOverlay(context, InternalCompassOrientationProvider(context), map)
             compassOverlay.enableCompass()
             map.overlays.add(compassOverlay)
 
@@ -50,33 +57,36 @@ class GeoMap {
             map.setMultiTouchControls(true)
             map.overlays.add(rotationGestureOverlay)
 
-            val dm : DisplayMetrics = context?.resources!!.displayMetrics
+            val dm: DisplayMetrics = context?.resources!!.displayMetrics
             val scaleBarOverlay = ScaleBarOverlay(map)
             scaleBarOverlay.setCentred(true)
             scaleBarOverlay.setScaleBarOffset(dm.widthPixels / 2, 10)
             map.overlays.add(scaleBarOverlay)
         }
 
-        fun drawPath(map: MapView, geoPoints: MutableList<GeoPoint>, context: Context?, items: ArrayList<OverlayItem>){
+        fun drawPath(
+            map: MapView,
+            geoPoints: MutableList<GeoPoint>,
+            context: Context?,
+            items: ArrayList<OverlayItem>
+        ) {
 
             val polyline = Polyline()
 
-            for((index, geopoint) in geoPoints.withIndex()){
-                if(index == 0){
+            for ((index, geopoint) in geoPoints.withIndex()) {
+                if (index == 0) {
                     items.add(OverlayItem("Partenza", "", geopoint))
-                }
-                else if(index == geoPoints.size-1){
+                } else if (index == geoPoints.size - 1) {
                     items.add(OverlayItem("Arrivo", "", geopoint))
-                }
-                else{
+                } else {
                     items.add(OverlayItem("Stop $index", "", geopoint))
                 }
 
                 polyline.addPoint(geopoint)
             }
 
-           val overlay = ItemizedOverlayWithFocus<OverlayItem>(items, object :
-                    ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
+            val overlay = ItemizedOverlayWithFocus<OverlayItem>(items, object :
+                ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
                 override fun onItemSingleTapUp(index: Int, item: OverlayItem): Boolean {
                     return false
                 }
@@ -91,14 +101,23 @@ class GeoMap {
             map.overlays.add(polyline)
         }
 
-        fun setUpPinPoint(map: MapView, geoPoints: MutableList<GeoPoint>, context: Context?, items: ArrayList<OverlayItem>){
+        fun setUpPinPoint(
+            map: MapView,
+            geoPoints: MutableList<GeoPoint>,
+            context: Context?,
+            items: ArrayList<OverlayItem>
+        ) {
 
-            map.overlays.add(object: Overlay() {
-                override fun onSingleTapConfirmed(e: MotionEvent,
-                                                  mapView: MapView): Boolean {
+            map.overlays.add(object : Overlay() {
+                override fun onSingleTapConfirmed(
+                    e: MotionEvent,
+                    mapView: MapView
+                ): Boolean {
                     val projection = mapView.projection
-                    val geoPoint = projection.fromPixels(e.x.toInt(),
-                            e.y.toInt()) as GeoPoint
+                    val geoPoint = projection.fromPixels(
+                        e.x.toInt(),
+                        e.y.toInt()
+                    ) as GeoPoint
 
                     Log.d("ABCDE", "$geoPoint")
 
@@ -113,8 +132,12 @@ class GeoMap {
             })
         }
 
-        fun clearPath(map:MapView, view: View, context: Context?){
-            map.overlays.forEach { elem -> if((elem is ItemizedOverlayWithFocus<*>)|| (elem is Polyline) ) map.overlays.remove(elem) }
+        fun clearPath(map: MapView, view: View, context: Context?) {
+            map.overlays.forEach { elem ->
+                if ((elem is ItemizedOverlayWithFocus<*>) || (elem is Polyline)) map.overlays.remove(
+                    elem
+                )
+            }
             map.invalidate()
         }
     }

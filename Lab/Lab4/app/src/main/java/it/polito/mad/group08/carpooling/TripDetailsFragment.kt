@@ -308,6 +308,18 @@ class TripDetailsFragment : Fragment() {
         map = view.findViewById(R.id.mapDetails)
         GeoMap.customizeMap(map, requireView(), context)
 
+        map.setOnTouchListener { v, event ->
+            when(event.action){
+                MotionEvent.ACTION_DOWN -> findNavController().navigate(R.id.action_tripDetailsFragment_to_mapFragment)
+            }
+            map.onTouchEvent(event)
+        }
+
+        /*map.setOnClickListener {
+            Log.d("ABCDE", "MAP CLICK")
+            findNavController().navigate(R.id.action_tripDetailsFragment_to_mapFragment)
+        }*/
+
         // INITIALIZE DATA
         //NOTE: please notice the nested call. You can access parentPosition only when it's returned
         model.getPosition().observe(viewLifecycleOwner, Observer<Int> { parentPosition ->

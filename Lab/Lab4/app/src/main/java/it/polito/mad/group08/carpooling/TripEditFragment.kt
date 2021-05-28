@@ -271,6 +271,7 @@ class TripEditFragment : Fragment() {
             trip = Trip()
             adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
             recyclerView.adapter = adapter
+            GeoMap.setUpPinPoint(map, geoPoints, context, itemsGeoPoint)
             return
         }
 
