@@ -17,9 +17,11 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.util.ArrayList
 
+
 class GeoMap {
+
     companion object StaticMethods{
-        fun customizeMap(map: MapView, view: View, context: Context?){
+       fun customizeMap(map: MapView, view: View, context: Context?){
             map.setTileSource(TileSourceFactory.MAPNIK)
 
             val controller = map.controller
@@ -57,26 +59,30 @@ class GeoMap {
 
         fun drawPath(map: MapView, geoPoints: MutableList<GeoPoint>, context: Context?, items: ArrayList<OverlayItem>){
 
-            val polyline: Polyline = Polyline()
+            val polyline = Polyline()
 
-            for(geoPoint in geoPoints){
-                items.add(OverlayItem("s", "s", geoPoint))
-                polyline.addPoint(geoPoint)
+            for((index, geopoint) in geoPoints.withIndex()){
+                if(index == 0){
+                    items.add(OverlayItem("Partenza", "", geopoint))
+                }
+                else if(index == geoPoints.size-1){
+                    items.add(OverlayItem("Arrivo", "", geopoint))
+                }
+                else{
+                    items.add(OverlayItem("Stop $index", "", geopoint))
+                }
+
+                polyline.addPoint(geopoint)
             }
 
-            val overlay = ItemizedOverlayWithFocus<OverlayItem>(items, object :
+           val overlay = ItemizedOverlayWithFocus<OverlayItem>(items, object :
                     ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
                 override fun onItemSingleTapUp(index: Int, item: OverlayItem): Boolean {
-                    //do something
-                    Log.d("ABCDE", "TapUP")
-                    return true
+                    return false
                 }
 
                 override fun onItemLongPress(index: Int, item: OverlayItem): Boolean {
-                    /*items.removeAt(index)*/
-                    Log.d("ABCDE", "LongPress")
-                    polyline.points.removeAt(index)
-                    return true
+                    return false
                 }
             }, context)
             overlay.setFocusItemsOnTap(true)
@@ -105,6 +111,11 @@ class GeoMap {
                     return true
                 }
             })
+        }
+
+        fun clearPath(map:MapView, view: View, context: Context?){
+            map.overlays.forEach { elem -> if((elem is ItemizedOverlayWithFocus<*>)|| (elem is Polyline) ) map.overlays.remove(elem) }
+            map.invalidate()
         }
     }
 }

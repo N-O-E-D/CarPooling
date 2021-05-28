@@ -36,6 +36,7 @@ import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.*
@@ -80,11 +81,15 @@ class TripEditFragment : Fragment() {
     private lateinit var map: MapView
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
     private var geoPoints: MutableList<GeoPoint> = mutableListOf()
+    private var itemsGeoPoint: ArrayList<OverlayItem> = arrayListOf()
     private val model: SharedViewModel by activityViewModels()
+    private lateinit var clearButton : Button
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID)
 
         pickImageContract = object : ActivityResultContract<Uri, Uri?>() {
             override fun createIntent(context: Context, input: Uri): Intent {
@@ -186,17 +191,27 @@ class TripEditFragment : Fragment() {
             outState.putString("currentPhotoPath", currentPhotoPath)
             outState.putString("filename", filename)
             outState.putString("tmp_checkpoints", Gson().toJson(tmp_checkpoints))
+            outState.putString("geopoints", Gson().toJson(geoPoints))
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if(savedInstanceState!=null){
-            val type: Type = object : TypeToken<MutableList<CheckPoint?>?>() {}.type
+            val type_checkpoints: Type = object : TypeToken<MutableList<CheckPoint?>?>() {}.type
+            val type_geopoints: Type = object : TypeToken<MutableList<GeoPoint?>?>() {}.type
             currentPhotoPath = savedInstanceState.getString("currentPhotoPath")!!
             filename = savedInstanceState.getString("filename")
             tmp_checkpoints = GsonBuilder().create()
-                    .fromJson(savedInstanceState.getString("tmp_checkpoints"), type)
+                    .fromJson(savedInstanceState.getString("tmp_checkpoints"), type_checkpoints)
+            geoPoints = GsonBuilder().create()
+                    .fromJson(savedInstanceState.getString("geopoints"), type_geopoints)
+            itemsGeoPoint = ArrayList<OverlayItem>()
+            for(geopoint in geoPoints){
+                itemsGeoPoint.add(OverlayItem("Ancona", "Descrizione", geopoint))
+            }
+            GeoMap.drawPath(map, geoPoints, context, itemsGeoPoint)
+            GeoMap.setUpPinPoint(map, geoPoints, context, itemsGeoPoint)
             adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
             recyclerView.adapter = adapter
 
@@ -241,6 +256,13 @@ class TripEditFragment : Fragment() {
         loadTrip()
 
         GeoMap.customizeMap(map, requireView(), context)
+
+        clearButton = view.findViewById(R.id.clearButton)
+        clearButton.setOnClickListener{
+            geoPoints.clear()
+            itemsGeoPoint.clear()
+            GeoMap.clearPath(map, view, context)
+        }
     }
 
     private fun loadTrip(){
@@ -275,12 +297,9 @@ class TripEditFragment : Fragment() {
         for(geoPoint in geoPointsCoord){
             geoPoints.add(GeoPoint(geoPoint.latitude, geoPoint.longitude))
         }
-        val items = ArrayList<OverlayItem>()
-        GeoMap.drawPath(map, geoPointsCoord.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, items)
-        for(item in items){
-            println(item)
-        }
-        GeoMap.setUpPinPoint(map, geoPoints, context, items)
+        itemsGeoPoint = ArrayList<OverlayItem>()
+        GeoMap.drawPath(map, geoPointsCoord.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, itemsGeoPoint)
+        GeoMap.setUpPinPoint(map, geoPoints, context, itemsGeoPoint)
     }
 
     override fun onCreateContextMenu(
