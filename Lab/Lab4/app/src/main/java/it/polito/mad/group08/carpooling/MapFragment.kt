@@ -13,6 +13,17 @@ import org.osmdroid.views.overlay.OverlayItem
 class MapFragment : Fragment(R.layout.fragment_map) {
     private val model: SharedViewModel by activityViewModels()
     private lateinit var map: MapView
+
+    override fun onResume() {
+        super.onResume()
+        map.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        map.onPause()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

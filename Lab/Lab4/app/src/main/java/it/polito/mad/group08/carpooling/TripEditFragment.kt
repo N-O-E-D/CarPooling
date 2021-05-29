@@ -18,6 +18,7 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.activity.result.ActivityResultCallback
@@ -48,7 +49,7 @@ import java.util.*
 
 class TripEditFragment : Fragment() {
     //VIEW
-    private lateinit var editProgressBar: ProgressBar
+
     private lateinit var carNameET: EditText
     private lateinit var driverNameET: EditText
     private lateinit var seatPriceET: EditText
@@ -190,6 +191,16 @@ class TripEditFragment : Fragment() {
         adapter.onItemEditDeleted(position)
     }
 
+    override fun onResume() {
+        super.onResume()
+        map.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        map.onPause()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if (view != null) {
@@ -240,7 +251,6 @@ class TripEditFragment : Fragment() {
             unregisterForContextMenu(it)
         }
 
-        editProgressBar = view.findViewById(R.id.editProgressBar)
         carNameET = view.findViewById(R.id.carNameET)
         driverNameET = view.findViewById(R.id.driverNameET)
         seatPriceET = view.findViewById(R.id.seatPriceET)
@@ -273,7 +283,47 @@ class TripEditFragment : Fragment() {
 
     private fun loadMyTrips() {
         position = model.getPosition().value!!
-        model.getMyTrips()
+        val trips = model.getMyTrips().value
+        if(trips is Resource.Success){
+            if (position == trips.data.size) { // ADD EMPTY VIEW
+                trip = Trip()
+                adapter =
+                    ItemEditAdapter(tmp_checkpoints) { position -> removeAt(position) }
+                recyclerView.adapter = adapter
+                GeoMap.setUpPinPoint(map, geoPoints, context, itemsGeoPoint)
+            } else {
+                // EDIT EXISTING TRIP VIEW
+                trip = trips.data[position]
+
+                carNameET.setText(trip.carDescription)
+                driverNameET.setText(trip.driverName)
+                seatPriceET.setText(trip.seatPrice.toString())
+                availableSeatsET.setText(trip.availableSeats.toString())
+                informationsET.setText(trip.description)
+                ratingBar.rating = trip.driverRate
+
+                for (item in trip.checkPoints) {
+                    tmp_checkpoints.add(CheckPoint(item.location, item.timestamp))
+                }
+
+                takeSavedPhoto(model.bitmaps[trip.id])
+
+                adapter =
+                    ItemEditAdapter(tmp_checkpoints) { position -> removeAt(position) }
+                recyclerView.adapter = adapter
+
+                val geoPointsCoord = trip.geoPoints
+                for(geoPoint in geoPointsCoord){
+                    geoPoints.add(GeoPoint(geoPoint.latitude, geoPoint.longitude))
+                    Log.d("ABCDE", "$geoPoint")
+                }
+                itemsGeoPoint = ArrayList<OverlayItem>()
+                GeoMap.drawPath(map, geoPointsCoord.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, itemsGeoPoint)
+                GeoMap.setUpPinPoint(map, geoPoints, context, itemsGeoPoint)
+            }
+        }
+
+        /*model.getMyTrips()
             .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
                 when (resource) {
                     is Resource.Loading -> {
@@ -314,6 +364,7 @@ class TripEditFragment : Fragment() {
                             val geoPointsCoord = trip.geoPoints
                             for(geoPoint in geoPointsCoord){
                                 geoPoints.add(GeoPoint(geoPoint.latitude, geoPoint.longitude))
+                                Log.d("ABCDE", "$geoPoint")
                             }
                             itemsGeoPoint = ArrayList<OverlayItem>()
                             GeoMap.drawPath(map, geoPointsCoord.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, itemsGeoPoint)
@@ -331,20 +382,7 @@ class TripEditFragment : Fragment() {
                         ).show()
                     }
                 }
-            })
-    }
-
-    private fun showAllComponents(showHide: Boolean) {
-        carPhotoET.visibility = if (showHide) View.VISIBLE else View.GONE
-        changeCarPhotoET.visibility = if (showHide) View.VISIBLE else View.GONE
-        carNameET.visibility = if (showHide) View.VISIBLE else View.GONE
-        driverNameET.visibility = if (showHide) View.VISIBLE else View.GONE
-        ratingBar.visibility = if (showHide) View.VISIBLE else View.GONE
-        recyclerView.visibility = if (showHide) View.VISIBLE else View.GONE
-        button_stop.visibility = if (showHide) View.VISIBLE else View.GONE
-        availableSeatsET.visibility = if (showHide) View.VISIBLE else View.GONE
-        seatPriceET.visibility = if (showHide) View.VISIBLE else View.GONE
-        informationsET.visibility = if (showHide) View.VISIBLE else View.GONE
+            })*/
     }
 
     override fun onCreateContextMenu(
@@ -437,9 +475,8 @@ class TripEditFragment : Fragment() {
                 trip.seatPrice = seatPriceET.text.toString().toFloat()
                 trip.description = informationsET.text.toString()
                 trip.checkPoints = tmp_checkpoints
-                if(geoPoints.size != 0){
-                    trip.geoPoints = geoPoints.map { elem -> Coordinate(elem.latitude,elem.longitude) }.toMutableList()
-                }
+                trip.geoPoints = geoPoints.map { elem -> Coordinate(elem.latitude,elem.longitude) }.toMutableList()
+
 
                 if (filename != null) {
                     val tmpBitmap = (carPhotoET.drawable as BitmapDrawable).bitmap

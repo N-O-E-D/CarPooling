@@ -75,11 +75,23 @@ class GeoMap {
 
             for ((index, geopoint) in geoPoints.withIndex()) {
                 if (index == 0) {
-                    items.add(OverlayItem("${context?.getString(R.string.departure)}", "", geopoint))
+                    items.add(
+                        OverlayItem(
+                            "${context?.getString(R.string.departure)}",
+                            "",
+                            geopoint
+                        )
+                    )
                 } else if (index == geoPoints.size - 1) {
                     items.add(OverlayItem("${context?.getString(R.string.arrival)}", "", geopoint))
                 } else {
-                    items.add(OverlayItem("${context?.getString(R.string.stop)} $index", "", geopoint))
+                    items.add(
+                        OverlayItem(
+                            "${context?.getString(R.string.stop)} $index",
+                            "",
+                            geopoint
+                        )
+                    )
                 }
 
                 polyline.addPoint(geopoint)
@@ -101,18 +113,11 @@ class GeoMap {
             map.overlays.add(polyline)
         }
 
-        fun setUpPinPoint(
-            map: MapView,
-            geoPoints: MutableList<GeoPoint>,
-            context: Context?,
-            items: ArrayList<OverlayItem>
-        ) {
+        fun setUpPinPoint(map: MapView, geoPoints: MutableList<GeoPoint>, context: Context?, items: ArrayList<OverlayItem>) {
 
             map.overlays.add(object : Overlay() {
-                override fun onSingleTapConfirmed(
-                    e: MotionEvent,
-                    mapView: MapView
-                ): Boolean {
+                override fun onSingleTapConfirmed(e: MotionEvent, mapView: MapView): Boolean {
+                    Log.d("ABCDE", "ONSINGLETAP")
                     val projection = mapView.projection
                     val geoPoint = projection.fromPixels(
                         e.x.toInt(),

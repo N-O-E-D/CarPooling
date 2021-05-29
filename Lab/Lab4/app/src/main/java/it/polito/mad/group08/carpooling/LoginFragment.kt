@@ -2,7 +2,9 @@ package it.polito.mad.group08.carpooling
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +23,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val RC_SIGN_IN = 0
 
@@ -113,50 +120,36 @@ class LoginFragment : Fragment() {
     }
 
     private fun updateUI() {
-        if (auth.currentUser != null) {
+        if(auth.currentUser != null) {
             model.setUser(
                 User(
                     name = auth.currentUser!!.displayName!!,
                     email = auth.currentUser!!.email!!
                 )
             )
-            // Update Header of left menu
             (activity as? ShowProfileFragment.InfoManager)?.updateTexts(
                 auth.currentUser!!.displayName!!,
                 auth.currentUser!!.email!!
             )
-
-            model.getUserPhoto()
-                .observe(viewLifecycleOwner, Observer<Resource<Bitmap>> { resource ->
-                    when (resource) {
-                        is Resource.Loading -> {
-                            loginProgressBar.visibility = View.VISIBLE
-                            signInButton.visibility = View.GONE
-                        }
-                        is Resource.Success -> {
-                            loginProgressBar.visibility = View.GONE
-                            signInButton.visibility = View.GONE
-
-                            model.setUserBitmap(resource.data)
-                            (activity as? ShowProfileFragment.InfoManager)?.updatePhoto(resource.data)
-                            findNavController().navigate(R.id.action_loginFragment_to_othersTripListFragment)
-                        }
-                        is Resource.Failure -> {
-                            loginProgressBar.visibility = View.GONE
-                            signInButton.visibility = View.VISIBLE
-
-                            if (resource.throwable.message.equals("No_Storage_For_New_User"))
-                                findNavController().navigate(R.id.action_loginFragment_to_othersTripListFragment)
-                            else {
-                                Toast.makeText(
-                                    context,
-                                    resource.throwable.message,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
+            findNavController().navigate(R.id.action_loginFragment_to_othersTripListFragment)
+            val storage = Firebase.storage
+            val storageRef = storage.reference
+            val testRef = storageRef.child(auth.currentUser!!.email!!)
+            testRef.metadata.addOnSuccessListener { metadata ->
+                val size = metadata.sizeBytes
+                val ONE_MEGABYTE: Long = 1024 * 1024
+                testRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
+                    val imageBitmap = BitmapFactory.decodeByteArray(it, 0, size.toInt())
+                    if (imageBitmap != null) {
+                        model.setUserBitmap(imageBitmap)
+                        (activity as? ShowProfileFragment.InfoManager)?.updatePhoto(imageBitmap)
                     }
-                })
+                }.addOnFailureListener {
+                    // Handle any errors
+                }
+            }.addOnFailureListener {
+                // Uh-oh, an error occurred!
+            }
         }
     }
 }
