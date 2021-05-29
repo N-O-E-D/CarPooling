@@ -283,6 +283,7 @@ class TripAdapter(
         private val arrivalTimestamp: TextView = itemView.findViewById(R.id.arrivalTimestamp)
         private val cardButton: Button = itemView.findViewById(R.id.editButton)
         private val card: CardView = itemView.findViewById(R.id.card)
+        private val carPhotoItemProgressBar: ProgressBar = itemView.findViewById(R.id.carPhotoItemProgressBar)
 
         fun bind(
             trip: Trip,
@@ -300,10 +301,12 @@ class TripAdapter(
             else
                 cardButton.text = itemView.context.getString(R.string.edit)
 
-            //TODO model.uploadPhoto().observe<Resource<model.bitmaps> ... { resource -> ... when (resource) is Loading: ...
-            //TODO oppure semplicemente loading prima di setImage e si lascia tutto come è
+
+
+            //TODO If time move in Shared
             if (model.bitmaps[trip.id] == null) {
                 if (trip.carPhotoPath != null && trip.carPhotoPath != "") {
+                    carPhotoItemProgressBar.visibility = View.VISIBLE
                     MainScope().launch {
                         val size = withContext(Dispatchers.IO) {
                             model.downloadMetadataPhoto(trip.carPhotoPath!!).sizeBytes
@@ -316,6 +319,7 @@ class TripAdapter(
 
                         when (itemView.context.resources.configuration.orientation) {
                             Configuration.ORIENTATION_PORTRAIT -> {
+                                carPhotoItemProgressBar.visibility = View.GONE
                                 itemView.findViewById<ImageView>(R.id.carPhoto)
                                     .setImageBitmap(model.bitmaps[trip.id])
                             }
