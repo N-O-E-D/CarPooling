@@ -17,10 +17,13 @@ class MapFragment : Fragment(R.layout.fragment_map) {
         super.onViewCreated(view, savedInstanceState)
 
         val position = model.getPosition().value!!
-        val geoPoints = model.getTrips().value?.get(position)?.geoPoints!!
-        val items = ArrayList<OverlayItem> ()
-        map = view.findViewById(R.id.mapFullScreen)
-        GeoMap.customizeMap(map, view, context)
-        GeoMap.drawPath(map, geoPoints.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, items)
+        val tmpTrip = model.getMyTrips().value
+        if(tmpTrip is Resource.Success){
+            val geoPoints = tmpTrip.data[position].geoPoints
+            val items = ArrayList<OverlayItem> ()
+            map = view.findViewById(R.id.mapFullScreen)
+            GeoMap.customizeMap(map, view, context)
+            GeoMap.drawPath(map, geoPoints.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, items)
+        }
     }
 }
