@@ -522,10 +522,6 @@ class TripDetailsFragment : Fragment() {
                 ).show()
                 activity?.onBackPressed()
 
-                //TODO Benedetto: Why it's done two times?
-                if (currentTrip != null && currentTrip?.carPhotoPath != null) {
-                    model.deletePhotoTrip(currentTrip!!.carPhotoPath!!)
-                }
 
                 //delete this trip
                 model.getPosition().observe(viewLifecycleOwner, Observer<Int> { parentPosition ->
@@ -546,15 +542,11 @@ class TripDetailsFragment : Fragment() {
                                         }
                                     }
 
-                                    // resource.data[parentPosition].interestedUsers = mutableListOf()
+                                    model.deleteTrip(resource.data[parentPosition].id)
 
-                                    //TODO second time here
-                                    //TODO Test that it works
                                     if (resource.data[parentPosition].carPhotoPath != null) {
                                         model.deletePhotoTrip(resource.data[parentPosition].carPhotoPath!!)
                                     }
-
-                                    model.deleteTrip(resource.data[parentPosition].id)
                                 }
                                 is Resource.Failure -> {
                                     showAllComponents(false)
