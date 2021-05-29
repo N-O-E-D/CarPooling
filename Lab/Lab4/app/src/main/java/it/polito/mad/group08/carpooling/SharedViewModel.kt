@@ -267,18 +267,18 @@ class SharedViewModel : ViewModel() {
                             myBookedTrips.postValue(Resource.Failure(errorBookings))
 
                         if (bookingsDB != null) {
-                            val tmpTripID = mutableListOf<String>()
+                            val tmpTripsID = mutableListOf<String>()
                             for (document in bookingsDB.documents) {
                                 val tmp = document.toObject(Booking::class.java)
                                 if (tmp != null)
-                                    tmpTripID.add(tmp.tripID)
+                                    tmpTripsID.add(tmp.tripID)
                             }
 
-                            if (tmpTripID.isEmpty())
+                            if (tmpTripsID.isEmpty())
                                 myBookedTrips.postValue(Resource.Success(listOf()))
                             else {
                                 db.collection("trips")
-                                    .whereIn("id", tmpTripID)
+                                    .whereIn("id", tmpTripsID)
                                     .addSnapshotListener { tripsDB, errorTrips ->
                                         if (errorTrips != null)
                                             myBookedTrips.postValue(Resource.Failure(errorTrips))

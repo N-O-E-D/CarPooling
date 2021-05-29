@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -425,17 +426,19 @@ class TripDetailsFragment : Fragment() {
                                     detailsProgressBar.visibility = View.VISIBLE
                                 }
                                 is Resource.Success -> {
-                                    if ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))
+                                    if (parentPosition >= resource.data.size || ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))) {
                                         activity?.onBackPressed()
+                                    }else {
+                                        detailsProgressBar.visibility = View.GONE
+                                        showAllComponents(true)
 
-                                    detailsProgressBar.visibility = View.GONE
-                                    showAllComponents(true)
-
-                                    currentTrip = resource.data[parentPosition]
-                                    setTripInformation(resource.data[parentPosition])
-                                    showInterestFab.show() //FAB with check since she already booked it
-                                    interestedUsersRecyclerView.visibility = View.GONE // Owner Only
-                                    interestedUsersShowHideButton.visibility = View.GONE
+                                        currentTrip = resource.data[parentPosition]
+                                        setTripInformation(resource.data[parentPosition])
+                                        showInterestFab.show() //FAB with check since she already booked it
+                                        interestedUsersRecyclerView.visibility =
+                                            View.GONE // Owner Only
+                                        interestedUsersShowHideButton.visibility = View.GONE
+                                    }
                                 }
                                 is Resource.Failure -> {
                                     showAllComponents(false)
@@ -462,17 +465,20 @@ class TripDetailsFragment : Fragment() {
                                     detailsProgressBar.visibility = View.VISIBLE
                                 }
                                 is Resource.Success -> {
-                                    if ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))
+                                    Log.d("AAAA", "$parentPosition")
+                                    Log.d("AAAA", "${resource.data.size}")
+                                    if (parentPosition >= resource.data.size || ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))) {
                                         activity?.onBackPressed()
+                                    }else{
+                                        detailsProgressBar.visibility = View.GONE
+                                        showAllComponents(true)
 
-                                    detailsProgressBar.visibility = View.GONE
-                                    showAllComponents(true)
-
-                                    currentTrip = resource.data[parentPosition]
-                                    setTripInformation(resource.data[parentPosition])
-                                    showInterestFab.show() //FAB with check since she already booked it
-                                    interestedUsersRecyclerView.visibility = View.GONE // Owner Only
-                                    interestedUsersShowHideButton.visibility = View.GONE
+                                        currentTrip = resource.data[parentPosition]
+                                        setTripInformation(resource.data[parentPosition])
+                                        showInterestFab.show() //FAB with check since she already booked it
+                                        interestedUsersRecyclerView.visibility = View.GONE // Owner Only
+                                        interestedUsersShowHideButton.visibility = View.GONE
+                                    }
                                 }
                                 is Resource.Failure -> {
                                     showAllComponents(false)

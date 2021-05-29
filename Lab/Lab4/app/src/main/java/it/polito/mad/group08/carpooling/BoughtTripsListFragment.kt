@@ -2,6 +2,7 @@ package it.polito.mad.group08.carpooling
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -82,6 +83,9 @@ class BoughtTripsListFragment : Fragment() {
                             recyclerView.visibility = View.VISIBLE
                             emptyTextView.visibility = View.GONE
                         }
+
+                        //TODO solve it
+                        Log.d("AAAA", "${resource.data}")
 
                         adapter = TripAdapter( resource.data, model, OTHER_TRIP_LIST_IS_PARENT) {
                                 mode: Int, tripItem: Trip, position: Int? ->
