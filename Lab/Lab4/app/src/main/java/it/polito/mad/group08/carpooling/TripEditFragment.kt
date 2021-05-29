@@ -34,6 +34,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import org.osmdroid.config.Configuration
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.*
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -73,11 +78,18 @@ class TripEditFragment : Fragment() {
     private lateinit var takeImageCallback: ActivityResultCallback<Any?>
     private lateinit var takeImageLauncher: ActivityResultLauncher<Any>
 
+    private lateinit var map: MapView
+    private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
+    private var geoPoints: MutableList<GeoPoint> = mutableListOf()
+    private var itemsGeoPoint: ArrayList<OverlayItem> = arrayListOf()
     private val model: SharedViewModel by activityViewModels()
+    private lateinit var clearButton : Button
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID)
 
         pickImageContract = object : ActivityResultContract<Uri, Uri?>() {
             override fun createIntent(context: Context, input: Uri): Intent {
@@ -184,19 +196,28 @@ class TripEditFragment : Fragment() {
             outState.putString("currentPhotoPath", currentPhotoPath)
             outState.putString("filename", filename)
             outState.putString("tmp_checkpoints", Gson().toJson(tmp_checkpoints))
+            outState.putString("geopoints", Gson().toJson(geoPoints))
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if (savedInstanceState != null) {
-            val type: Type = object : TypeToken<MutableList<CheckPoint?>?>() {}.type
+        if(savedInstanceState!=null){
+            val type_checkpoints: Type = object : TypeToken<MutableList<CheckPoint?>?>() {}.type
+            val type_geopoints: Type = object : TypeToken<MutableList<GeoPoint?>?>() {}.type
             currentPhotoPath = savedInstanceState.getString("currentPhotoPath")!!
             filename = savedInstanceState.getString("filename")
             tmp_checkpoints = GsonBuilder().create()
-                .fromJson(savedInstanceState.getString("tmp_checkpoints"), type)
-            //TODO Benedetto: solve again the bug when rotating, add start and stop as intermediate
-            adapter = ItemEditAdapter(tmp_checkpoints) { position -> removeAt(position) }
+                .fromJson(savedInstanceState.getString("tmp_checkpoints"), type_checkpoints)
+            geoPoints = GsonBuilder().create()
+                    .fromJson(savedInstanceState.getString("geopoints"), type_geopoints)
+            itemsGeoPoint = ArrayList<OverlayItem>()
+            for(geopoint in geoPoints){
+                itemsGeoPoint.add(OverlayItem("Ancona", "Descrizione", geopoint))
+            }
+            GeoMap.drawPath(map, geoPoints, context, itemsGeoPoint)
+            GeoMap.setUpPinPoint(map, geoPoints, context, itemsGeoPoint)
+            adapter = ItemEditAdapter(tmp_checkpoints) {position -> removeAt(position)}
             recyclerView.adapter = adapter
         }
     }
@@ -237,7 +258,17 @@ class TripEditFragment : Fragment() {
             adapter.onItemEditAdded()
         }
 
+        map = view.findViewById(R.id.mapEdit)
         loadMyTrips()
+
+        GeoMap.customizeMap(map, requireView(), context)
+
+        clearButton = view.findViewById(R.id.clearButton)
+        clearButton.setOnClickListener{
+            geoPoints.clear()
+            itemsGeoPoint.clear()
+            GeoMap.clearPath(map, view, context)
+        }
     }
 
     private fun loadMyTrips() {
@@ -258,6 +289,7 @@ class TripEditFragment : Fragment() {
                             adapter =
                                 ItemEditAdapter(tmp_checkpoints) { position -> removeAt(position) }
                             recyclerView.adapter = adapter
+                            GeoMap.setUpPinPoint(map, geoPoints, context, itemsGeoPoint)
                         } else {
                             // EDIT EXISTING TRIP VIEW
                             trip = resource.data[position]
@@ -278,6 +310,14 @@ class TripEditFragment : Fragment() {
                             adapter =
                                 ItemEditAdapter(tmp_checkpoints) { position -> removeAt(position) }
                             recyclerView.adapter = adapter
+
+                            val geoPointsCoord = trip.geoPoints
+                            for(geoPoint in geoPointsCoord){
+                                geoPoints.add(GeoPoint(geoPoint.latitude, geoPoint.longitude))
+                            }
+                            itemsGeoPoint = ArrayList<OverlayItem>()
+                            GeoMap.drawPath(map, geoPointsCoord.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, itemsGeoPoint)
+                            GeoMap.setUpPinPoint(map, geoPoints, context, itemsGeoPoint)
                         }
                     }
                     is Resource.Failure -> {
@@ -397,6 +437,9 @@ class TripEditFragment : Fragment() {
                 trip.seatPrice = seatPriceET.text.toString().toFloat()
                 trip.description = informationsET.text.toString()
                 trip.checkPoints = tmp_checkpoints
+                if(geoPoints.size != 0){
+                    trip.geoPoints = geoPoints.map { elem -> Coordinate(elem.latitude,elem.longitude) }.toMutableList()
+                }
 
                 if (filename != null) {
                     val tmpBitmap = (carPhotoET.drawable as BitmapDrawable).bitmap

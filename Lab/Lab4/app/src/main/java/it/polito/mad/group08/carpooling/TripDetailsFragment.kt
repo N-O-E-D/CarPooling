@@ -10,6 +10,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -17,12 +18,17 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import org.osmdroid.config.Configuration.*
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.OverlayItem
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -58,10 +64,42 @@ class TripDetailsFragment : Fragment() {
 
     private val model: SharedViewModel by activityViewModels()
 
+    private lateinit var map: MapView
+    private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context))
+    }
 
     private fun takeSavedPhoto(bitmap: Bitmap?) {
         if (bitmap != null) {
             carPhotoPath.setImageBitmap(bitmap)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        map.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        map.onPause()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        val permissionsToRequest = ArrayList<String>();
+        var i = 0;
+        while (i < grantResults.size) {
+            permissionsToRequest.add(permissions[i]);
+            i++;
+        }
+        if (permissionsToRequest.size > 0) {
+            ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    permissionsToRequest.toTypedArray(),
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
         }
     }
 
@@ -204,6 +242,11 @@ class TripDetailsFragment : Fragment() {
             }
             j++
         }
+
+        val geoPoints = trip.geoPoints
+
+        val items = ArrayList<OverlayItem>()
+        GeoMap.drawPath(map, geoPoints.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, items)
     }
 
     private fun calcDuration(dep: CheckPoint, arr: CheckPoint): String {
@@ -276,6 +319,21 @@ class TripDetailsFragment : Fragment() {
 
         interestedUsersRecyclerView = view.findViewById(R.id.interestedUserRecyclerView)
         interestedUsersShowHideButton = view.findViewById(R.id.showHideInterestedUsers)
+
+        map = view.findViewById(R.id.mapDetails)
+        GeoMap.customizeMap(map, requireView(), context)
+
+        map.setOnTouchListener { v, event ->
+            when(event.action){
+                MotionEvent.ACTION_DOWN -> findNavController().navigate(R.id.action_tripDetailsFragment_to_mapFragment)
+            }
+            map.onTouchEvent(event)
+        }
+
+        /*map.setOnClickListener {
+            Log.d("ABCDE", "MAP CLICK")
+            findNavController().navigate(R.id.action_tripDetailsFragment_to_mapFragment)
+        }*/
 
         // INITIALIZE DATA
         when (arguments?.getString("parent")) {

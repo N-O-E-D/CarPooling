@@ -70,6 +70,9 @@
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/action_tripDetailsFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
         android:id="@+id/tripEditFragment"
@@ -112,6 +115,11 @@
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out" />
     </fragment>
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="it.polito.mad.group08.carpooling.MapFragment"
+        android:label="Full screen map"
+        tools:layout="@layout/fragment_map" />
     <fragment
         android:id="@+id/tripsOfInterestListFragment"
         android:name="it.polito.mad.group08.carpooling.TripsOfInterestListFragment"

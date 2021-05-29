@@ -76,5 +76,10 @@
 
     <string name="token_id">886522778931-698f6bkmod6af65ed18ogmvomkregduh.apps.googleusercontent.com</string>
 
+    <string name="clear_path">Clear</string>
+    <string name="departure">Departure</string>
+    <string name="arrival">Arrival</string>
+    <string name="stop">Stop</string>
+
     <string name="error_occur">An Error occur. Please try later.</string>
 </resources>

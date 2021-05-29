@@ -18,6 +18,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import kotlin.collections.set
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.OverlayItem
 
 const val ONE_MEGABYTE: Long = 1024 * 1024
 
@@ -613,6 +615,7 @@ class SharedViewModel : ViewModel() {
         val storage = Firebase.storage
         val storageRef = storage.reference
         val testRef = storageRef.child(path)
+        val ONE_MEGABYTE: Long = 1024 * 1024
         val byteArray = Tasks.await(testRef.getBytes(ONE_MEGABYTE))
         return BitmapFactory.decodeByteArray(byteArray, 0, size.toInt())
     }
@@ -628,20 +631,22 @@ data class User(
 
 data class CheckPoint(var location: String = "", var timestamp: String = "")
 
-data class Trip(
-    var id: String = "",
-    var carPhotoPath: String? = "",
-    var carDescription: String = "",
-    var driverName: String = "",
-    var driverEmail: String = "",
-    var driverRate: Float = 0f,
-    var checkPoints: MutableList<CheckPoint> = mutableListOf(),
-    var estimatedDuration: String = "",
-    var availableSeats: Int = 0,
-    var seatPrice: Float = 0f,
-    var description: String = "",
-    var interestedUsers: MutableList<User> = mutableListOf()
+data class Trip(var id: String = "",
+                var carPhotoPath: String? = "",
+                var carDescription: String = "",
+                var driverName: String = "",
+                var driverEmail: String = "",
+                var driverRate: Float = 0f,
+                var checkPoints: MutableList<CheckPoint> = mutableListOf(),
+                var estimatedDuration: String = "",
+                var availableSeats: Int = 0,
+                var seatPrice: Float = 0f,
+                var description: String = "",
+                var interestedUsers: MutableList<User> = mutableListOf(),
+                var geoPoints: MutableList<Coordinate> = mutableListOf()
 )
+
+data class Coordinate(var latitude: Double = 0.0, var longitude: Double = 0.0)
 
 data class Booking(var tripID: String = "", var userEmail: String = "")
 
