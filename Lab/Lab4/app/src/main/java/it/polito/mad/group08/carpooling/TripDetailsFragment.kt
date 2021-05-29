@@ -1,10 +1,8 @@
 package it.polito.mad.group08.carpooling
 
 import android.annotation.SuppressLint
-import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,24 +11,32 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import org.osmdroid.config.Configuration.*
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.OverlayItem
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 const val MY_TRIPS_IS_PARENT = "TRIPS"
 const val OTHER_TRIPS_IS_PARENT = "OTHERS_TRIPS"
+
+
 
 class TripDetailsFragment : Fragment() {
     private lateinit var carPhotoPath: ImageView
@@ -55,10 +61,41 @@ class TripDetailsFragment : Fragment() {
 
     private val model: SharedViewModel by activityViewModels()
 
+    private lateinit var map: MapView
+    private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context))
+    }
     private fun takeSavedPhoto(bitmap: Bitmap?) {
         if(bitmap != null) {
             carPhotoPath.setImageBitmap(bitmap)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        map.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        map.onPause()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        val permissionsToRequest = ArrayList<String>();
+        var i = 0;
+        while (i < grantResults.size) {
+            permissionsToRequest.add(permissions[i]);
+            i++;
+        }
+        if (permissionsToRequest.size > 0) {
+            ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    permissionsToRequest.toTypedArray(),
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
         }
     }
 
@@ -197,6 +234,11 @@ class TripDetailsFragment : Fragment() {
             }
             j++
         }
+
+        val geoPoints = trip.geoPoints
+
+        val items = ArrayList<OverlayItem>()
+        GeoMap.drawPath(map, geoPoints.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, items)
     }
 
     private fun calcDuration(dep: CheckPoint, arr: CheckPoint): String {
@@ -263,10 +305,25 @@ class TripDetailsFragment : Fragment() {
         interestedUsersRecyclerView = view.findViewById(R.id.interestedUserRecyclerView)
         interestedUsersShowHideButton = view.findViewById(R.id.showHideInterestedUsers)
 
+        map = view.findViewById(R.id.mapDetails)
+        GeoMap.customizeMap(map, requireView(), context)
+
+        map.setOnTouchListener { v, event ->
+            when(event.action){
+                MotionEvent.ACTION_DOWN -> findNavController().navigate(R.id.action_tripDetailsFragment_to_mapFragment)
+            }
+            map.onTouchEvent(event)
+        }
+
+        /*map.setOnClickListener {
+            Log.d("ABCDE", "MAP CLICK")
+            findNavController().navigate(R.id.action_tripDetailsFragment_to_mapFragment)
+        }*/
+
         // INITIALIZE DATA
         //NOTE: please notice the nested call. You can access parentPosition only when it's returned
-        model.getPosition().observe(viewLifecycleOwner, Observer<Int> {parentPosition ->
-            when(arguments?.getString("parent")){
+        model.getPosition().observe(viewLifecycleOwner, Observer<Int> { parentPosition ->
+            when (arguments?.getString("parent")) {
                 MY_TRIPS_IS_PARENT -> {
                     model.getTrips()
                             .observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
@@ -280,13 +337,13 @@ class TripDetailsFragment : Fragment() {
                             .observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
                                 // POPULATE VIEW WITH DATA
                                 model.getBookings().observe(viewLifecycleOwner, Observer<MutableList<Booking>> {
-                                    if((currentTrip!= null) && (tripsDB[parentPosition].id != currentTrip!!.id))
+                                    if ((currentTrip != null) && (tripsDB[parentPosition].id != currentTrip!!.id))
                                         activity?.onBackPressed()
 
                                     currentTrip = tripsDB[parentPosition]
 
                                     setTripInformation(tripsDB[parentPosition])
-                                    if(tripsDB[parentPosition].availableSeats > 0 || model.bookingIsAccepted(tripsDB[parentPosition].id))
+                                    if (tripsDB[parentPosition].availableSeats > 0 || model.bookingIsAccepted(tripsDB[parentPosition].id))
                                         showInterestFab.show()
                                     else
                                         showInterestFab.hide()
@@ -320,10 +377,10 @@ class TripDetailsFragment : Fragment() {
                     }
 
                     //delete this trip
-                    model.getPosition().observe(viewLifecycleOwner, Observer<Int> {parentPosition ->
+                    model.getPosition().observe(viewLifecycleOwner, Observer<Int> { parentPosition ->
                         model.getTrips().observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
                             tripsDB[parentPosition].interestedUsers.forEach { item ->
-                                if(item.isAccepted){
+                                if (item.isAccepted) {
                                     model.removeFromBookings("${tripsDB[parentPosition].id}_${item.email}")
                                 }
                             }
@@ -333,7 +390,7 @@ class TripDetailsFragment : Fragment() {
                                 val storageRef = storage.reference
                                 val imageRef = storageRef.child(tripsDB[parentPosition].carPhotoPath!!)
                                 imageRef.delete()
-                                        .addOnSuccessListener { Log.d("PROVA", "OnSuccess")  }
+                                        .addOnSuccessListener { Log.d("PROVA", "OnSuccess") }
                                         .addOnFailureListener { Log.d("PROVA", "OnFailure") }
                             }
                             model.deleteTrip(tripsDB[parentPosition].id)

@@ -13,6 +13,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.ktx.storage
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.OverlayItem
 
 
 class SharedViewModel : ViewModel() {
@@ -24,6 +26,7 @@ class SharedViewModel : ViewModel() {
     private val filter = MutableLiveData<Filter>(Filter())
 
     val bitmaps: MutableMap<String, Bitmap?> = mutableMapOf()
+
 
     private val trips: MutableLiveData<MutableList<Trip>> by lazy {
         MutableLiveData<MutableList<Trip>>().also {
@@ -373,8 +376,11 @@ data class Trip(var id: String = "",
                 var availableSeats: Int = 0,
                 var seatPrice: Float = 0f,
                 var description: String = "",
-                var interestedUsers: MutableList<User> = mutableListOf()
+                var interestedUsers: MutableList<User> = mutableListOf(),
+                var geoPoints: MutableList<Coordinate> = mutableListOf()
 )
+
+data class Coordinate(var latitude: Double = 0.0, var longitude: Double = 0.0)
 
 data class Booking(var tripID: String = "", var userEmail: String = "")
 

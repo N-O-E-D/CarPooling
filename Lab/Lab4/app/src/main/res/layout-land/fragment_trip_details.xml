@@ -116,7 +116,7 @@
                 android:textSize="@dimen/secondary_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/showHideIntermediateSteps" />
+                app:layout_constraintTop_toBottomOf="@+id/mapDetails" />
 
             <TextView
                 android:id="@+id/availableSeats"
@@ -181,6 +181,17 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tripDescription" />
+
+            <org.osmdroid.views.MapView
+                android:id="@+id/mapDetails"
+                android:layout_width="0dp"
+                android:layout_height="250dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/showHideIntermediateSteps" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
