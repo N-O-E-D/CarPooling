@@ -18,7 +18,6 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.format.DateFormat
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.activity.result.ActivityResultCallback
@@ -28,15 +27,13 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -46,12 +43,14 @@ import java.util.*
 
 class TripEditFragment : Fragment() {
     //VIEW
+    private lateinit var editProgressBar: ProgressBar
     private lateinit var carNameET: EditText
     private lateinit var driverNameET: EditText
     private lateinit var seatPriceET: EditText
     private lateinit var availableSeatsET: EditText
     private lateinit var informationsET: EditText
-    private lateinit var imageView: ImageView
+    private lateinit var carPhotoET: ImageView
+    private lateinit var changeCarPhotoET: ImageButton
     private lateinit var ratingBar: RatingBar
     private lateinit var button_stop: Button
 
@@ -84,22 +83,24 @@ class TripEditFragment : Fragment() {
             override fun createIntent(context: Context, input: Uri): Intent {
                 return Intent(Intent.ACTION_PICK, input)
             }
+
             override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
-                if(resultCode != Activity.RESULT_OK || intent == null)
+                if (resultCode != Activity.RESULT_OK || intent == null)
                     return null
                 return intent.data
             }
         }
 
         pickImageCallback = ActivityResultCallback { imageUri: Uri? ->
-            if(imageUri != null) {
+            if (imageUri != null) {
                 val bitmap = when {
                     Build.VERSION.SDK_INT < 28 -> MediaStore.Images.Media.getBitmap(
-                            activity?.contentResolver,
-                            imageUri
+                        activity?.contentResolver,
+                        imageUri
                     )
                     else -> {
-                        val source = ImageDecoder.createSource(activity?.contentResolver!!, imageUri)
+                        val source =
+                            ImageDecoder.createSource(activity?.contentResolver!!, imageUri)
                         ImageDecoder.decodeBitmap(source)
                     }
                 }
@@ -109,11 +110,8 @@ class TripEditFragment : Fragment() {
                 requireContext().openFileOutput(filename, Context.MODE_PRIVATE).use {
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
                 }
-                /*requireContext().openFileOutput(filename, Context.MODE_PRIVATE).use {
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
-                }*/
 
-                imageView.setImageBitmap(bitmap)
+                carPhotoET.setImageBitmap(bitmap)
             }
         }
 
@@ -122,12 +120,14 @@ class TripEditFragment : Fragment() {
         takeImageContract = object : ActivityResultContract<Any, Any?>() {
             override fun createIntent(context: Context, input: Any): Intent {
                 val photoFile: File? = try {
-                    val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-                    val storageDir: File = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+                    val timeStamp: String =
+                        SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                    val storageDir: File =
+                        context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
                     File.createTempFile(
-                            "JPEG_${timeStamp}_", /* prefix */
-                            ".jpg", /* suffix */
-                            storageDir /* directory */
+                        "JPEG_${timeStamp}_", /* prefix */
+                        ".jpg", /* suffix */
+                        storageDir /* directory */
                     ).apply {
                         // Save a file: path for use with ACTION_VIEW intents
                         currentPhotoPath = absolutePath
@@ -138,16 +138,20 @@ class TripEditFragment : Fragment() {
                 // Continue only if the File was successfully created
                 photoFile?.also {
                     val photoURI: Uri = FileProvider.getUriForFile(
-                            context,
-                            "it.polito.mad.group08.carpooling",
-                            it
+                        context,
+                        "it.polito.mad.group08.carpooling",
+                        it
                     )
-                    return Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    return Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(
+                        MediaStore.EXTRA_OUTPUT,
+                        photoURI
+                    )
                 }
                 return Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             }
+
             override fun parseResult(resultCode: Int, intent: Intent?): Bitmap? {
-                if(resultCode != Activity.RESULT_OK || intent == null) {
+                if (resultCode != Activity.RESULT_OK || intent == null) {
                     currentPhotoPath = ""
                     return null
                 }
@@ -160,7 +164,7 @@ class TripEditFragment : Fragment() {
         takeImageCallback = ActivityResultCallback {
             if (currentPhotoPath != "") {
                 val bitmap = BitmapFactory.decodeFile(currentPhotoPath)
-                imageView.setImageBitmap(bitmap)
+                carPhotoET.setImageBitmap(bitmap)
 
                 filename = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
             }
@@ -176,7 +180,7 @@ class TripEditFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        if(view != null) {
+        if (view != null) {
             outState.putString("currentPhotoPath", currentPhotoPath)
             outState.putString("filename", filename)
             outState.putString("tmp_checkpoints", Gson().toJson(tmp_checkpoints))
@@ -185,21 +189,22 @@ class TripEditFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             val type: Type = object : TypeToken<MutableList<CheckPoint?>?>() {}.type
             currentPhotoPath = savedInstanceState.getString("currentPhotoPath")!!
             filename = savedInstanceState.getString("filename")
             tmp_checkpoints = GsonBuilder().create()
-                    .fromJson(savedInstanceState.getString("tmp_checkpoints"), type)
-            adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
+                .fromJson(savedInstanceState.getString("tmp_checkpoints"), type)
+            //TODO Benedetto: solve again the bug when rotating, add start and stop as intermediate
+            adapter = ItemEditAdapter(tmp_checkpoints) { position -> removeAt(position) }
             recyclerView.adapter = adapter
-
-            takeSavedPhoto(filename, currentPhotoPath, imageView, model.bitmaps[trip.id])
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         setHasOptionsMenu(true)
         return inflater.inflate(R.layout.fragment_trip_edit, container, false)
@@ -214,58 +219,98 @@ class TripEditFragment : Fragment() {
             unregisterForContextMenu(it)
         }
 
+        editProgressBar = view.findViewById(R.id.editProgressBar)
         carNameET = view.findViewById(R.id.carNameET)
         driverNameET = view.findViewById(R.id.driverNameET)
         seatPriceET = view.findViewById(R.id.seatPriceET)
         availableSeatsET = view.findViewById(R.id.availableSeatsET)
         informationsET = view.findViewById(R.id.tripDescriptionET)
-        imageView = view.findViewById(R.id.carPhoto)
+        carPhotoET = view.findViewById(R.id.carPhoto)
+        changeCarPhotoET = view.findViewById(R.id.imageButton)
         ratingBar = view.findViewById(R.id.driverRate)
         button_stop = view.findViewById(R.id.new_stop)
         recyclerView = view.findViewById(R.id.tripRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        button_stop.setOnClickListener{
+        button_stop.setOnClickListener {
             tmp_checkpoints.add(CheckPoint("", ""))
             adapter.onItemEditAdded()
         }
 
-        loadTrip()
+        loadMyTrips()
     }
 
-    private fun loadTrip(){
+    private fun loadMyTrips() {
         position = model.getPosition().value!!
-        if(position == model.getTrips().value?.size){ // ADD EMPTY VIEW
-            trip = Trip()
-            adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
-            recyclerView.adapter = adapter
-            return
-        }
+        model.getMyTrips()
+            .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
+                when (resource) {
+                    is Resource.Loading -> {
+                        showAllComponents(false)
+                        editProgressBar.visibility = View.VISIBLE
+                    }
+                    is Resource.Success -> {
+                        editProgressBar.visibility = View.GONE
+                        showAllComponents(true)
 
-        // EDIT EXISTING TRIP VIEW
-        trip = model.getTrips().value!![position]
+                        if (position == resource.data.size) { // ADD EMPTY VIEW
+                            trip = Trip()
+                            adapter =
+                                ItemEditAdapter(tmp_checkpoints) { position -> removeAt(position) }
+                            recyclerView.adapter = adapter
+                        } else {
+                            // EDIT EXISTING TRIP VIEW
+                            trip = resource.data[position]
 
-        carNameET.setText(trip.carDescription)
-        driverNameET.setText(trip.driverName)
-        seatPriceET.setText(trip.seatPrice.toString())
-        availableSeatsET.setText(trip.availableSeats.toString())
-        informationsET.setText(trip.description)
-        ratingBar.rating = trip.driverRate
+                            carNameET.setText(trip.carDescription)
+                            driverNameET.setText(trip.driverName)
+                            seatPriceET.setText(trip.seatPrice.toString())
+                            availableSeatsET.setText(trip.availableSeats.toString())
+                            informationsET.setText(trip.description)
+                            ratingBar.rating = trip.driverRate
 
-        for (item in trip.checkPoints) {
-            tmp_checkpoints.add(CheckPoint(item.location, item.timestamp))
-        }
-        adapter = ItemEditAdapter(tmp_checkpoints){position -> removeAt(position)}
-        recyclerView.adapter = adapter
+                            for (item in trip.checkPoints) {
+                                tmp_checkpoints.add(CheckPoint(item.location, item.timestamp))
+                            }
 
-        takeSavedPhoto(filename, currentPhotoPath, imageView, model.bitmaps[trip.id])
+                            takeSavedPhoto(model.bitmaps[trip.id])
 
+                            adapter =
+                                ItemEditAdapter(tmp_checkpoints) { position -> removeAt(position) }
+                            recyclerView.adapter = adapter
+                        }
+                    }
+                    is Resource.Failure -> {
+                        showAllComponents(false)
+                        editProgressBar.visibility = View.GONE
+
+                        Toast.makeText(
+                            context,
+                            getString(R.string.error_occur),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            })
+    }
+
+    private fun showAllComponents(showHide: Boolean) {
+        carPhotoET.visibility = if (showHide) View.VISIBLE else View.GONE
+        changeCarPhotoET.visibility = if (showHide) View.VISIBLE else View.GONE
+        carNameET.visibility = if (showHide) View.VISIBLE else View.GONE
+        driverNameET.visibility = if (showHide) View.VISIBLE else View.GONE
+        ratingBar.visibility = if (showHide) View.VISIBLE else View.GONE
+        recyclerView.visibility = if (showHide) View.VISIBLE else View.GONE
+        button_stop.visibility = if (showHide) View.VISIBLE else View.GONE
+        availableSeatsET.visibility = if (showHide) View.VISIBLE else View.GONE
+        seatPriceET.visibility = if (showHide) View.VISIBLE else View.GONE
+        informationsET.visibility = if (showHide) View.VISIBLE else View.GONE
     }
 
     override fun onCreateContextMenu(
-            menu: ContextMenu,
-            v: View,
-            menuInfo: ContextMenu.ContextMenuInfo?
+        menu: ContextMenu,
+        v: View,
+        menuInfo: ContextMenu.ContextMenuInfo?
     ) {
         super.onCreateContextMenu(menu, v, menuInfo)
         activity?.menuInflater?.inflate(R.menu.floating_menu, menu)
@@ -278,14 +323,14 @@ class TripEditFragment : Fragment() {
 
     private fun checkCheckpoint(): Boolean {
         for (checkpoint in tmp_checkpoints)
-            if(checkpoint.location == "" || checkpoint.timestamp == "")
+            if (checkpoint.location == "" || checkpoint.timestamp == "")
                 return true
         return false
     }
 
     private fun checkCheckpointCoherency(): Boolean {
         val format = SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.US)
-        for (i in 0 .. tmp_checkpoints.size - 2) {
+        for (i in 0..tmp_checkpoints.size - 2) {
             val date1 = format.parse(tmp_checkpoints[i].timestamp)
             val date2 = format.parse(tmp_checkpoints[i + 1].timestamp)
             if (date2!!.time <= date1!!.time)
@@ -296,93 +341,93 @@ class TripEditFragment : Fragment() {
 
     private fun checkCheckpointFormat(): Boolean {
         for (checkpoint in tmp_checkpoints)
-            if(checkpoint.timestamp.length != 16)
+            if (checkpoint.timestamp.length != 16)
                 return true
         return false
     }
 
     @SuppressLint("WrongThread")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
+        return when (item.itemId) {
             R.id.saveButton -> {
-                if(carNameET.text.toString() == "" || driverNameET.text.toString() == "" ||
-                        availableSeatsET.text.toString() == "" || seatPriceET.text.toString() == "" || checkCheckpoint()) {
+                if (carNameET.text.toString() == "" || driverNameET.text.toString() == "" ||
+                    availableSeatsET.text.toString() == "" || seatPriceET.text.toString() == "" ||
+                    checkCheckpoint()
+                ) {
 
-                    Toast.makeText(activity?.applicationContext, "Please fill all the fields before saving!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        activity?.applicationContext,
+                        "Please fill all the fields before saving!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return true
                 }
 
                 if (tmp_checkpoints.size < 2) {
-                    Toast.makeText(activity?.applicationContext, "Please insert at least departure and arrival!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        activity?.applicationContext,
+                        "Please insert at least departure and arrival!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return true
                 }
 
                 if (checkCheckpointFormat()) {
-                    Toast.makeText(activity?.applicationContext, "Please insert also the time!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        activity?.applicationContext,
+                        "Please insert also the time!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return true
                 }
 
                 if (checkCheckpointCoherency()) {
-                    Toast.makeText(activity?.applicationContext, "Please make sure the dates are in chronological order!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        activity?.applicationContext,
+                        "Please make sure the dates are in chronological order!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return true
                 }
 
-                if(filename != null) {
-                    val storage = Firebase.storage
-                    val storageRef = storage.reference
-                    val testRef = storageRef.child(filename!!)
-                    val bitmap = (imageView.drawable as BitmapDrawable).bitmap
-                    val baos = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                    val data = baos.toByteArray()
-                    val uploadTask = testRef.putBytes(data)
-                    uploadTask.addOnFailureListener {
-                    }.addOnSuccessListener {
-                        trip.carPhotoPath = filename
-                        model.addOrReplaceTrip(trip)
-                    }
-                    model.bitmaps[trip.id] = bitmap
-                    trip.carDescription = carNameET.text.toString()
-                    trip.driverName = driverNameET.text.toString()
-                    trip.driverEmail = model.auth.currentUser!!.email!!
-                    trip.availableSeats = availableSeatsET.text.toString().toInt()
-                    trip.seatPrice = seatPriceET.text.toString().toFloat()
-                    trip.description = informationsET.text.toString()
-                    trip.checkPoints = tmp_checkpoints
-                    model.addOrReplaceTrip(trip)
-                    findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
-                } else {
-                    trip.carDescription = carNameET.text.toString()
-                    trip.driverName = driverNameET.text.toString()
-                    trip.driverEmail = model.auth.currentUser!!.email!!
-                    trip.availableSeats = availableSeatsET.text.toString().toInt()
-                    trip.seatPrice = seatPriceET.text.toString().toFloat()
-                    trip.description = informationsET.text.toString()
-                    trip.checkPoints = tmp_checkpoints
+                trip.carDescription = carNameET.text.toString()
+                trip.driverName = driverNameET.text.toString()
+                trip.driverEmail = model.auth.currentUser!!.email!!
+                trip.availableSeats = availableSeatsET.text.toString().toInt()
+                trip.seatPrice = seatPriceET.text.toString().toFloat()
+                trip.description = informationsET.text.toString()
+                trip.checkPoints = tmp_checkpoints
 
+                if (filename != null) {
+                    val tmpBitmap = (carPhotoET.drawable as BitmapDrawable).bitmap
+                    model.updatePhotoTrip(filename!!, tmpBitmap, trip)
+                } else
                     model.addOrReplaceTrip(trip)
-                    findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
-                }
+
+                findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
+
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun takeSavedPhoto(file_name: String?, cur_photo_path: String?, imageView: ImageView, bitmap: Bitmap?) {
-        if(cur_photo_path == "" && filename == null && bitmap != null) {
-            imageView.setImageBitmap(bitmap)
-        }
+    private fun takeSavedPhoto(bitmap: Bitmap?) {
+        if (currentPhotoPath == "" && filename == null && bitmap != null) {
+            carPhotoET.setImageBitmap(bitmap)
+        } //TODO Ask benedetto if the below code should be in an Else
         try {
-            if(cur_photo_path != "") {
-                val bitmap = BitmapFactory.decodeFile(currentPhotoPath)
-                imageView.setImageBitmap(bitmap)
-            } else if (file_name != null) {
-                requireContext().openFileInput(file_name).use {
-                    val imageBitmap = BitmapFactory.decodeStream(it)
-                    if (imageBitmap != null)
-                        imageView.setImageBitmap(imageBitmap)
-                }
+            if (currentPhotoPath != "") {
+                val tmpBitmap = BitmapFactory.decodeFile(currentPhotoPath)
+                carPhotoET.setImageBitmap(tmpBitmap)
+            } else if (filename != null) {
+                requireContext()
+                    .openFileInput(filename)
+                    .use {
+                        val imageBitmap = BitmapFactory.decodeStream(it)
+                        if (imageBitmap != null)
+                            carPhotoET.setImageBitmap(imageBitmap)
+                    }
             }
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
@@ -391,7 +436,6 @@ class TripEditFragment : Fragment() {
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        //val info = item.menuInfo
         return when (item.itemId) {
             R.id.openGalleryOption -> {
                 pickImageLauncher.launch(MediaStore.Images.Media.INTERNAL_CONTENT_URI)
@@ -406,8 +450,10 @@ class TripEditFragment : Fragment() {
     }
 }
 
-class ItemEditAdapter(private val items: MutableList<CheckPoint>,
-                      private val clickListener: (Int) -> Unit) : RecyclerView.Adapter<ItemEditAdapter.ItemEditViewHolder>() {
+class ItemEditAdapter(
+    private val items: MutableList<CheckPoint>,
+    private val clickListener: (Int) -> Unit
+) : RecyclerView.Adapter<ItemEditAdapter.ItemEditViewHolder>() {
 
     class ItemEditViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val location = v.findViewById<EditText>(R.id.addressET)
@@ -420,20 +466,28 @@ class ItemEditAdapter(private val items: MutableList<CheckPoint>,
             cal.set(Calendar.MINUTE, minute)
             updateTimeInView(timestamp, cal)
         }
-        private val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-            cal.set(Calendar.YEAR, year)
-            cal.set(Calendar.MONTH, monthOfYear)
-            cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-            updateDateInView(timestamp, cal)
-            val timePickerDialog = TimePickerDialog(v.context, timeSetListener, cal.get(Calendar.HOUR), cal.get(Calendar.MINUTE),
-                    DateFormat.is24HourFormat(v.context))
-            timePickerDialog.show()
-        }
+        private val dateSetListener =
+            DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                cal.set(Calendar.YEAR, year)
+                cal.set(Calendar.MONTH, monthOfYear)
+                cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                updateDateInView(timestamp, cal)
+                val timePickerDialog = TimePickerDialog(
+                    v.context, timeSetListener, cal.get(Calendar.HOUR), cal.get(Calendar.MINUTE),
+                    DateFormat.is24HourFormat(v.context)
+                )
+                timePickerDialog.show()
+            }
 
         fun bind(i: CheckPoint, clickListener: (Int) -> Unit, items: MutableList<CheckPoint>) {
             location.setText(i.location)
-            location.addTextChangedListener(object: TextWatcher{
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            location.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -445,18 +499,25 @@ class ItemEditAdapter(private val items: MutableList<CheckPoint>,
             })
             timestamp.setText(i.timestamp)
             timestamp.setOnClickListener {
-                DatePickerDialog(timestamp.context,
-                        dateSetListener,
-                        // set DatePickerDialog to point to today's date when it loads up
-                        cal.get(Calendar.YEAR),
-                        cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH))
-                        .apply {
-                            datePicker.minDate = System.currentTimeMillis() - 1000
-                        }.show()
+                DatePickerDialog(
+                    timestamp.context,
+                    dateSetListener,
+                    // set DatePickerDialog to point to today's date when it loads up
+                    cal.get(Calendar.YEAR),
+                    cal.get(Calendar.MONTH),
+                    cal.get(Calendar.DAY_OF_MONTH)
+                )
+                    .apply {
+                        datePicker.minDate = System.currentTimeMillis() - 1000
+                    }.show()
             }
-            timestamp.addTextChangedListener(object: TextWatcher{
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            timestamp.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {

@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -25,9 +27,11 @@ const val CARD_CLICKED = 2
 const val FAB_CLICKED = 3
 
 class TripListFragment : Fragment() {
+    private lateinit var myTripsProgressBar: ProgressBar
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TripAdapter
     private lateinit var emptyTextView: TextView
+    private lateinit var addFab: FloatingActionButton
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -36,17 +40,25 @@ class TripListFragment : Fragment() {
         if (mode == CARD_BUTTON_CLICKED && position != null && trip != null) {
             model.setPosition(position)
             navController.navigate(R.id.action_tripListFragment_to_tripEditFragment)
-            //Toast.makeText(context, "EDIT: From ${trip.departureLocation} to ${trip.arrivalLocation}!", Toast.LENGTH_SHORT).show()
         } else if (mode == CARD_CLICKED && trip != null) {
             model.setPosition(position!!)
             navController.navigate(
                 R.id.action_tripListFragment_to_tripDetailsFragment,
                 bundleOf("parent" to "TRIPS")
             )
-            //Toast.makeText(context, "DETAILS: From ${trip.departureLocation} to ${trip.arrivalLocation}!", Toast.LENGTH_SHORT).show()
         } else if (mode == FAB_CLICKED) {
-            model.setPosition(model.getTrips().value!!.size)
-            navController.navigate(R.id.action_tripListFragment_to_tripEditFragment)
+            model.getMyTrips()
+                .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
+                    when (resource) {
+                        is Resource.Success -> {
+                            model.setPosition(resource.data.size)
+                            navController.navigate(R.id.action_tripListFragment_to_tripEditFragment)
+                        }
+                        else -> {
+                            Toast.makeText(context, "Please wait...", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                })
         }
     }
 
@@ -55,8 +67,10 @@ class TripListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_trip_list, container, false)
+        myTripsProgressBar = view.findViewById(R.id.myTripsProgressBar)
         emptyTextView = view.findViewById(R.id.emptyTextView)
         recyclerView = view.findViewById(R.id.tripListRecyclerView)
+        addFab = view.findViewById(R.id.add_fab)
 
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
@@ -73,7 +87,6 @@ class TripListFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val addFab: FloatingActionButton = view.findViewById(R.id.add_fab)
 
         recyclerView.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
             if (scrollY > oldScrollY && addFab.visibility == View.VISIBLE) {
@@ -91,28 +104,45 @@ class TripListFragment : Fragment() {
         }
 
         // DECOUPLE DATA FROM UI
-        model.getTrips().observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
-            // update UI
-            if (tripsDB.isEmpty()) {
-                recyclerView.visibility = View.GONE
-                emptyTextView.visibility = View.VISIBLE
-            } else {
-                recyclerView.visibility = View.VISIBLE
-                emptyTextView.visibility = View.GONE
-            }
+        model.getMyTrips()
+            .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
+                // update UI
+                when (resource) {
+                    is Resource.Loading -> {
+                        myTripsProgressBar.visibility = View.VISIBLE
+                        addFab.visibility = View.GONE
+                    }
+                    is Resource.Success -> {
+                        myTripsProgressBar.visibility = View.GONE
+                        addFab.visibility = View.VISIBLE
 
-            adapter = TripAdapter( //TODO change in List
-                tripsDB,
-                model,
-                TRIP_LIST_IS_PARENT
-            ) { mode: Int, tripItem: Trip, position: Int? ->
-                navigationClickListener(
-                    mode,
-                    tripItem,
-                    position
-                )
-            }
-            recyclerView.adapter = adapter
-        })
+                        if (resource.data.isEmpty()) {
+                            recyclerView.visibility = View.GONE
+                            emptyTextView.visibility = View.VISIBLE
+                        } else {
+                            recyclerView.visibility = View.VISIBLE
+                            emptyTextView.visibility = View.GONE
+                        }
+
+                        adapter = TripAdapter(
+                            resource.data,
+                            model,
+                            TRIP_LIST_IS_PARENT
+                        ) { mode: Int, tripItem: Trip, position: Int? ->
+                            navigationClickListener(
+                                mode,
+                                tripItem,
+                                position
+                            )
+                        }
+                        recyclerView.adapter = adapter
+
+                    }
+                    is Resource.Failure -> {
+                        myTripsProgressBar.visibility = View.GONE
+                        emptyTextView.text = getString(R.string.error_occur)
+                    }
+                }
+            })
     }
 }

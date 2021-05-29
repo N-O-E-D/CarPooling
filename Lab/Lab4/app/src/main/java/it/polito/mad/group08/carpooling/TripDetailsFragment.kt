@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -14,6 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -30,9 +30,10 @@ import java.util.*
 const val MY_TRIPS_IS_PARENT = "TRIPS"
 const val OTHER_TRIPS_IS_PARENT = "OTHERS_TRIPS"
 const val BOOKED_TRIPS_IS_PARENT = "BOOKED_TRIPS"
+const val INTERESTED_TRIPS_IS_PARENT = "INTERESTED_TRIPS"
 
 class TripDetailsFragment : Fragment() {
-    private lateinit var progressBar: ProgressBar
+    private lateinit var detailsProgressBar: ProgressBar
 
     private lateinit var scrollView: ScrollView
     private lateinit var carPhotoPath: ImageView
@@ -183,6 +184,7 @@ class TripDetailsFragment : Fragment() {
             interestedUsersRecyclerView.adapter = InterestedUserAdapter(
                 trip.interestedUsers,
                 model,
+                viewLifecycleOwner,
                 trip,
                 findNavController()
             )
@@ -255,7 +257,7 @@ class TripDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // FIND VIEW
-        progressBar = view.findViewById(R.id.progressBar)
+        detailsProgressBar = view.findViewById(R.id.detailsProgressBar)
 
         scrollView = view.findViewById(R.id.scrollView)
         carPhotoPath = view.findViewById(R.id.carPhoto)
@@ -280,11 +282,33 @@ class TripDetailsFragment : Fragment() {
             MY_TRIPS_IS_PARENT -> {
                 //NOTE: please notice the nested call. You can access parentPosition only when it's returned
                 model.getPosition().observe(viewLifecycleOwner, Observer<Int> { parentPosition ->
-                    model.getTrips()
-                        .observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
+                    model.getMyTrips()
+                        .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
                             // POPULATE VIEW WITH DATA
-                            setTripInformation(tripsDB[parentPosition])
-                            showInterestFab.hide()
+                            when (resource) {
+                                is Resource.Loading -> {
+                                    showAllComponents(false)
+                                    detailsProgressBar.visibility = View.VISIBLE
+                                }
+                                is Resource.Success -> {
+                                    showAllComponents(true)
+                                    detailsProgressBar.visibility = View.GONE
+
+                                    setTripInformation(resource.data[parentPosition])
+                                    showInterestFab.hide()
+                                }
+                                is Resource.Failure -> {
+                                    showAllComponents(false)
+                                    detailsProgressBar.visibility = View.GONE
+
+                                    Toast.makeText(
+                                        context,
+                                        "Error in trip loading! Try later.",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+
                         })
                 })
             }
@@ -292,22 +316,43 @@ class TripDetailsFragment : Fragment() {
                 //NOTE: please notice the nested call. You can access parentPosition only when it's returned
                 model.getPosition().observe(viewLifecycleOwner, Observer<Int> { parentPosition ->
                     model.getOthersTrips()
-                        .observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
+                        .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
                             // POPULATE VIEW WITH DATA
-                            if ((currentTrip != null) && (tripsDB[parentPosition].id != currentTrip!!.id))
-                                activity?.onBackPressed()
+                            when (resource) {
+                                is Resource.Loading -> {
+                                    showAllComponents(false)
+                                    detailsProgressBar.visibility = View.VISIBLE
+                                }
+                                is Resource.Success -> {
+                                    if ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))
+                                        activity?.onBackPressed()
 
-                            currentTrip = tripsDB[parentPosition]
+                                    detailsProgressBar.visibility = View.GONE
+                                    showAllComponents(true)
 
-                            setTripInformation(tripsDB[parentPosition])
-                            if (tripsDB[parentPosition].availableSeats > 0 ||
-                                model.bookingIsAccepted(tripsDB[parentPosition])
-                            )
-                                showInterestFab.show()
-                            else
-                                showInterestFab.hide()
-                            interestedUsersRecyclerView.visibility = View.GONE
-                            interestedUsersShowHideButton.visibility = View.GONE
+                                    currentTrip = resource.data[parentPosition]
+                                    setTripInformation(resource.data[parentPosition])
+
+                                    if (resource.data[parentPosition].availableSeats > 0 ||
+                                        model.bookingIsAccepted(resource.data[parentPosition])
+                                    )
+                                        showInterestFab.show()
+                                    else
+                                        showInterestFab.hide()
+                                    interestedUsersRecyclerView.visibility = View.GONE
+                                    interestedUsersShowHideButton.visibility = View.GONE
+                                }
+                                is Resource.Failure -> {
+                                    showAllComponents(false)
+                                    detailsProgressBar.visibility = View.GONE
+
+                                    Toast.makeText(
+                                        context,
+                                        "Error in trip loading! Try later.",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
                         })
                 })
             }
@@ -319,13 +364,13 @@ class TripDetailsFragment : Fragment() {
                             when (resource) {
                                 is Resource.Loading -> {
                                     showAllComponents(false)
-                                    progressBar.visibility = View.VISIBLE
+                                    detailsProgressBar.visibility = View.VISIBLE
                                 }
                                 is Resource.Success -> {
                                     if ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))
                                         activity?.onBackPressed()
 
-                                    progressBar.visibility = View.GONE
+                                    detailsProgressBar.visibility = View.GONE
                                     showAllComponents(true)
 
                                     currentTrip = resource.data[parentPosition]
@@ -336,11 +381,48 @@ class TripDetailsFragment : Fragment() {
                                 }
                                 is Resource.Failure -> {
                                     showAllComponents(false)
-                                    progressBar.visibility = View.GONE
+                                    detailsProgressBar.visibility = View.GONE
 
                                     Toast.makeText(
                                         context,
-                                        "Error trip loading! Try later.",
+                                        "Error in trip loading! Try later.",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                        })
+                })
+            }
+            INTERESTED_TRIPS_IS_PARENT -> { //TODO test it when owner delete the trip
+                model.getPosition().observe(viewLifecycleOwner, Observer<Int> { parentPosition ->
+                    model.getMyInterestedTrips()
+                        .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
+                            // update UI
+                            when (resource) {
+                                is Resource.Loading -> {
+                                    showAllComponents(false)
+                                    detailsProgressBar.visibility = View.VISIBLE
+                                }
+                                is Resource.Success -> {
+                                    if ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))
+                                        activity?.onBackPressed()
+
+                                    detailsProgressBar.visibility = View.GONE
+                                    showAllComponents(true)
+
+                                    currentTrip = resource.data[parentPosition]
+                                    setTripInformation(resource.data[parentPosition])
+                                    showInterestFab.show() //FAB with check since she already booked it
+                                    interestedUsersRecyclerView.visibility = View.GONE // Owner Only
+                                    interestedUsersShowHideButton.visibility = View.GONE
+                                }
+                                is Resource.Failure -> {
+                                    showAllComponents(false)
+                                    detailsProgressBar.visibility = View.GONE
+
+                                    Toast.makeText(
+                                        context,
+                                        "Error in trip loading! Try later.",
                                         Toast.LENGTH_LONG
                                     ).show()
                                 }
@@ -382,40 +464,57 @@ class TripDetailsFragment : Fragment() {
                 ).show()
                 activity?.onBackPressed()
 
-                if (currentTrip?.carPhotoPath != null) {
-                    val storage = Firebase.storage
-                    val storageRef = storage.reference
-                    val imageRef = storageRef.child(currentTrip!!.carPhotoPath!!)
-                    imageRef.delete()
-                        .addOnSuccessListener { Log.d("PROVA", "OnSuccess") }
-                        .addOnFailureListener { Log.d("PROVA", "OnFailure") }
+                //TODO Benedetto: Why it's done two times?
+                if (currentTrip != null && currentTrip?.carPhotoPath != null) {
+                    model.deletePhotoTrip(currentTrip!!.carPhotoPath!!)
                 }
 
                 //delete this trip
                 model.getPosition().observe(viewLifecycleOwner, Observer<Int> { parentPosition ->
-                    model.getTrips()
-                        .observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
-                            tripsDB[parentPosition].interestedUsers.forEach { item ->
-                                if (item.isAccepted) {
-                                    model.removeFromBookings("${tripsDB[parentPosition].id}_${item.email}")
+                    model.getMyTrips()
+                        .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
+                            when (resource) {
+                                is Resource.Loading -> {
+                                    showAllComponents(false)
+                                    detailsProgressBar.visibility = View.VISIBLE
+                                }
+                                is Resource.Success -> {
+                                    detailsProgressBar.visibility = View.GONE
+                                    showAllComponents(true)
+
+                                    resource.data[parentPosition].interestedUsers.forEach { user ->
+                                        if (user.isAccepted) {
+                                            model.removeFromBookings("${resource.data[parentPosition].id}_${user.email}")
+                                        }
+                                    }
+
+                                    // resource.data[parentPosition].interestedUsers = mutableListOf()
+
+                                    //TODO second time here
+                                    //TODO Test that it works
+                                    if (resource.data[parentPosition].carPhotoPath != null) {
+                                        model.deletePhotoTrip(resource.data[parentPosition].carPhotoPath!!)
+                                    }
+
+                                    model.deleteTrip(resource.data[parentPosition].id)
+                                }
+                                is Resource.Failure -> {
+                                    showAllComponents(false)
+                                    detailsProgressBar.visibility = View.GONE
+
+                                    Toast.makeText(
+                                        context,
+                                        "Error in trip loading! Try later.",
+                                        Toast.LENGTH_LONG
+                                    ).show()
                                 }
                             }
-                            tripsDB[parentPosition].interestedUsers = mutableListOf()
-                            if (tripsDB[parentPosition].carPhotoPath != null) {
-                                val storage = Firebase.storage
-                                val storageRef = storage.reference
-                                val imageRef =
-                                    storageRef.child(tripsDB[parentPosition].carPhotoPath!!)
-                                imageRef.delete()
-                                    .addOnSuccessListener { Log.d("PROVA", "OnSuccess") }
-                                    .addOnFailureListener { Log.d("PROVA", "OnFailure") }
-                            }
-                            model.deleteTrip(tripsDB[parentPosition].id)
                         })
                 })
 
             }
             .setNegativeButton(android.R.string.cancel) { _, _ ->
+
             }
             .show()
     }
@@ -513,6 +612,7 @@ class ItemAdapter(private val items: List<Item>) :
 class InterestedUserAdapter(
     private val users: List<User>,
     private val model: SharedViewModel,
+    private val viewLifecycleOwner: LifecycleOwner,
     private val targetTrip: Trip,
     private val navController: NavController
 ) : RecyclerView.Adapter<InterestedUserAdapter.UserViewHolder>() {
@@ -523,7 +623,14 @@ class InterestedUserAdapter(
         private val acceptButton = v.findViewById<ImageButton>(R.id.acceptUserButton)
         private val rejectButton = v.findViewById<ImageButton>(R.id.rejectUserButton)
 
-        fun bind(u: User, model: SharedViewModel, targetTrip: Trip, navController: NavController) {
+        fun bind(
+            u: User,
+            model: SharedViewModel,
+            viewLifecycleOwner: LifecycleOwner,
+            targetTrip: Trip,
+            navController: NavController
+        ) {
+            //TODO loading while download the photo
             userImage.setImageResource(R.drawable.photo_default)
             val storage = Firebase.storage
             val storageRef = storage.reference
@@ -531,23 +638,26 @@ class InterestedUserAdapter(
             testRef.metadata.addOnSuccessListener { metadata ->
                 val size = metadata.sizeBytes
                 val ONE_MEGABYTE: Long = 1024 * 1024
-                testRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
-                    val imageBitmap = BitmapFactory.decodeByteArray(it, 0, size.toInt())
-                    if (imageBitmap != null) {
-                        userImage.setImageBitmap(imageBitmap)
+                testRef
+                    .getBytes(ONE_MEGABYTE)
+                    .addOnSuccessListener {
+                        val imageBitmap = BitmapFactory.decodeByteArray(it, 0, size.toInt())
+                        if (imageBitmap != null) {
+                            userImage.setImageBitmap(imageBitmap)
+                        }
+                    }.addOnFailureListener {
+                        // Handle any errors
                     }
-                }.addOnFailureListener {
-                    // Handle any errors
-                }
             }.addOnFailureListener {
                 // Uh-oh, an error occurred!
             }
+            //TODO ends here
 
             userImage.setOnClickListener {
                 model.setOtherUser(u.email)
                 navController.navigate(
                     R.id.action_tripDetailsFragment_to_showProfileFragment,
-                    bundleOf("parent" to "OTHERUSER")
+                    bundleOf("parent" to TRIP_DETAILS_IS_PARENT)
                 )
             }
             userName.text = u.name
@@ -582,7 +692,7 @@ class InterestedUserAdapter(
     override fun getItemCount() = users.size
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        holder.bind(users[position], model, targetTrip, navController)
+        holder.bind(users[position], model, viewLifecycleOwner, targetTrip, navController)
     }
 
     override fun onViewRecycled(holder: UserViewHolder) {

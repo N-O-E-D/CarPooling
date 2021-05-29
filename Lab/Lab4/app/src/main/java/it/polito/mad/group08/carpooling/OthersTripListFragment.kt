@@ -3,17 +3,12 @@ package it.polito.mad.group08.carpooling
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.BitmapFactory
 import android.icu.text.NumberFormat
 import android.icu.util.Currency
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
@@ -27,8 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.RangeSlider
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -41,6 +34,7 @@ const val TRIP_LIST_IS_PARENT = "TRIP_LIST_IS_PARENT"
 const val OTHER_TRIP_LIST_IS_PARENT = "OTHER_TRIP_LIST_IS_PARENT" // Other, booked, interested
 
 class OthersTripListFragment : Fragment() {
+    private lateinit var othersProgressBar: ProgressBar
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TripAdapter
     private lateinit var emptyTextView: TextView
@@ -63,7 +57,6 @@ class OthersTripListFragment : Fragment() {
                 R.id.action_othersTripListFragment_to_tripDetailsFragment,
                 bundleOf("parent" to "OTHERS_TRIPS")
             )
-            //Toast.makeText(context, "DETAILS: From ${trip.departureLocation} to ${trip.arrivalLocation}!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -72,6 +65,7 @@ class OthersTripListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_others_trip_list, container, false)
+        othersProgressBar = view.findViewById(R.id.othersProgressBar)
         emptyTextView = view.findViewById(R.id.emptyTextView)
         recyclerView = view.findViewById(R.id.othersTripListRecyclerView)
 
@@ -91,31 +85,44 @@ class OthersTripListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // DECOUPLE DATA FROM UI
-        model.getOthersTrips().observe(viewLifecycleOwner, Observer<MutableList<Trip>> { tripsDB ->
-            // update UI
-            if (tripsDB.isEmpty()) {
-                recyclerView.visibility = View.GONE
-                emptyTextView.visibility = View.VISIBLE
-            } else {
-                recyclerView.visibility = View.VISIBLE
-                emptyTextView.visibility = View.GONE
-            }
+        model.getOthersTrips()
+            .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
+                // update UI
+                when (resource) {
+                    is Resource.Loading -> {
+                        othersProgressBar.visibility = View.VISIBLE
+                    }
+                    is Resource.Success -> {
+                        othersProgressBar.visibility = View.GONE
 
-            adapter = TripAdapter( //TODO change in List
-                tripsDB,
-                model,
-                OTHER_TRIP_LIST_IS_PARENT
-            ) { mode: Int, tripItem: Trip, position: Int? ->
-                navigationClickListener(
-                    mode,
-                    tripItem,
-                    position
-                )
-            }
-            recyclerView.adapter = adapter
-        })
+                        if (resource.data.isEmpty()) {
+                            recyclerView.visibility = View.GONE
+                            emptyTextView.visibility = View.VISIBLE
+                        } else {
+                            recyclerView.visibility = View.VISIBLE
+                            emptyTextView.visibility = View.GONE
+                        }
+
+                        adapter = TripAdapter(
+                            resource.data,
+                            model,
+                            OTHER_TRIP_LIST_IS_PARENT
+                        ) { mode: Int, tripItem: Trip, position: Int? ->
+                            navigationClickListener(
+                                mode,
+                                tripItem,
+                                position
+                            )
+                        }
+                        recyclerView.adapter = adapter
+                    }
+                    is Resource.Failure -> {
+                        othersProgressBar.visibility = View.GONE
+                        emptyTextView.text = getString(R.string.error_occur)
+                    }
+                }
+            })
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -293,6 +300,8 @@ class TripAdapter(
             else
                 cardButton.text = itemView.context.getString(R.string.edit)
 
+            //TODO model.uploadPhoto().observe<Resource<model.bitmaps> ... { resource -> ... when (resource) is Loading: ...
+            //TODO oppure semplicemente loading prima di setImage e si lascia tutto come è
             if (model.bitmaps[trip.id] == null) {
                 if (trip.carPhotoPath != null && trip.carPhotoPath != "") {
                     MainScope().launch {
@@ -321,6 +330,7 @@ class TripAdapter(
                     }
                 }
             }
+            //TODO ends here
 
             card.setOnClickListener {
                 clickListener(CARD_CLICKED, trip, bindingAdapterPosition)

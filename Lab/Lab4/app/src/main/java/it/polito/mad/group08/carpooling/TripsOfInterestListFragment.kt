@@ -1,59 +1,106 @@
 package it.polito.mad.group08.carpooling
 
+import android.content.res.Configuration
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [TripsOfInterestListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class TripsOfInterestListFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: TripAdapter
+    private lateinit var emptyTextView: TextView
+    private lateinit var interestTripsProgressBar: ProgressBar
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private val model: SharedViewModel by activityViewModels()
+
+    private fun navigationClickListener(mode: Int, trip: Trip?, position: Int?) {
+        val navController = findNavController()
+        if (mode == CARD_CLICKED && trip != null) {
+            model.setPosition(position!!)
+            navController.navigate(
+                R.id.action_tripsOfInterestListFragment_to_tripDetailsFragment,
+                bundleOf("parent" to INTERESTED_TRIPS_IS_PARENT)
+            )
         }
     }
+
+    //TODO Should I need to re-define onBack? Is it Top View?
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_trips_of_interest_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_trips_of_interest_list, container, false)
+        emptyTextView = view.findViewById(R.id.emptyTextView)
+        recyclerView = view.findViewById(R.id.interestedTripListRecyclerView)
+        interestTripsProgressBar = view.findViewById(R.id.interestedTripListProgressBar)
+
+        when (resources.configuration.orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> {
+                recyclerView.layoutManager = LinearLayoutManager(context)
+            }
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                recyclerView.layoutManager = GridLayoutManager(context, 3)
+            }
+            else -> recyclerView.layoutManager = LinearLayoutManager(context)
+        }
+
+        setHasOptionsMenu(true)
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TripsOfInterestListFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TripsOfInterestListFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // DECOUPLE DATA FROM UI
+        model.getMyInterestedTrips()
+            .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
+                // update UI
+                when (resource) {
+                    is Resource.Loading -> {
+                        interestTripsProgressBar.visibility = View.VISIBLE
+                    }
+                    is Resource.Success -> {
+                        interestTripsProgressBar.visibility = View.GONE
+
+                        if (resource.data.isEmpty()) {
+                            recyclerView.visibility = View.GONE
+                            emptyTextView.visibility = View.VISIBLE
+                        } else {
+                            recyclerView.visibility = View.VISIBLE
+                            emptyTextView.visibility = View.GONE
+                        }
+
+                        adapter = TripAdapter(
+                            resource.data,
+                            model,
+                            OTHER_TRIP_LIST_IS_PARENT
+                        ) { mode: Int, tripItem: Trip, position: Int? ->
+                            navigationClickListener(
+                                mode,
+                                tripItem,
+                                position
+                            )
+                        }
+                        recyclerView.adapter = adapter
+                    }
+                    is Resource.Failure -> {
+                        interestTripsProgressBar.visibility = View.GONE
+                        emptyTextView.text = getString(R.string.error_occur)
+                    }
                 }
-            }
+            })
     }
 }
