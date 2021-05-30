@@ -20,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.RangeSlider
 import kotlinx.coroutines.Dispatchers
@@ -283,7 +284,8 @@ class TripAdapter(
         private val arrivalTimestamp: TextView = itemView.findViewById(R.id.arrivalTimestamp)
         private val cardButton: Button = itemView.findViewById(R.id.editButton)
         private val card: CardView = itemView.findViewById(R.id.card)
-        private val carPhotoItemProgressBar: ProgressBar = itemView.findViewById(R.id.carPhotoItemProgressBar)
+        //private val carPhotoItemProgressBar: ProgressBar = itemView.findViewById(R.id.carPhotoItemProgressBar)
+        private val mShimmerViewContainer : ShimmerFrameLayout = itemView.findViewById(R.id.shimmer_view_container)
 
         fun bind(
             trip: Trip,
@@ -306,7 +308,8 @@ class TripAdapter(
             //TODO If time move in Shared
             if (model.bitmaps[trip.id] == null) {
                 if (trip.carPhotoPath != null && trip.carPhotoPath != "") {
-                    carPhotoItemProgressBar.visibility = View.VISIBLE
+                    //carPhotoItemProgressBar.visibility = View.VISIBLE
+                    mShimmerViewContainer.startShimmer()
                     MainScope().launch {
                         val size = withContext(Dispatchers.IO) {
                             model.downloadMetadataPhoto(trip.carPhotoPath!!).sizeBytes
@@ -319,7 +322,8 @@ class TripAdapter(
 
                         when (itemView.context.resources.configuration.orientation) {
                             Configuration.ORIENTATION_PORTRAIT -> {
-                                carPhotoItemProgressBar.visibility = View.GONE
+                                //carPhotoItemProgressBar.visibility = View.GONE
+                                mShimmerViewContainer.stopShimmer()
                                 itemView.findViewById<ImageView>(R.id.carPhoto)
                                     .setImageBitmap(model.bitmaps[trip.id])
                             }

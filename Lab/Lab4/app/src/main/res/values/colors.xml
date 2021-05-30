@@ -18,4 +18,7 @@
     <color name="imageViewBackground">#DCDCDC</color>
     <color name="imageButtonBackground">#00FFFFFF</color>
 
+    <!--Shimmer effect-->
+    <color name="shimmerBackground">#dddddd</color>
+
 </resources>

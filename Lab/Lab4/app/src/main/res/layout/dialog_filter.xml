@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
         android:text="@string/filters"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="#131212"
@@ -24,6 +25,8 @@
         android:id="@+id/startLocationImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="4dp"
         android:contentDescription="@string/location_image"
         app:layout_constraintBottom_toBottomOf="@+id/departureET_layout"
@@ -88,12 +91,14 @@
         android:id="@+id/endLocationImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="4dp"
         android:contentDescription="@string/location_image"
+        app:layout_constraintBottom_toBottomOf="@+id/arrivalET_layout"
         app:layout_constraintHorizontal_weight="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/arrivalET_layout"
-        app:layout_constraintBottom_toBottomOf="@+id/arrivalET_layout"
         app:srcCompat="@drawable/ic_baseline_location_arrival"
         tools:ignore="VectorDrawableCompat" />
 
@@ -149,27 +154,32 @@
         android:id="@+id/sliderLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Price\nRange"
-        android:textSize="14sp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:text="@string/price_range"
         android:textAppearance="?attr/textAppearanceHeadline6"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/rangeSlider"
-        app:layout_constraintTop_toTopOf="@+id/rangeSlider"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@id/rangeSlider"
-        android:layout_marginLeft="4dp"
-        android:layout_marginStart="4dp" />
+        app:layout_constraintEnd_toStartOf="@+id/rangeSlider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/rangeSlider" />
 
     <com.google.android.material.slider.RangeSlider
         android:id="@+id/rangeSlider"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:stepSize="5.00"
         android:valueFrom="0.0"
         android:valueTo="100.0"
-        android:stepSize="5.00"
-        app:values="@array/initial_slider_values"
-        app:layout_constraintTop_toBottomOf="@+id/arrivalET_layout"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/sliderLabel"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/arrivalET_layout"
+        app:values="@array/initial_slider_values" />
 
 
 

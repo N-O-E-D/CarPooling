@@ -81,5 +81,6 @@
     <string name="arrival">Arrival</string>
     <string name="stop">Stop</string>
 
+
     <string name="error_occur">An Error occur. Please try later.</string>
 </resources>

@@ -16,11 +16,13 @@ class MapFragment : Fragment(R.layout.fragment_map) {
 
     override fun onResume() {
         super.onResume()
-        map.onResume()
+        if(this::map.isInitialized)
+            map.onResume()
     }
 
     override fun onPause() {
         super.onPause()
+        if(this::map.isInitialized)
         map.onPause()
     }
 

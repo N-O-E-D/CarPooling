@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/editButton"
-        android:icon="@drawable/edit"
+        android:icon="@drawable/edit_v24"
         android:title="@string/edit"
         app:showAsAction="always" />
     <item

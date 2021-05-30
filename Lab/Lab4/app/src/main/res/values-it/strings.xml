@@ -70,7 +70,7 @@
     <string name="apply_filters">Applica</string>
     <string name="cancel_filters">Annulla</string>
     <string name="reset_filters">Reset</string>
-    <string name="price_range">Range\ndi prezzo</string>
+    <string name="price_range">Prezzo</string>
     <string name="departure_address">Indirizzo partenza</string>
     <string name="arrival_address">Indirizzo arrivo</string>
     <string name="departure_date">Data partenza</string>
@@ -84,4 +84,6 @@
     <string name="departure">Partenza</string>
     <string name="arrival">Arrivo</string>
     <string name="stop">Stop</string>
+
+
 </resources>

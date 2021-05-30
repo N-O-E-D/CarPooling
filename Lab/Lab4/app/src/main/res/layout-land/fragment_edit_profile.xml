@@ -36,7 +36,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/photoImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/imageViewBackground"
+        android:contentDescription="@string/photo"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/verticalGuideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/photo_default"
+        app:civ_border_color="#FF000000"/>
+
+    <!--<ImageView
         android:id="@+id/photoImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -51,7 +69,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/photo_default"
-        tools:srcCompat="@drawable/photo_default" />
+        tools:srcCompat="@drawable/photo_default" />-->
     <!--android:scaleType="centerCrop"  for full-extended image-->
 
     <ImageButton
