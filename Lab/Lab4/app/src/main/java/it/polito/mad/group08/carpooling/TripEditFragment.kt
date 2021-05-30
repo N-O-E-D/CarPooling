@@ -118,12 +118,7 @@ class TripEditFragment : Fragment() {
                     }
                 }
 
-                filename = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-
-                requireContext().openFileOutput(filename, Context.MODE_PRIVATE).use {
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
-                }
-
+                filename = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date()) + "_" + model.auth.currentUser!!.email!!
                 carPhotoET.setImageBitmap(bitmap)
             }
         }
@@ -179,7 +174,7 @@ class TripEditFragment : Fragment() {
                 val bitmap = BitmapFactory.decodeFile(currentPhotoPath)
                 carPhotoET.setImageBitmap(bitmap)
 
-                filename = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                filename = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())+ "_" + model.auth.currentUser!!.email!!
             }
         }
 
@@ -201,6 +196,7 @@ class TripEditFragment : Fragment() {
         map.onPause()
     }
 
+    @SuppressLint("WrongThread")
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if (view != null) {
@@ -208,12 +204,23 @@ class TripEditFragment : Fragment() {
             outState.putString("filename", filename)
             outState.putString("tmp_checkpoints", Gson().toJson(tmp_checkpoints))
             outState.putString("geopoints", Gson().toJson(geoPoints))
+            val cacheFile = File.createTempFile("cacheImage", null, context?.cacheDir)
+            val tmpBitmap = (carPhotoET.drawable as BitmapDrawable).bitmap
+            tmpBitmap?.compress(Bitmap.CompressFormat.PNG, 100, cacheFile.outputStream())
+            outState.putString("cacheFilePath", cacheFile.name)
+            outState.putString("photoPath", currentPhotoPath)
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if(savedInstanceState!=null){
+            val cacheFile = File(context?.cacheDir, savedInstanceState.getString("cacheFilePath")!!)
+            val bitmap = BitmapFactory.decodeFile(cacheFile.path)
+            if (bitmap != null) {
+                carPhotoET.setImageBitmap(bitmap)
+            }
+            cacheFile.delete()
             val type_checkpoints: Type = object : TypeToken<MutableList<CheckPoint?>?>() {}.type
             val type_geopoints: Type = object : TypeToken<MutableList<GeoPoint?>?>() {}.type
             currentPhotoPath = savedInstanceState.getString("currentPhotoPath")!!
@@ -493,26 +500,9 @@ class TripEditFragment : Fragment() {
     }
 
     private fun takeSavedPhoto(bitmap: Bitmap?) {
-        if (currentPhotoPath == "" && filename == null && bitmap != null) {
+        if (bitmap != null) {
             carPhotoET.setImageBitmap(bitmap)
-        } //TODO Ask benedetto if the below code should be in an Else
-        try {
-            if (currentPhotoPath != "") {
-                val tmpBitmap = BitmapFactory.decodeFile(currentPhotoPath)
-                carPhotoET.setImageBitmap(tmpBitmap)
-            } else if (filename != null) {
-                requireContext()
-                    .openFileInput(filename)
-                    .use {
-                        val imageBitmap = BitmapFactory.decodeStream(it)
-                        if (imageBitmap != null)
-                            carPhotoET.setImageBitmap(imageBitmap)
-                    }
-            }
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
         }
-
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {

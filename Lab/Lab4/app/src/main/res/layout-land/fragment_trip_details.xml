@@ -43,12 +43,14 @@
         android:id="@+id/driverName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
         android:layout_marginBottom="16dp"
         android:text="@string/driver_name"
         android:textSize="@dimen/secondary_text"
         app:layout_constraintBottom_toTopOf="@+id/driverRate"
         app:layout_constraintEnd_toEndOf="@+id/carName"
-        app:layout_constraintStart_toStartOf="@+id/carName" />
+        app:layout_constraintStart_toEndOf="@+id/account_button" />
 
     <RatingBar
         android:id="@+id/driverRate"
@@ -57,10 +59,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:numStars="5"
-        android:progressTint="@color/ratingBar"
-        android:rating="4"
-        android:secondaryProgressTint="@color/ratingBar"
-        android:stepSize="0.5"
+        android:secondaryProgressTint="#00000000"
+        android:stepSize="0.1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/driverName"
         app:layout_constraintStart_toStartOf="@+id/driverName"
@@ -212,6 +212,34 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.3" />
 
+    <TextView
+        android:id="@+id/review_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:background="@drawable/rounded_corner"
+        android:text="Lascia Una Recensione"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/write_review_fab"
+        app:layout_constraintEnd_toStartOf="@+id/write_review_fab"
+        app:layout_constraintTop_toTopOf="@+id/write_review_fab" />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/write_review_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:visibility="gone"
+        app:fabSize="mini"
+        app:layout_constraintTop_toTopOf="@+id/show_interest_fab"
+        app:layout_constraintEnd_toEndOf="@+id/show_interest_fab"
+        app:layout_constraintStart_toStartOf="@+id/show_interest_fab"
+        app:srcCompat="@drawable/edit" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/show_interest_fab"
         android:layout_width="wrap_content"
@@ -228,5 +256,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_baseline_favorite_24"
         tools:ignore="RtlHardcoded,VectorDrawableCompat" />
+
+    <View
+        android:id="@+id/fabBGLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/account_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#00000000"
+        android:src="@drawable/face_neutral_v24"
+        app:layout_constraintBottom_toBottomOf="@+id/driverName"
+        app:layout_constraintEnd_toStartOf="@+id/driverName"
+        app:layout_constraintStart_toStartOf="@+id/carName"
+        app:layout_constraintTop_toTopOf="@+id/driverName" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

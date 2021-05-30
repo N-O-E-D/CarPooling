@@ -1,6 +1,8 @@
 package it.polito.mad.group08.carpooling
 
+import android.animation.Animator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
@@ -24,8 +26,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.osmdroid.config.Configuration.*
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -60,6 +67,10 @@ class TripDetailsFragment : Fragment() {
     private lateinit var description: TextView
 
     private lateinit var showInterestFab: FloatingActionButton
+    private lateinit var reviewFab: FloatingActionButton
+    private lateinit var reviewTV: TextView
+    private lateinit var bg_fab: View
+    private lateinit var account_button: ImageButton
 
     private var currentTrip: Trip? = null
 
@@ -77,6 +88,33 @@ class TripDetailsFragment : Fragment() {
         if (bitmap != null) {
             carPhotoPath.setImageBitmap(bitmap)
         }
+    }
+
+    private fun openFabMenu() {
+        bg_fab.visibility = View.VISIBLE
+        reviewFab.visibility = View.VISIBLE
+        reviewTV.visibility = View.VISIBLE
+        showInterestFab.animate().rotationBy(360f)
+        reviewFab.animate().translationY(-resources.getDimension(R.dimen.transitionY))
+        reviewTV.animate().translationY(-resources.getDimension(R.dimen.transitionY))
+    }
+
+    private fun closeFabMenu(){
+        bg_fab.visibility = View.GONE
+        showInterestFab.animate().rotation(0f)
+        reviewTV.animate().translationY(0f)
+        reviewFab.animate().translationY(0f)
+            .setListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animator: Animator) {}
+                override fun onAnimationEnd(animator: Animator) {
+                    if (View.GONE == bg_fab.visibility) {
+                        reviewFab.visibility = View.GONE
+                        reviewTV.visibility = View.GONE
+                    }
+                }
+                override fun onAnimationCancel(animator: Animator) {}
+                override fun onAnimationRepeat(animator: Animator) {}
+            })
     }
 
     override fun onResume() {
@@ -186,8 +224,25 @@ class TripDetailsFragment : Fragment() {
             if (model.bookingIsAccepted(trip)) { //user already show favorite and owner accepted
                 showInterestFab.setImageResource(R.drawable.check)
                 showInterestFab.setOnClickListener {
-                    Toast.makeText(context, "You already booked this trip!", Toast.LENGTH_LONG)
-                        .show()
+                    MainScope().launch {
+                        if (!withContext(Dispatchers.IO) {model.reviewAlreadySent(
+                                model.auth.currentUser!!.email!!,
+                                currentTrip!!.driverEmail, currentTrip!!.id
+                            )}
+                        ) {
+                            if (reviewFab.visibility == View.GONE) {
+                                openFabMenu()
+                            } else {
+                                closeFabMenu()
+                            }
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "Review Already Sent",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
                 }
             } else {
                 if (model.userIsInterested(trip)) {
@@ -296,6 +351,7 @@ class TripDetailsFragment : Fragment() {
         return v
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -317,6 +373,13 @@ class TripDetailsFragment : Fragment() {
         intermediateTripsShowHideButton = view.findViewById(R.id.showHideIntermediateSteps)
 
         showInterestFab = view.findViewById(R.id.show_interest_fab)
+        reviewFab = view.findViewById(R.id.write_review_fab)
+        bg_fab = view.findViewById(R.id.fabBGLayout)
+        reviewTV = view.findViewById(R.id.review_tv)
+        account_button = view.findViewById(R.id.account_button)
+        bg_fab.setOnClickListener{
+            closeFabMenu()
+        }
 
         interestedUsersRecyclerView = view.findViewById(R.id.interestedUserRecyclerView)
         interestedUsersShowHideButton = view.findViewById(R.id.showHideInterestedUsers)
@@ -354,6 +417,12 @@ class TripDetailsFragment : Fragment() {
                                     detailsProgressBar.visibility = View.GONE
 
                                     setTripInformation(resource.data[parentPosition])
+                                    account_button.visibility = View.GONE
+                                    MainScope().launch {
+                                        driverRate.rating = withContext(Dispatchers.IO){
+                                            model.calculateRating(model.auth.currentUser!!.email!!, true)
+                                        }
+                                    }
                                     showInterestFab.hide()
                                 }
                                 is Resource.Failure -> {
@@ -391,6 +460,11 @@ class TripDetailsFragment : Fragment() {
 
                                     currentTrip = resource.data[parentPosition]
                                     setTripInformation(resource.data[parentPosition])
+                                    MainScope().launch {
+                                        driverRate.rating = withContext(Dispatchers.IO){
+                                            model.calculateRating(currentTrip!!.driverEmail, true)
+                                        }
+                                    }
 
                                     if (resource.data[parentPosition].availableSeats > 0 ||
                                         model.bookingIsAccepted(resource.data[parentPosition])
@@ -434,6 +508,11 @@ class TripDetailsFragment : Fragment() {
 
                                         currentTrip = resource.data[parentPosition]
                                         setTripInformation(resource.data[parentPosition])
+                                        MainScope().launch {
+                                            driverRate.rating = withContext(Dispatchers.IO){
+                                                model.calculateRating(currentTrip!!.driverEmail, true)
+                                            }
+                                        }
                                         showInterestFab.show() //FAB with check since she already booked it
                                         interestedUsersRecyclerView.visibility =
                                             View.GONE // Owner Only
@@ -475,6 +554,11 @@ class TripDetailsFragment : Fragment() {
 
                                         currentTrip = resource.data[parentPosition]
                                         setTripInformation(resource.data[parentPosition])
+                                        MainScope().launch {
+                                            driverRate.rating = withContext(Dispatchers.IO){
+                                                model.calculateRating(currentTrip!!.driverEmail, true)
+                                            }
+                                        }
                                         showInterestFab.show() //FAB with check since she already booked it
                                         interestedUsersRecyclerView.visibility = View.GONE // Owner Only
                                         interestedUsersShowHideButton.visibility = View.GONE
@@ -497,6 +581,45 @@ class TripDetailsFragment : Fragment() {
             else -> {
                 Toast.makeText(context, "Error in trip loading!", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        reviewFab.setOnClickListener {
+            closeFabMenu()
+            val inflater = it.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val dialogView = inflater.inflate(R.layout.dialog_review, null)
+            val dialogFilter = MaterialAlertDialogBuilder(it.context)
+                .setView(dialogView)
+                .setNegativeButton("Cancel"){dialog, which ->
+                }
+                .setPositiveButton("Send") { dialog, which ->
+                    val ratingBar = dialogView.findViewById<RatingBar>(R.id.reviewRatingBar)
+                    val reviewText = dialogView.findViewById<EditText>(R.id.textReviewET)
+                    val from = model.auth.currentUser!!.email
+                    val to = currentTrip!!.driverEmail
+                    if (ratingBar.rating == 0.0f)
+                        Snackbar.make(it.context, it, "Please insert a rating", Snackbar.LENGTH_SHORT).show()
+                    else {
+                        model.addReview(
+                            Review(
+                                from!!,
+                                to,
+                                ratingBar.rating.toString(),
+                                reviewText.text.toString(),
+                                true,
+                                currentTrip!!.id
+                            )
+                        )
+                    }
+                }
+                .show()
+        }
+
+        account_button.setOnClickListener {
+            model.setOtherUser(currentTrip!!.driverEmail)
+            findNavController().navigate(
+                R.id.action_tripDetailsFragment_to_showProfileFragment,
+                bundleOf("parent" to TRIP_DETAILS_IS_PARENT)
+            )
         }
     }
 
@@ -678,6 +801,7 @@ class InterestedUserAdapter(
         private val userEmail = v.findViewById<TextView>(R.id.userEmail)
         private val acceptButton = v.findViewById<ImageButton>(R.id.acceptUserButton)
         private val rejectButton = v.findViewById<ImageButton>(R.id.rejectUserButton)
+        private val reviewButton = v.findViewById<Button>(R.id.reviewButton)
 
         fun bind(
             u: User,
@@ -723,6 +847,48 @@ class InterestedUserAdapter(
             }
             rejectButton.setOnClickListener {
                 model.updateTripInterestedUser(targetTrip, false, u)
+            }
+
+            reviewButton.setOnClickListener {
+                val inflater = it.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val dialogView = inflater.inflate(R.layout.dialog_review, null)
+                val dialogFilter = MaterialAlertDialogBuilder(it.context)
+                    .setView(dialogView)
+                    .setNegativeButton("Cancel"){dialog, which ->
+                    }
+                    .setPositiveButton("Send") { dialog, which ->
+                        val ratingBar = dialogView.findViewById<RatingBar>(R.id.reviewRatingBar)
+                        val reviewText = dialogView.findViewById<EditText>(R.id.textReviewET)
+                        val from = model.auth.currentUser!!.email
+                        val to = u.email
+                        if (ratingBar.rating == 0.0f)
+                            Snackbar.make(it.context, it, "Please insert a rating", Snackbar.LENGTH_SHORT).show()
+                        else {
+                            model.addReview(
+                                Review(
+                                    from!!,
+                                    to,
+                                    ratingBar.rating.toString(),
+                                    reviewText.text.toString(),
+                                    false,
+                                    targetTrip.id
+                                )
+                            )
+                            reviewButton.visibility = View.INVISIBLE
+                        }
+                    }
+                    .show()
+            }
+
+            MainScope().launch {
+                if (u.isAccepted) {
+                    val alreadySent = withContext(Dispatchers.IO) {
+                        model.reviewAlreadySent(model.auth.currentUser!!.email!!, u.email, targetTrip.id)
+                    }
+
+                    if (!alreadySent)
+                        reviewButton.visibility = View.VISIBLE
+                }
             }
         }
 

@@ -621,6 +621,58 @@ class SharedViewModel : ViewModel() {
         return BitmapFactory.decodeByteArray(byteArray, 0, size.toInt())
     }
 
+    fun addReview(review: Review) {
+        db.collection("reviews")
+            .document()
+            .set(review)
+            .addOnSuccessListener {
+            }
+            .addOnFailureListener {
+            }
+    }
+
+    fun reviewAlreadySent(from: String, to: String, tripID: String): Boolean {
+        val review = Tasks.await(db.collection("reviews")
+            .whereEqualTo("from", from)
+            .whereEqualTo("to", to)
+            .whereEqualTo("tripID", tripID).get())
+
+        return !review.isEmpty
+    }
+
+    fun getReviews(userEmail: String, isDriverRating: Boolean): MutableList<Review> {
+        val reviewsDB = Tasks.await(db.collection("reviews")
+            .whereEqualTo("to", userEmail)
+            .whereEqualTo("forDriver", isDriverRating).get())
+        val reviews = mutableListOf<Review>()
+        for (review in reviewsDB) {
+            val tmpReview = review.toObject(Review::class.java)
+            reviews.add(tmpReview)
+        }
+
+        return reviews
+    }
+
+    fun calculateRating(userEmail: String, isDriverRating: Boolean): Float {
+        val reviewsDB = Tasks.await(db.collection("reviews")
+            .whereEqualTo("to", userEmail)
+            .whereEqualTo("forDriver", isDriverRating).get())
+        val reviews = mutableListOf<Review>()
+        for (review in reviewsDB) {
+            val tmpReview = review.toObject(Review::class.java)
+            reviews.add(tmpReview)
+        }
+
+        var sum = 0f
+        var num_reviews = 0
+        for (review in reviews) {
+            sum += review.rating.toFloat()
+            num_reviews++
+        }
+
+        return sum/num_reviews
+    }
+
 }
 
 data class User(
@@ -659,6 +711,10 @@ data class Filter(
     var minPrice: Float = 0f,
     var maxPrice: Float = 100f
 )
+
+data class Review(var from: String = "", var to: String = "",
+                  var rating: String = "", var text: String = "",
+                  var isForDriver: Boolean = false, var tripID: String = "")
 
 sealed class Resource<out T> {
     class Loading<out T> : Resource<T>()

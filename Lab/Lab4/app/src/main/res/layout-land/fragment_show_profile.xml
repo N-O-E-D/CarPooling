@@ -84,7 +84,6 @@
         android:text="@string/phone_number"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textSize="@dimen/secondary_text"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/locationTV"
         app:layout_constraintStart_toStartOf="@+id/locationTV"
         app:layout_constraintTop_toBottomOf="@+id/locationTV" />
@@ -111,22 +110,6 @@
         app:srcCompat="@drawable/photo_default"
         tools:srcCompat="@drawable/photo_default" />
     <!--android:scaleType="centerCrop"  for full-extended image-->
-
-
-    <RatingBar
-        android:id="@+id/ratingBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        android:isIndicator="true"
-        android:progressTint="@color/ratingBar"
-        android:rating="4.5"
-        android:secondaryProgressTint="@color/ratingBar"
-        android:stepSize="0.1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
         android:id="@+id/fullnameIcon"
@@ -189,6 +172,51 @@
         app:layout_constraintTop_toTopOf="@+id/phonenumberTV"
         app:srcCompat="@drawable/phone"
         tools:ignore="VectorDrawableCompat" />
+
+    <RatingBar
+        android:id="@+id/ratingAsDriver"
+        style="@style/Widget.AppCompat.RatingBar.Indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:isIndicator="true"
+        android:secondaryProgressTint="#00000000"
+        android:stepSize="0.1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ratingAsPassenger"
+        app:layout_constraintStart_toStartOf="@id/verticalGuideline" />
+
+    <RatingBar
+        android:id="@+id/ratingAsPassenger"
+        style="@style/Widget.AppCompat.RatingBar.Indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:stepSize="0.1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ratingAsDriver"
+        android:secondaryProgressTint="#00000000"/>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rating As Driver"
+        app:layout_constraintBottom_toTopOf="@+id/ratingAsDriver"
+        app:layout_constraintEnd_toEndOf="@+id/ratingAsDriver"
+        app:layout_constraintStart_toStartOf="@+id/ratingAsDriver" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rating As Passenger"
+        app:layout_constraintStart_toStartOf="@id/ratingAsPassenger"
+        app:layout_constraintBottom_toTopOf="@+id/ratingAsPassenger"
+        app:layout_constraintEnd_toEndOf="@+id/ratingAsPassenger" />
 
     <ProgressBar
         android:id="@+id/showProfileProgressBar"

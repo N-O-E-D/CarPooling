@@ -24,27 +24,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/shimmer"
+            <ImageView
+                android:id="@+id/carPhoto"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1.3"
+                android:contentDescription="@string/car_photo_description"
+                android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline3"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shimmer_auto_start="false">
-
-                <ImageView
-                    android:id="@+id/carPhoto"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/car_photo_description"
-                    android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/car_photo" />
-
-            </com.facebook.shimmer.ShimmerFrameLayout>
-
+                android:background="#CCCCCC"
+                app:srcCompat="@drawable/car_photo"/>
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline3"
@@ -55,7 +47,7 @@
 
             <TextView
                 android:id="@+id/departureLocation"
-                android:layout_width="wrap_content"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginTop="8dp"
@@ -64,11 +56,12 @@
                 android:textAppearance="?attr/textAppearanceHeadline6"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="#CCCCCC"/>
 
             <TextView
                 android:id="@+id/departureTimestamp"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginTop="8dp"
@@ -76,22 +69,24 @@
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="@+id/departureLocation"
-                app:layout_constraintTop_toBottomOf="@+id/departureLocation" />
+                app:layout_constraintTop_toBottomOf="@+id/departureLocation"
+                android:background="#CCCCCC"/>
 
             <TextView
                 android:id="@+id/arrivalLocation"
-                android:layout_width="wrap_content"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginTop="8dp"
                 android:textAppearance="?attr/textAppearanceHeadline6"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="@+id/departureTimestamp"
-                app:layout_constraintTop_toBottomOf="@+id/departureTimestamp" />
+                app:layout_constraintTop_toBottomOf="@+id/departureTimestamp"
+                android:background="#CCCCCC"/>
 
             <TextView
                 android:id="@+id/arrivalTimestamp"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginTop="8dp"
@@ -99,17 +94,18 @@
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="@+id/arrivalLocation"
-                app:layout_constraintTop_toBottomOf="@+id/arrivalLocation" />
+                app:layout_constraintTop_toBottomOf="@+id/arrivalLocation"
+                android:background="#CCCCCC"/>
 
             <Button
                 android:id="@+id/editButton"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/edit"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/arrivalTimestamp" />
+                app:layout_constraintTop_toBottomOf="@+id/arrivalTimestamp"
+                android:background="#CCCCCC"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

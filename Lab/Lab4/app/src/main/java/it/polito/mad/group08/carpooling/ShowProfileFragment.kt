@@ -1,13 +1,23 @@
 package it.polito.mad.group08.carpooling
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val TRIP_DETAILS_IS_PARENT = "TRIP_DETAILS_IS_PARENT"
 
@@ -27,7 +37,8 @@ class ShowProfileFragment : Fragment() {
     private lateinit var locationTV: TextView
     private lateinit var phoneNumberIcon: ImageView
     private lateinit var phoneNumberTV: TextView
-    private lateinit var ratingBar: RatingBar
+    private lateinit var ratingBarAsDriver : RatingBar
+    private lateinit var ratingBarAsPassenger : RatingBar
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -46,6 +57,7 @@ class ShowProfileFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_show_profile, container, false)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -62,7 +74,8 @@ class ShowProfileFragment : Fragment() {
         locationTV = view.findViewById(R.id.locationTV)
         phoneNumberIcon = view.findViewById(R.id.phonenumberIcon)
         phoneNumberTV = view.findViewById(R.id.phonenumberTV)
-        ratingBar = view.findViewById(R.id.ratingBar)
+        ratingBarAsDriver = view.findViewById(R.id.ratingAsDriver)
+        ratingBarAsPassenger = view.findViewById(R.id.ratingAsPassenger)
 
         if (arguments?.getString("parent") == TRIP_DETAILS_IS_PARENT) { // Other user
             model.getOtherUser()
@@ -114,6 +127,12 @@ class ShowProfileFragment : Fragment() {
                                             }
                                         }
                                     })
+                            MainScope().launch {
+                                withContext(Dispatchers.IO) {
+                                    ratingBarAsDriver.rating = model.calculateRating(resource.data.email, true)
+                                    ratingBarAsPassenger.rating = model.calculateRating(resource.data.email, false)
+                                }
+                            }
                         }
                         is Resource.Failure -> {
                             showAllComponents(false)
@@ -173,6 +192,12 @@ class ShowProfileFragment : Fragment() {
                                             }
                                         }
                                     })
+                            MainScope().launch {
+                                withContext(Dispatchers.IO) {
+                                    ratingBarAsDriver.rating = model.calculateRating(model.auth.currentUser!!.email!!, true)
+                                    ratingBarAsPassenger.rating = model.calculateRating(model.auth.currentUser!!.email!!, false)
+                                }
+                            }
                         }
                         is Resource.Failure -> {
                             showAllComponents(false)
@@ -186,6 +211,22 @@ class ShowProfileFragment : Fragment() {
                     }
                 })
         }
+
+        ratingBarAsDriver.setOnTouchListener(View.OnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                Log.d("ABABABA", "Click su driver rating bar")
+                initDialog(v, true)
+            }
+            return@OnTouchListener true
+        })
+
+        ratingBarAsPassenger.setOnTouchListener(View.OnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                Log.d("ABABABA", "Click su driver rating bar")
+                initDialog(v, false)
+            }
+            return@OnTouchListener true
+        })
     }
 
     private fun showAllComponents(showHide: Boolean) {
@@ -201,7 +242,8 @@ class ShowProfileFragment : Fragment() {
         locationTV.visibility = if (showHide) View.VISIBLE else View.GONE
         phoneNumberTV.visibility = if (showHide) View.VISIBLE else View.GONE
 
-        ratingBar.visibility = if (showHide) View.VISIBLE else View.GONE
+        ratingBarAsPassenger.visibility = if (showHide) View.VISIBLE else View.GONE
+        ratingBarAsDriver.visibility = if (showHide) View.VISIBLE else View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -219,4 +261,52 @@ class ShowProfileFragment : Fragment() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    private fun initDialog(v: View, isDriverRating: Boolean) {
+        val inflater = v.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val dialogView = inflater.inflate(R.layout.dialog_reviews, null)
+        val dialogFilter = MaterialAlertDialogBuilder(v.context)
+            .setView(dialogView)
+            .show()
+        val recyclerView = dialogFilter.findViewById<RecyclerView>(R.id.recycleReviews)
+        recyclerView!!.layoutManager = LinearLayoutManager(context)
+        MainScope().launch {
+            val reviews = withContext(Dispatchers.IO) {
+                model.getReviews(emailTV.text.toString(), isDriverRating)
+            }
+            recyclerView.adapter = ReviewAdapter(reviews)
+        }
+    }
+}
+
+class ReviewAdapter(private val items: MutableList<Review>) : RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder>() {
+
+    class ReviewViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        private val ratingBar = v.findViewById<RatingBar>(R.id.rating)
+        private val textReview = v.findViewById<TextView>(R.id.reviewText)
+        private val nameReview = v.findViewById<TextView>(R.id.nameReview)
+
+
+        fun bind(review: Review) {
+            ratingBar.rating = review.rating.toFloat()
+            if(review.text == "")
+                textReview.visibility = View.GONE
+            else
+                textReview.text = review.text
+            nameReview.text = review.from
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val layout = layoutInflater.inflate(R.layout.review_item, parent, false)
+
+        return ReviewViewHolder(layout)
+    }
+
+    override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
+        holder.bind(items[position])
+    }
+
+    override fun getItemCount() = items.size
 }
