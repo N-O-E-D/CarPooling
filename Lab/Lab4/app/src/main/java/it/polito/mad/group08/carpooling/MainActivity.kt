@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,18 +15,18 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 
-class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
+class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var headerMainInfo: TextView
     private lateinit var headerSecInfo: TextView
     private lateinit var headerProfilePhoto: ImageView
-
-    private lateinit var headerProfilePhotoBitmap: Bitmap
-    private lateinit var headerNameText: String
-    private lateinit var headerEmailText: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,10 +34,14 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
         setSupportActionBar(findViewById(R.id.toolbar))
         val drawerLayout: DrawerLayout = findViewById(R.id.drawerLayout)
         val navigationView: NavigationView = findViewById(R.id.nav_view)
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         appBarConfiguration = AppBarConfiguration(
-                setOf(R.id.tripListFragment, R.id.othersTripListFragment), drawerLayout
+            setOf(
+                R.id.tripListFragment, R.id.othersTripListFragment,
+                R.id.tripsOfInterestListFragment, R.id.boughtTripsListFragment
+            ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
@@ -58,16 +61,18 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager{
         outState.putString("name", headerMainInfo.text.toString())
         outState.putString("email", headerSecInfo.text.toString())
         val bitmap = (headerProfilePhoto.drawable as BitmapDrawable).bitmap
-        val cacheFile = File.createTempFile("cacheImageHeader",null, applicationContext.cacheDir)
+        val cacheFile =
+            File.createTempFile("cacheImageHeader", null, applicationContext.cacheDir)
         bitmap?.compress(Bitmap.CompressFormat.PNG, 100, cacheFile.outputStream())
         outState.putString("cacheFilePathHeader", cacheFile.name)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        val cacheFile = File(applicationContext.cacheDir, savedInstanceState.getString("cacheFilePathHeader")!!)
+        val cacheFile =
+            File(applicationContext.cacheDir, savedInstanceState.getString("cacheFilePathHeader")!!)
         val bitmap = BitmapFactory.decodeFile(cacheFile.path)
-        if(bitmap!=null)
+        if (bitmap != null)
             headerProfilePhoto.setImageBitmap(bitmap)
         headerMainInfo.text = savedInstanceState.getString("name")
         headerSecInfo.text = savedInstanceState.getString("email")

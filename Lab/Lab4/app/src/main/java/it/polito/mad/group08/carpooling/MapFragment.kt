@@ -13,14 +13,28 @@ import org.osmdroid.views.overlay.OverlayItem
 class MapFragment : Fragment(R.layout.fragment_map) {
     private val model: SharedViewModel by activityViewModels()
     private lateinit var map: MapView
+
+    override fun onResume() {
+        super.onResume()
+        map.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        map.onPause()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val position = model.getPosition().value!!
-        val geoPoints = model.getTrips().value?.get(position)?.geoPoints!!
-        val items = ArrayList<OverlayItem> ()
-        map = view.findViewById(R.id.mapFullScreen)
-        GeoMap.customizeMap(map, view, context)
-        GeoMap.drawPath(map, geoPoints.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, items)
+        val tmpTrip = model.getMyTrips().value
+        if(tmpTrip is Resource.Success){
+            val geoPoints = tmpTrip.data[position].geoPoints
+            val items = ArrayList<OverlayItem> ()
+            map = view.findViewById(R.id.mapFullScreen)
+            GeoMap.customizeMap(map, view, context)
+            GeoMap.drawPath(map, geoPoints.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, items)
+        }
     }
 }

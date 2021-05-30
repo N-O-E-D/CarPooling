@@ -252,4 +252,5 @@
         app:layout_constraintTop_toTopOf="@+id/carPhoto"
         app:layout_constraintWidth_percent="0.3" />
 
+
 </androidx.constraintlayout.widget.ConstraintLayout>

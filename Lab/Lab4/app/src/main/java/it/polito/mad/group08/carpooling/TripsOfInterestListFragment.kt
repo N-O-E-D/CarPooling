@@ -1,17 +1,12 @@
 package it.polito.mad.group08.carpooling
 
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -20,57 +15,36 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-const val CARD_BUTTON_CLICKED = 1 //Edit in MyTrips; ShowInterest in OtherTripList
-const val CARD_CLICKED = 2
-const val FAB_CLICKED = 3
-
-class TripListFragment : Fragment() {
-    private lateinit var myTripsProgressBar: ProgressBar
+class TripsOfInterestListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TripAdapter
     private lateinit var emptyTextView: TextView
-    private lateinit var addFab: FloatingActionButton
+    private lateinit var interestTripsProgressBar: ProgressBar
 
     private val model: SharedViewModel by activityViewModels()
 
     private fun navigationClickListener(mode: Int, trip: Trip?, position: Int?) {
         val navController = findNavController()
-        if (mode == CARD_BUTTON_CLICKED && position != null && trip != null) {
-            model.setPosition(position)
-            navController.navigate(R.id.action_tripListFragment_to_tripEditFragment)
-        } else if (mode == CARD_CLICKED && trip != null) {
+        if (mode == CARD_CLICKED && trip != null) {
             model.setPosition(position!!)
             navController.navigate(
-                R.id.action_tripListFragment_to_tripDetailsFragment,
-                bundleOf("parent" to "TRIPS")
+                R.id.action_tripsOfInterestListFragment_to_tripDetailsFragment,
+                bundleOf("parent" to INTERESTED_TRIPS_IS_PARENT)
             )
-        } else if (mode == FAB_CLICKED) {
-            model.getMyTrips()
-                .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
-                    when (resource) {
-                        is Resource.Success -> {
-                            model.setPosition(resource.data.size)
-                            navController.navigate(R.id.action_tripListFragment_to_tripEditFragment)
-                        }
-                        else -> {
-                            Toast.makeText(context, "Please wait...", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                })
         }
     }
+
+    //TODO Should I need to re-define onBack? Is it Top View?
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_trip_list, container, false)
-        myTripsProgressBar = view.findViewById(R.id.myTripsProgressBar)
+        val view = inflater.inflate(R.layout.fragment_trips_of_interest_list, container, false)
         emptyTextView = view.findViewById(R.id.emptyTextView)
-        recyclerView = view.findViewById(R.id.tripListRecyclerView)
-        addFab = view.findViewById(R.id.add_fab)
+        recyclerView = view.findViewById(R.id.interestedTripListRecyclerView)
+        interestTripsProgressBar = view.findViewById(R.id.interestedTripListProgressBar)
 
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
@@ -79,42 +53,27 @@ class TripListFragment : Fragment() {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 recyclerView.layoutManager = GridLayoutManager(context, 3)
             }
+            else -> recyclerView.layoutManager = LinearLayoutManager(context)
         }
+
+        setHasOptionsMenu(true)
 
         return view
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerView.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
-            if (scrollY > oldScrollY && addFab.visibility == View.VISIBLE) {
-                addFab.hide()
-            } else if (scrollY < oldScrollY && addFab.visibility != View.VISIBLE) {
-                addFab.show()
-            }
-        }
-
-        addFab.setOnClickListener {
-            val anim: Animation = AnimationUtils.loadAnimation(addFab.context, R.anim.zoom)
-            anim.duration = 150
-            addFab.startAnimation(anim)
-            navigationClickListener(FAB_CLICKED, null, null)
-        }
-
         // DECOUPLE DATA FROM UI
-        model.getMyTrips()
+        model.getMyInterestedTrips()
             .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
                 // update UI
                 when (resource) {
                     is Resource.Loading -> {
-                        myTripsProgressBar.visibility = View.VISIBLE
-                        addFab.visibility = View.GONE
+                        interestTripsProgressBar.visibility = View.VISIBLE
                     }
                     is Resource.Success -> {
-                        myTripsProgressBar.visibility = View.GONE
-                        addFab.visibility = View.VISIBLE
+                        interestTripsProgressBar.visibility = View.GONE
 
                         if (resource.data.isEmpty()) {
                             recyclerView.visibility = View.GONE
@@ -127,7 +86,7 @@ class TripListFragment : Fragment() {
                         adapter = TripAdapter(
                             resource.data,
                             model,
-                            TRIP_LIST_IS_PARENT
+                            OTHER_TRIP_LIST_IS_PARENT
                         ) { mode: Int, tripItem: Trip, position: Int? ->
                             navigationClickListener(
                                 mode,
@@ -136,10 +95,9 @@ class TripListFragment : Fragment() {
                             )
                         }
                         recyclerView.adapter = adapter
-
                     }
                     is Resource.Failure -> {
-                        myTripsProgressBar.visibility = View.GONE
+                        interestTripsProgressBar.visibility = View.GONE
                         emptyTextView.text = getString(R.string.error_occur)
                     }
                 }

@@ -51,6 +51,8 @@
     <string name="menu_profile">Profile</string>
     <string name="menu_trips">My trips</string>
     <string name="menu_others_trips">Others trips</string>
+    <string name="menu_interested_trips">My Interested trips</string>
+    <string name="menu_booked_trips">My Booked trips</string>
 
     <string name="no_trips">No trips available!</string>
     <string name="car_photo_description">Car photo</string>
@@ -78,4 +80,6 @@
     <string name="departure">Departure</string>
     <string name="arrival">Arrival</string>
     <string name="stop">Stop</string>
+
+    <string name="error_occur">An Error occur. Please try later.</string>
 </resources>

@@ -53,6 +53,8 @@
     <string name="menu_profile">Profilo</string>
     <string name="menu_trips">Miei viaggi</string>
     <string name="menu_others_trips">Altri viaggi</string>
+    <string name="menu_interested_trips">Viaggi di interesse</string>
+    <string name="menu_booked_trips">Viaggi acquistati</string>
 
     <string name="no_trips">Nessun viaggio disponibile!</string>
     <string name="car_photo_description">Fotografia della macchina</string>
@@ -75,6 +77,8 @@
     <string name="arrival_date">Data arrivo</string>
 
     <string name="token_id">886522778931-698f6bkmod6af65ed18ogmvomkregduh.apps.googleusercontent.com</string>
+
+    <string name="error_occur">Si è verificato un errore. Riprova più tardi.</string>
 
     <string name="clear_path">Rimuovi</string>
     <string name="departure">Partenza</string>
