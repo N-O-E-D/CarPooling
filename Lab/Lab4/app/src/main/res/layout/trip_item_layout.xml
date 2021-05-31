@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/car_photo_description"
                     android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/car_photo" />
+                    app:srcCompat="@drawable/car_photo_alpha" />
 
             </com.facebook.shimmer.ShimmerFrameLayout>
 

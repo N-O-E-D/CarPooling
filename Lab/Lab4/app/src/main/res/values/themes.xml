@@ -22,7 +22,7 @@
         <item name="colorPrimaryVariant">#009688</item>
         <item name="colorOnPrimary">#FFFFFF</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">#B2DFDB</item>
+        <item name="colorSecondary">#3cb09b</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->

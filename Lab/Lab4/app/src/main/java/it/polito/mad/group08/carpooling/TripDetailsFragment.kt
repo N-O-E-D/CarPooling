@@ -290,7 +290,7 @@ class TripDetailsFragment : Fragment() {
         var j = 0
         interestedUsersShowHideButton.setOnClickListener {
             if (j % 2 == 0) {
-                interestedUsersShowHideButton.text = getString(R.string.hide_intermediate_stops)
+                interestedUsersShowHideButton.text = getString(R.string.hide_interested_users)
                 interestedUsersRecyclerView.visibility = View.VISIBLE
             } else {
                 interestedUsersShowHideButton.text = getString(R.string.show_interested_users)
@@ -796,7 +796,7 @@ class InterestedUserAdapter(
     private val navController: NavController
 ) : RecyclerView.Adapter<InterestedUserAdapter.UserViewHolder>() {
     class UserViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        private val userImage = v.findViewById<ImageButton>(R.id.userImage)
+        private val userImage = v.findViewById<ImageView>(R.id.userImage)
         private val userName = v.findViewById<TextView>(R.id.userName)
         private val userEmail = v.findViewById<TextView>(R.id.userEmail)
         private val acceptButton = v.findViewById<ImageButton>(R.id.acceptUserButton)

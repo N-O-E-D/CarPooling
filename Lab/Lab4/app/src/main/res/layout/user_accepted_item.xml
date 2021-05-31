@@ -12,19 +12,24 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryVariant">
+        android:background="#a2dcde">
 
-        <ImageButton
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/userImage"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:contentDescription="@string/user_image"
-            android:scaleType="fitCenter"
+            android:paddingLeft="2dp"
+            android:paddingTop="2dp"
+            android:paddingRight="2dp"
+            android:paddingBottom="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/userImageGuideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/avatars" />
+            android:src="@drawable/photo_default"
+            app:civ_border_color="#FF000000"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/userImageGuideline"
@@ -102,7 +107,11 @@
             android:visibility="invisible"
             app:layout_constraintHeight_percent="0.4"
             app:layout_constraintStart_toStartOf="@id/userImageGuideline"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            style="?attr/materialButtonOutlinedStyle"
+            android:textColor="@color/black"
+            app:strokeWidth="2dp"
+            app:strokeColor="@color/black"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

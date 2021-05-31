@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
-        android:backgroundTint="#23A649"
+        android:backgroundTint="?attr/colorSecondary"
         android:contentDescription="@string/add_new_stop"
         android:elevation="4dp"
         android:visibility="gone"
