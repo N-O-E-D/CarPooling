@@ -40,14 +40,14 @@ class LoginFragment : Fragment() {
     lateinit var mGoogleSignInClient: GoogleSignInClient
     private val model: SharedViewModel by activityViewModels()
     private lateinit var auth: FirebaseAuth
-
+    //TODO logout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.token_id))
             .requestEmail()
             .build()
-
+        Log.d("AB", "LOGIN CREATE")
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
         // Initialize Firebase Auth

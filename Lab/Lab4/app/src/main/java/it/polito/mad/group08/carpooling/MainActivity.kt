@@ -15,6 +15,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -54,6 +56,12 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager {
             navController.navigate(R.id.showProfileFragment)
             drawerLayout.closeDrawers()
         }
+
+        navigationView.getMenu().findItem(R.id.logout).setOnMenuItemClickListener { menuItem ->
+            Firebase.auth.signOut()
+            navController.navigate(R.id.loginFragment)
+            drawerLayout.closeDrawers()
+            true}
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

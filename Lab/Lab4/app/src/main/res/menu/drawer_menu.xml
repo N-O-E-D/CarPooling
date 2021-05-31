@@ -20,4 +20,12 @@
             android:title="@string/menu_booked_trips"
             android:icon="@drawable/trip_dollar"/>
     </group>
+
+    <group
+        android:id="@+id/grp_3"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/logout"
+            android:title="Logout" />
+    </group>
 </menu>
