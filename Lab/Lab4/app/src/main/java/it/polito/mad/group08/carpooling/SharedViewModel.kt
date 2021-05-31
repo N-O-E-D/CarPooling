@@ -80,6 +80,15 @@ class SharedViewModel : ViewModel() {
         }
     }
 
+    private val statusAddOrReplace = MutableLiveData<Resource<Boolean>>()
+    .also {
+        it.postValue(Resource.Loading())
+    }
+
+    fun getStatusAddorReplace(): LiveData<Resource<Boolean>> {
+        return statusAddOrReplace
+    }
+
     //TripEditFragment onClick on Save
     fun addOrReplaceTrip(newTrip: Trip) {
         if (newTrip.id == "") {
@@ -101,8 +110,10 @@ class SharedViewModel : ViewModel() {
             .document(newTrip.id)
             .set(newTrip) //TODO handle return ?
             .addOnSuccessListener {
+                statusAddOrReplace.postValue(Resource.Success(true))
             }
             .addOnFailureListener {
+                statusAddOrReplace.postValue(Resource.Failure(java.lang.Exception("Error in uploading")))
             }
     }
 

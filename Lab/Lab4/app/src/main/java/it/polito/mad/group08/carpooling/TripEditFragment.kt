@@ -32,6 +32,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -491,7 +492,22 @@ class TripEditFragment : Fragment() {
                 } else
                     model.addOrReplaceTrip(trip)
 
-                findNavController().popBackStack()
+                model.getStatusAddorReplace().observe(viewLifecycleOwner, Observer {
+                    when(it) {
+                        is Resource.Success -> {
+                            Snackbar.make(requireView(), "Modifiche Apportate Con Successo", Snackbar.LENGTH_SHORT).show()
+                            findNavController().popBackStack()
+                        }
+                        is Resource.Failure -> {
+                            Snackbar.make(requireView(), "Errore", Snackbar.LENGTH_SHORT).show()
+                            findNavController().popBackStack()
+                        }
+                        is Resource.Loading -> {}
+                    }
+                })
+
+                //Snackbar.make(requireView(), "Prova", Snackbar.LENGTH_SHORT).show()
+                //findNavController().popBackStack()
 
                 true
             }
