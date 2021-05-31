@@ -84,9 +84,6 @@ class BoughtTripsListFragment : Fragment() {
                             emptyTextView.visibility = View.GONE
                         }
 
-                        //TODO solve it
-                        Log.d("AAAA", "${resource.data}")
-
                         adapter = TripAdapter( resource.data, model, OTHER_TRIP_LIST_IS_PARENT) {
                                 mode: Int, tripItem: Trip, position: Int? ->
                                     navigationClickListener(

@@ -142,14 +142,16 @@ class SharedViewModel : ViewModel() {
     fun deleteTrip(tripID: String) {
         db.collection("trips")
             .document(tripID)
-            .delete() //TODO Should we report a result to user?
+            .delete()
     }
 
     fun deletePhotoTrip(carPhotoPath: String) {
-        val storage = Firebase.storage
-        val storageRef = storage.reference
-        val imageRef = storageRef.child(carPhotoPath)
-        imageRef.delete() //TODO Should we report a result to user?
+        if(carPhotoPath != "") {
+            val storage = Firebase.storage
+            val storageRef = storage.reference
+            val imageRef = storageRef.child(carPhotoPath)
+            imageRef.delete()
+        }
     }
 
     fun getMyTrips(): LiveData<Resource<List<Trip>>> {
@@ -290,7 +292,7 @@ class SharedViewModel : ViewModel() {
                             else {
                                 db.collection("trips")
                                     .whereIn("id", tmpTripsID)
-                                    .addSnapshotListener { tripsDB, errorTrips ->
+                                    /*.addSnapshotListener { tripsDB, errorTrips ->
                                         if (errorTrips != null)
                                             myBookedTrips.postValue(Resource.Failure(errorTrips))
 
@@ -301,8 +303,19 @@ class SharedViewModel : ViewModel() {
                                                 if (tmp != null)
                                                     tmpBookedTrips.add(tmp)
                                             }
+                                            Log.d("ABCDE", tmpBookedTrips.toString())
                                             myBookedTrips.postValue(Resource.Success(tmpBookedTrips))
                                         }
+                                    }*/
+                                    .get().addOnSuccessListener {
+                                        val tmpBookedTrips = mutableListOf<Trip>()
+                                        for (document in it.documents) {
+                                            val tmp = document.toObject(Trip::class.java)
+                                            if (tmp != null)
+                                                tmpBookedTrips.add(tmp)
+                                        }
+                                        Log.d("ABCDE", tmpBookedTrips.toString())
+                                        myBookedTrips.postValue(Resource.Success(tmpBookedTrips))
                                     }
                             }
                         }
@@ -531,16 +544,26 @@ class SharedViewModel : ViewModel() {
 
     fun userIsInterested(tripToCheck: Trip): Boolean {
         // User shows his interest in the trip.
-        val myself =
-            User(email = auth.currentUser!!.email!!, name = auth.currentUser!!.displayName!!)
-        return tripToCheck.interestedUsers.contains(myself)
+        /*val myself =
+            User(email = auth.currentUser!!.email!!, name = auth.currentUser!!.displayName!!)*/
+        return tripToCheck.interestedUsers.find { it.email == auth.currentUser!!.email } != null
+    }
+
+    fun userIsAccepted(tripToCheck: Trip): Boolean {
+        // User shows his interest in the trip.
+        for (user in tripToCheck.interestedUsers) {
+            if (user.email == auth.currentUser!!.email) {
+                return user.isAccepted
+            }
+        }
+        return false
     }
 
     // If a trip is deleted from owner, the users already booked it have to be deleted too
     fun removeFromBookings(bookingID: String) {
         db.collection("bookings")
             .document(bookingID)
-            .delete() //TODO Should we report a result to user?
+            .delete()
     }
 
     fun updateTripInterestedUser(tripToUpdate: Trip, isInterested: Boolean, userToUpdate: User?) {
@@ -607,13 +630,6 @@ class SharedViewModel : ViewModel() {
             }
             .addOnFailureListener {
             }
-    }
-
-    fun bookingIsAccepted(trip: Trip): Boolean {
-        var tmpBookedTrips: Resource.Success<List<Trip>> = Resource.Success(listOf())
-        if (myBookedTrips.value != null)
-            tmpBookedTrips = myBookedTrips.value as Resource.Success
-        return tmpBookedTrips.data.contains(trip)
     }
 
     fun downloadMetadataPhoto(path: String): StorageMetadata {

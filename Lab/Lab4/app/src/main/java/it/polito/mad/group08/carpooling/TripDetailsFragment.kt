@@ -221,7 +221,7 @@ class TripDetailsFragment : Fragment() {
                 }
             }
 
-            if (model.bookingIsAccepted(trip)) { //user already show favorite and owner accepted
+            if (model.userIsAccepted(trip)) { //user already show favorite and owner accepted
                 showInterestFab.setImageResource(R.drawable.check)
                 showInterestFab.setOnClickListener {
                     MainScope().launch {
@@ -467,7 +467,7 @@ class TripDetailsFragment : Fragment() {
                                     }
 
                                     if (resource.data[parentPosition].availableSeats > 0 ||
-                                        model.bookingIsAccepted(resource.data[parentPosition])
+                                        model.userIsAccepted(resource.data[parentPosition])
                                     )
                                         showInterestFab.show()
                                     else

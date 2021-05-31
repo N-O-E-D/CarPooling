@@ -7,6 +7,7 @@ import android.icu.text.NumberFormat
 import android.icu.util.Currency
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.EditText
@@ -118,6 +119,7 @@ class OthersTripListFragment : Fragment() {
 
                         shimmerFrameLayout.hideShimmer()
                         shimmerFrameLayout.visibility = View.GONE
+
                         adapter = TripAdapter(
                             resource.data,
                             model,
@@ -372,7 +374,7 @@ class TripAdapter(
                     clickListener(CARD_BUTTON_CLICKED, trip, bindingAdapterPosition)
                 }
             } else { //SHOW INTEREST BUTTON
-                if (model.bookingIsAccepted(trip)) { //user already show favorite and owner accepted
+                if (model.userIsAccepted(trip)) { //user already show favorite and owner accepted
                     cardButton.text = itemView.context.getString(R.string.trip_already_booked)
                     cardButton.isClickable = false
                 } else {
