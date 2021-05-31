@@ -17,7 +17,6 @@ import android.provider.MediaStore
 import android.view.*
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -39,9 +38,6 @@ private const val OPEN_CAMERA_REQUEST_CODE = 1
 private const val OPEN_GALLERY_REQUEST_CODE = 2
 
 class EditProfileFragment : Fragment() {
-
-    private lateinit var editProfileProgressBar: ProgressBar
-    private lateinit var editProfilePhotoProgressBar: ProgressBar
 
     private lateinit var photoIV: ImageView
     private lateinit var changePhotoIB: ImageButton
@@ -81,9 +77,6 @@ class EditProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        editProfileProgressBar = view.findViewById(R.id.editProfileProgressBar)
-        editProfilePhotoProgressBar = view.findViewById(R.id.editProfilePhotoProgressBar)
-
         photoIV = view.findViewById(R.id.photoImage)
         changePhotoIB = view.findViewById(R.id.changeImageButton)
         fullNameET = view.findViewById(R.id.fullNameET)
@@ -104,79 +97,27 @@ class EditProfileFragment : Fragment() {
             unregisterForContextMenu(it)
         }
 
-        model.getUser()
-            .observe(viewLifecycleOwner, Observer<Resource<User>> { resource ->
-                when (resource) {
-                    is Resource.Loading -> {
-                        showAllComponents(false)
-                        editProfileProgressBar.visibility = View.VISIBLE
-                        editProfilePhotoProgressBar.visibility = View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        editProfileProgressBar.visibility = View.GONE
-                        showAllComponents(true)
 
-                        fullNameET.setText(resource.data.name)
-                        nicknameET.setText(resource.data.nickname)
-                        emailET.setText(resource.data.email)
-                        locationET.setText(resource.data.location)
-                        phonenumberET.setText(resource.data.phone_number)
+       val user = model.getUser().value
+        if(user is Resource.Success){
+            fullNameET.setText(user.data.name)
+            nicknameET.setText(user.data.nickname)
+            emailET.setText(user.data.email)
+            locationET.setText(user.data.location)
+            phonenumberET.setText(user.data.phone_number)
 
-                        tmpRatingBar = resource.data.rating
+            tmpRatingBar = user.data.rating
 
-                        if (bitmap != null) {
-                            editProfilePhotoProgressBar.visibility = View.GONE
-                            photoIV.setImageBitmap(bitmap)
-                        } else {
-                            model.getUserPhoto()
-                                .observe(
-                                    viewLifecycleOwner,
-                                    Observer<Resource<Bitmap>> { resPhotoDB ->
-                                        when (resPhotoDB) {
-                                            is Resource.Loading -> {
-                                                editProfilePhotoProgressBar.visibility =
-                                                    View.VISIBLE
-                                            }
-                                            is Resource.Success -> {
-                                                editProfilePhotoProgressBar.visibility = View.GONE
-                                                photoIV.setImageBitmap(resPhotoDB.data)
-                                            }
-                                            is Resource.Failure -> {
-                                                editProfilePhotoProgressBar.visibility = View.GONE
-                                                Toast.makeText(
-                                                    context,
-                                                    "Error in loading the new photo",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                        }
-                                    })
+            if (bitmap != null) {
+                photoIV.setImageBitmap(bitmap)
+            } else {
+                val userPhoto = model.getUserPhoto().value
+                        if(userPhoto is Resource.Success){
+                            photoIV.setImageBitmap(userPhoto.data)
                         }
-                    }
-                    is Resource.Failure -> {
-                        showAllComponents(false)
-                        editProfileProgressBar.visibility = View.GONE
-                        editProfilePhotoProgressBar.visibility = View.GONE
-                        Toast.makeText(
-                            context,
-                            getString(R.string.error_occur),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            })
+            }
+        }
     }
-
-    private fun showAllComponents(showHide: Boolean) {
-        photoIV.visibility = if (showHide) View.VISIBLE else View.GONE
-        changePhotoIB.visibility = if (showHide) View.VISIBLE else View.GONE
-        fullNameET_layout.visibility = if (showHide) View.VISIBLE else View.GONE
-        nicknameET_layout.visibility = if (showHide) View.VISIBLE else View.GONE
-        emailET_layout.visibility = if (showHide) View.VISIBLE else View.GONE
-        locationET_layout.visibility = if (showHide) View.VISIBLE else View.GONE
-        phonenumberET_layout.visibility = if (showHide) View.VISIBLE else View.GONE
-    }
-
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

@@ -3,6 +3,8 @@ package it.polito.mad.group08.carpooling
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.opengl.Visibility
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -57,7 +61,6 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        //TODO Hide left arrow in menu
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
@@ -70,6 +73,7 @@ class LoginFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loginProgressBar = view.findViewById(R.id.loginProgressBar)
@@ -78,6 +82,9 @@ class LoginFragment : Fragment() {
         signInButton.setOnClickListener {
             signIn()
         }
+
+        val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
+        toolbar?.navigationIcon = null
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
