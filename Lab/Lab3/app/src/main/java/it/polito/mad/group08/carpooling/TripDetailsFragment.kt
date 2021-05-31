@@ -1,6 +1,7 @@
 package it.polito.mad.group08.carpooling
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -23,10 +24,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.*
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 
 const val MY_TRIPS_IS_PARENT = "TRIPS"
@@ -447,6 +452,7 @@ class InterestedUserAdapter(
         private val userEmail = v.findViewById<TextView>(R.id.userEmail)
         private val acceptButton = v.findViewById<ImageButton>(R.id.acceptUserButton)
         private val rejectButton = v.findViewById<ImageButton>(R.id.rejectUserButton)
+        private val reviewButton = v.findViewById<Button>(R.id.reviewButton)
 
         fun bind(u: User, model: SharedViewModel, targetTrip: Trip, navController: NavController) {
             userImage.setImageResource(R.drawable.photo_default)
@@ -483,6 +489,49 @@ class InterestedUserAdapter(
             rejectButton.setOnClickListener {
                 model.updateTripInterestedUser(targetTrip, false, u)
             }
+
+            reviewButton.setOnClickListener {
+                val inflater = it.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val dialogView = inflater.inflate(R.layout.dialog_review, null)
+                val dialogFilter = MaterialAlertDialogBuilder(it.context)
+                    .setView(dialogView)
+                    .setNegativeButton("Cancel"){dialog, which ->
+                    }
+                    .setPositiveButton("Send") { dialog, which ->
+                        val ratingBar = dialogView.findViewById<RatingBar>(R.id.reviewRatingBar)
+                        val reviewText = dialogView.findViewById<EditText>(R.id.textReviewET)
+                        val from = model.auth.currentUser!!.email
+                        val to = u.email
+                        if (ratingBar.rating == 0.0f)
+                            Snackbar.make(it.context, it, "Please insert a rating", Snackbar.LENGTH_SHORT).show()
+                        else {
+                            model.addReview(
+                                Review(
+                                    from!!,
+                                    to,
+                                    ratingBar.rating.toString(),
+                                    reviewText.text.toString(),
+                                    false,
+                                    targetTrip.id
+                                )
+                            )
+                            reviewButton.visibility = View.GONE
+                        }
+                    }
+                    .show()
+            }
+
+            MainScope().launch {
+                if (u.isAccepted) {
+                    val alreadySent = withContext(Dispatchers.IO) {
+                        model.reviewAlreadySent(model.auth.currentUser!!.email!!, u.email, targetTrip.id)
+                    }
+
+                    if (!alreadySent)
+                        reviewButton.visibility = View.VISIBLE
+                }
+            }
+
         }
 
         fun unbind(){

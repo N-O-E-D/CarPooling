@@ -20,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 const val CARD_BUTTON_CLICKED = 1 //Edit in MyTrips; ShowInterest in OtherTripList
@@ -27,11 +28,11 @@ const val CARD_CLICKED = 2
 const val FAB_CLICKED = 3
 
 class TripListFragment : Fragment() {
-    private lateinit var myTripsProgressBar: ProgressBar
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TripAdapter
     private lateinit var emptyTextView: TextView
     private lateinit var addFab: FloatingActionButton
+    private lateinit var shimmerFrameLayout: ShimmerFrameLayout
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -67,10 +68,11 @@ class TripListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_trip_list, container, false)
-        myTripsProgressBar = view.findViewById(R.id.myTripsProgressBar)
+        //myTripsProgressBar = view.findViewById(R.id.myTripsProgressBar)
         emptyTextView = view.findViewById(R.id.emptyTextView)
         recyclerView = view.findViewById(R.id.tripListRecyclerView)
         addFab = view.findViewById(R.id.add_fab)
+        shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container)
 
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
@@ -82,6 +84,11 @@ class TripListFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        shimmerFrameLayout.startShimmer()
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -109,11 +116,11 @@ class TripListFragment : Fragment() {
                 // update UI
                 when (resource) {
                     is Resource.Loading -> {
-                        myTripsProgressBar.visibility = View.VISIBLE
+                        //myTripsProgressBar.visibility = View.VISIBLE
                         addFab.visibility = View.GONE
                     }
                     is Resource.Success -> {
-                        myTripsProgressBar.visibility = View.GONE
+                        //myTripsProgressBar.visibility = View.GONE
                         addFab.visibility = View.VISIBLE
 
                         if (resource.data.isEmpty()) {
@@ -123,6 +130,9 @@ class TripListFragment : Fragment() {
                             recyclerView.visibility = View.VISIBLE
                             emptyTextView.visibility = View.GONE
                         }
+
+                        shimmerFrameLayout.hideShimmer()
+                        shimmerFrameLayout.visibility = View.GONE
 
                         adapter = TripAdapter(
                             resource.data,
@@ -139,7 +149,9 @@ class TripListFragment : Fragment() {
 
                     }
                     is Resource.Failure -> {
-                        myTripsProgressBar.visibility = View.GONE
+                        shimmerFrameLayout.hideShimmer()
+                        shimmerFrameLayout.visibility = View.GONE
+                        //myTripsProgressBar.visibility = View.GONE
                         emptyTextView.text = getString(R.string.error_occur)
                     }
                 }

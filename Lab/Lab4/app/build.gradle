@@ -75,6 +75,7 @@ dependencies {
     implementation 'org.osmdroid:osmdroid-mapsforge:6.1.10'
     implementation 'org.osmdroid:osmdroid-geopackage:6.1.10'
     implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
     //circle crop
     implementation 'de.hdodenhof:circleimageview:3.1.0'
