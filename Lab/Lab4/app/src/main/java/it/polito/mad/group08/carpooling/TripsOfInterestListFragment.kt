@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -20,7 +19,6 @@ class TripsOfInterestListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TripAdapter
     private lateinit var emptyTextView: TextView
-    private lateinit var interestTripsProgressBar: ProgressBar
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -35,7 +33,6 @@ class TripsOfInterestListFragment : Fragment() {
         }
     }
 
-    //TODO Should I need to re-define onBack? Is it Top View?
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +41,6 @@ class TripsOfInterestListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_trips_of_interest_list, container, false)
         emptyTextView = view.findViewById(R.id.emptyTextView)
         recyclerView = view.findViewById(R.id.interestedTripListRecyclerView)
-        interestTripsProgressBar = view.findViewById(R.id.interestedTripListProgressBar)
 
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
@@ -70,10 +66,10 @@ class TripsOfInterestListFragment : Fragment() {
                 // update UI
                 when (resource) {
                     is Resource.Loading -> {
-                        interestTripsProgressBar.visibility = View.VISIBLE
+                        //TODO shimmer
                     }
                     is Resource.Success -> {
-                        interestTripsProgressBar.visibility = View.GONE
+                        //TODO shimmer
 
                         if (resource.data.isEmpty()) {
                             recyclerView.visibility = View.GONE
@@ -97,7 +93,7 @@ class TripsOfInterestListFragment : Fragment() {
                         recyclerView.adapter = adapter
                     }
                     is Resource.Failure -> {
-                        interestTripsProgressBar.visibility = View.GONE
+                        //TODO shimmer
                         emptyTextView.text = getString(R.string.error_occur)
                     }
                 }

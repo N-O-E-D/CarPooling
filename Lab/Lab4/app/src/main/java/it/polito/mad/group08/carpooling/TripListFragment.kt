@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -68,7 +67,6 @@ class TripListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_trip_list, container, false)
-        //myTripsProgressBar = view.findViewById(R.id.myTripsProgressBar)
         emptyTextView = view.findViewById(R.id.emptyTextView)
         recyclerView = view.findViewById(R.id.tripListRecyclerView)
         addFab = view.findViewById(R.id.add_fab)
@@ -116,11 +114,11 @@ class TripListFragment : Fragment() {
                 // update UI
                 when (resource) {
                     is Resource.Loading -> {
-                        //myTripsProgressBar.visibility = View.VISIBLE
+                        //TODO shimmer
                         addFab.visibility = View.GONE
                     }
                     is Resource.Success -> {
-                        //myTripsProgressBar.visibility = View.GONE
+                        //TODO shimmer
                         addFab.visibility = View.VISIBLE
 
                         if (resource.data.isEmpty()) {
@@ -151,7 +149,7 @@ class TripListFragment : Fragment() {
                     is Resource.Failure -> {
                         shimmerFrameLayout.hideShimmer()
                         shimmerFrameLayout.visibility = View.GONE
-                        //myTripsProgressBar.visibility = View.GONE
+                        //TODO shimmer
                         emptyTextView.text = getString(R.string.error_occur)
                     }
                 }

@@ -330,67 +330,6 @@ class TripEditFragment : Fragment() {
                 GeoMap.setUpPinPoint(map, geoPoints, context, itemsGeoPoint)
             }
         }
-
-        /*model.getMyTrips()
-            .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
-                when (resource) {
-                    is Resource.Loading -> {
-                        showAllComponents(false)
-                        editProgressBar.visibility = View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        editProgressBar.visibility = View.GONE
-                        showAllComponents(true)
-
-                        if (position == resource.data.size) { // ADD EMPTY VIEW
-                            trip = Trip()
-                            adapter =
-                                ItemEditAdapter(tmp_checkpoints) { position -> removeAt(position) }
-                            recyclerView.adapter = adapter
-                            GeoMap.setUpPinPoint(map, geoPoints, context, itemsGeoPoint)
-                        } else {
-                            // EDIT EXISTING TRIP VIEW
-                            trip = resource.data[position]
-
-                            carNameET.setText(trip.carDescription)
-                            driverNameET.setText(trip.driverName)
-                            seatPriceET.setText(trip.seatPrice.toString())
-                            availableSeatsET.setText(trip.availableSeats.toString())
-                            informationsET.setText(trip.description)
-                            ratingBar.rating = trip.driverRate
-
-                            for (item in trip.checkPoints) {
-                                tmp_checkpoints.add(CheckPoint(item.location, item.timestamp))
-                            }
-
-                            takeSavedPhoto(model.bitmaps[trip.id])
-
-                            adapter =
-                                ItemEditAdapter(tmp_checkpoints) { position -> removeAt(position) }
-                            recyclerView.adapter = adapter
-
-                            val geoPointsCoord = trip.geoPoints
-                            for(geoPoint in geoPointsCoord){
-                                geoPoints.add(GeoPoint(geoPoint.latitude, geoPoint.longitude))
-                                Log.d("ABCDE", "$geoPoint")
-                            }
-                            itemsGeoPoint = ArrayList<OverlayItem>()
-                            GeoMap.drawPath(map, geoPointsCoord.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, itemsGeoPoint)
-                            GeoMap.setUpPinPoint(map, geoPoints, context, itemsGeoPoint)
-                        }
-                    }
-                    is Resource.Failure -> {
-                        showAllComponents(false)
-                        editProgressBar.visibility = View.GONE
-
-                        Toast.makeText(
-                            context,
-                            getString(R.string.error_occur),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-            })*/
     }
 
     override fun onCreateContextMenu(
@@ -495,20 +434,16 @@ class TripEditFragment : Fragment() {
                 model.getStatusAddorReplace().observe(viewLifecycleOwner, Observer {
                     when(it) {
                         is Resource.Success -> {
-                            Snackbar.make(requireView(), "Modifiche Apportate Con Successo", Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(requireView(), getString(R.string.changes_applied_successfully), Snackbar.LENGTH_SHORT).show()
                             findNavController().popBackStack()
                         }
                         is Resource.Failure -> {
-                            Snackbar.make(requireView(), "Errore", Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(requireView(), getString(R.string.error_occur), Snackbar.LENGTH_SHORT).show()
                             findNavController().popBackStack()
                         }
                         is Resource.Loading -> {}
                     }
                 })
-
-                //Snackbar.make(requireView(), "Prova", Snackbar.LENGTH_SHORT).show()
-                //findNavController().popBackStack()
-
                 true
             }
             else -> super.onOptionsItemSelected(item)

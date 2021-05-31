@@ -214,12 +214,19 @@ class EditProfileFragment : Fragment() {
                     )
                 )
 
-                findNavController().popBackStack()
-                Snackbar.make(
-                    view?.findViewById(R.id.fullNameET)!!,
-                    R.string.changes_applied_successfully,
-                    Snackbar.LENGTH_SHORT
-                ).show()
+                model.getStatusAddorReplace().observe(viewLifecycleOwner, Observer {
+                    when(it) {
+                        is Resource.Success -> {
+                            Snackbar.make(requireView(), getString(R.string.changes_applied_successfully), Snackbar.LENGTH_SHORT).show()
+                            findNavController().popBackStack()
+                        }
+                        is Resource.Failure -> {
+                            Snackbar.make(requireView(), getString(R.string.error_occur), Snackbar.LENGTH_SHORT).show()
+                            findNavController().popBackStack()
+                        }
+                        is Resource.Loading -> {}
+                    }
+                })
                 true
             }
             else -> super.onOptionsItemSelected(item)

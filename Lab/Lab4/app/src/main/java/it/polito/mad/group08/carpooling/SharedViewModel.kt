@@ -108,7 +108,7 @@ class SharedViewModel : ViewModel() {
 
         db.collection("trips")
             .document(newTrip.id)
-            .set(newTrip) //TODO handle return ?
+            .set(newTrip)
             .addOnSuccessListener {
                 statusAddOrReplace.postValue(Resource.Success(true))
             }
@@ -438,7 +438,12 @@ class SharedViewModel : ViewModel() {
         db.collection("users")
             .document(auth.currentUser!!.email!!)
             .set(user)
-            .addOnSuccessListener {} //TODO Should we report a result to user?
+            .addOnSuccessListener {
+                statusAddOrReplace.postValue(Resource.Success(true))
+            }
+            .addOnFailureListener {
+                statusAddOrReplace.postValue(Resource.Failure(java.lang.Exception("Error in uploading")))
+            }
     }
 
     fun getUser(): LiveData<Resource<User>> {

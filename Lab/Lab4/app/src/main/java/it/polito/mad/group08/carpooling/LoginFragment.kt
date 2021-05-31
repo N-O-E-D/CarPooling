@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
@@ -38,7 +37,6 @@ const val RC_SIGN_IN = 0
 class LoginFragment : Fragment() {
 
     private lateinit var signInButton: SignInButton
-    private lateinit var loginProgressBar: ProgressBar
     lateinit var mGoogleSignInClient: GoogleSignInClient
     private val model: SharedViewModel by activityViewModels()
     private lateinit var auth: FirebaseAuth
@@ -76,7 +74,6 @@ class LoginFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loginProgressBar = view.findViewById(R.id.loginProgressBar)
         signInButton = view.findViewById(R.id.sign_in_button)
 
         signInButton.setOnClickListener {

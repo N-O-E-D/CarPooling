@@ -47,7 +47,6 @@ const val BOOKED_TRIPS_IS_PARENT = "BOOKED_TRIPS"
 const val INTERESTED_TRIPS_IS_PARENT = "INTERESTED_TRIPS"
 
 class TripDetailsFragment : Fragment() {
-    private lateinit var detailsProgressBar: ProgressBar
 
     private lateinit var scrollView: ScrollView
     private lateinit var carPhotoPath: ImageView
@@ -357,7 +356,6 @@ class TripDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // FIND VIEW
-        detailsProgressBar = view.findViewById(R.id.detailsProgressBar)
 
         scrollView = view.findViewById(R.id.scrollView)
         carPhotoPath = view.findViewById(R.id.carPhoto)
@@ -409,12 +407,11 @@ class TripDetailsFragment : Fragment() {
                             // POPULATE VIEW WITH DATA
                             when (resource) {
                                 is Resource.Loading -> {
-                                    showAllComponents(false)
-                                    detailsProgressBar.visibility = View.VISIBLE
+                                    //TODO shimmer
+
                                 }
                                 is Resource.Success -> {
-                                    showAllComponents(true)
-                                    detailsProgressBar.visibility = View.GONE
+                                    //TODO shimmer
 
                                     setTripInformation(resource.data[parentPosition])
                                     account_button.visibility = View.GONE
@@ -426,8 +423,7 @@ class TripDetailsFragment : Fragment() {
                                     showInterestFab.hide()
                                 }
                                 is Resource.Failure -> {
-                                    showAllComponents(false)
-                                    detailsProgressBar.visibility = View.GONE
+                                    //TODO shimmer
 
                                     Toast.makeText(
                                         context,
@@ -448,15 +444,13 @@ class TripDetailsFragment : Fragment() {
                             // POPULATE VIEW WITH DATA
                             when (resource) {
                                 is Resource.Loading -> {
-                                    showAllComponents(false)
-                                    detailsProgressBar.visibility = View.VISIBLE
+                                    //TODO shimmer
                                 }
                                 is Resource.Success -> {
                                     if ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))
                                         activity?.onBackPressed()
 
-                                    detailsProgressBar.visibility = View.GONE
-                                    showAllComponents(true)
+                                    //TODO shimmer
 
                                     currentTrip = resource.data[parentPosition]
                                     setTripInformation(resource.data[parentPosition])
@@ -476,8 +470,7 @@ class TripDetailsFragment : Fragment() {
                                     interestedUsersShowHideButton.visibility = View.GONE
                                 }
                                 is Resource.Failure -> {
-                                    showAllComponents(false)
-                                    detailsProgressBar.visibility = View.GONE
+                                    //TODO shimmer
 
                                     Toast.makeText(
                                         context,
@@ -489,22 +482,20 @@ class TripDetailsFragment : Fragment() {
                         })
                 })
             }
-            BOOKED_TRIPS_IS_PARENT -> { //TODO test it when owner delete the trip
+            BOOKED_TRIPS_IS_PARENT -> {
                 model.getPosition().observe(viewLifecycleOwner, Observer<Int> { parentPosition ->
                     model.getMyBookedTrips()
                         .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
                             // update UI
                             when (resource) {
                                 is Resource.Loading -> {
-                                    showAllComponents(false)
-                                    detailsProgressBar.visibility = View.VISIBLE
+                                    //TODO shimmer
                                 }
                                 is Resource.Success -> {
                                     if (parentPosition >= resource.data.size || ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))) {
                                         activity?.onBackPressed()
                                     }else {
-                                        detailsProgressBar.visibility = View.GONE
-                                        showAllComponents(true)
+                                        //TODO shimmer
 
                                         currentTrip = resource.data[parentPosition]
                                         setTripInformation(resource.data[parentPosition])
@@ -520,8 +511,7 @@ class TripDetailsFragment : Fragment() {
                                     }
                                 }
                                 is Resource.Failure -> {
-                                    showAllComponents(false)
-                                    detailsProgressBar.visibility = View.GONE
+                                    //TODO shimmer
 
                                     Toast.makeText(
                                         context,
@@ -533,15 +523,14 @@ class TripDetailsFragment : Fragment() {
                         })
                 })
             }
-            INTERESTED_TRIPS_IS_PARENT -> { //TODO test it when owner delete the trip
+            INTERESTED_TRIPS_IS_PARENT -> {
                 model.getPosition().observe(viewLifecycleOwner, Observer<Int> { parentPosition ->
                     model.getMyInterestedTrips()
                         .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
                             // update UI
                             when (resource) {
                                 is Resource.Loading -> {
-                                    showAllComponents(false)
-                                    detailsProgressBar.visibility = View.VISIBLE
+                                    //TODO shimmer
                                 }
                                 is Resource.Success -> {
                                     Log.d("AAAA", "$parentPosition")
@@ -549,8 +538,7 @@ class TripDetailsFragment : Fragment() {
                                     if (parentPosition >= resource.data.size || ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))) {
                                         activity?.onBackPressed()
                                     }else{
-                                        detailsProgressBar.visibility = View.GONE
-                                        showAllComponents(true)
+                                        //TODO shimmer
 
                                         currentTrip = resource.data[parentPosition]
                                         setTripInformation(resource.data[parentPosition])
@@ -565,8 +553,7 @@ class TripDetailsFragment : Fragment() {
                                     }
                                 }
                                 is Resource.Failure -> {
-                                    showAllComponents(false)
-                                    detailsProgressBar.visibility = View.GONE
+                                    //TODO shimmer
 
                                     Toast.makeText(
                                         context,
@@ -658,12 +645,10 @@ class TripDetailsFragment : Fragment() {
                         .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
                             when (resource) {
                                 is Resource.Loading -> {
-                                    showAllComponents(false)
-                                    detailsProgressBar.visibility = View.VISIBLE
+                                    //TODO shimmer
                                 }
                                 is Resource.Success -> {
-                                    detailsProgressBar.visibility = View.GONE
-                                    showAllComponents(true)
+                                    //TODO shimmer
 
                                     resource.data[parentPosition].interestedUsers.forEach { user ->
                                         if (user.isAccepted) {
@@ -678,8 +663,7 @@ class TripDetailsFragment : Fragment() {
                                     }
                                 }
                                 is Resource.Failure -> {
-                                    showAllComponents(false)
-                                    detailsProgressBar.visibility = View.GONE
+                                    //TODO shimmer
 
                                     Toast.makeText(
                                         context,

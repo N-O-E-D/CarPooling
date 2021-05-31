@@ -127,8 +127,8 @@
     <fragment
         android:id="@+id/tripsOfInterestListFragment"
         android:name="it.polito.mad.group08.carpooling.TripsOfInterestListFragment"
-        android:label="fragment_trips_of_interest_list"
-        tools:layout="@layout/fragment_trips_of_interest_list" >
+        android:label="Interested trips"
+        tools:layout="@layout/fragment_trips_of_interest_list">
         <action
             android:id="@+id/action_tripsOfInterestListFragment_to_tripDetailsFragment"
             app:destination="@id/tripDetailsFragment"
@@ -140,8 +140,8 @@
     <fragment
         android:id="@+id/boughtTripsListFragment"
         android:name="it.polito.mad.group08.carpooling.BoughtTripsListFragment"
-        android:label="fragment_bought_trips_list"
-        tools:layout="@layout/fragment_bought_trips_list" >
+        android:label="Booked trips"
+        tools:layout="@layout/fragment_bought_trips_list">
         <action
             android:id="@+id/action_boughtTripsListFragment_to_tripDetailsFragment"
             app:destination="@id/tripDetailsFragment"

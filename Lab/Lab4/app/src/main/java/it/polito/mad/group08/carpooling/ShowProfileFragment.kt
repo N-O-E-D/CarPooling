@@ -23,9 +23,6 @@ const val TRIP_DETAILS_IS_PARENT = "TRIP_DETAILS_IS_PARENT"
 
 
 class ShowProfileFragment : Fragment() {
-    private lateinit var showProfileProgressBar: ProgressBar
-    private lateinit var showProfilePhotoProgressBar: ProgressBar
-
     private lateinit var photoIV: ImageView
     private lateinit var fullNameIcon: ImageView
     private lateinit var fullNameTV: TextView
@@ -61,8 +58,6 @@ class ShowProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        showProfileProgressBar = view.findViewById(R.id.showProfileProgressBar)
-        showProfilePhotoProgressBar = view.findViewById(R.id.showProfilePhotoProgressBar)
         photoIV = view.findViewById(R.id.photoImage)
         fullNameIcon = view.findViewById(R.id.fullnameIcon)
         fullNameTV = view.findViewById(R.id.fullNameTV)
@@ -82,14 +77,11 @@ class ShowProfileFragment : Fragment() {
                 .observe(viewLifecycleOwner, Observer<Resource<User>> { resource ->
                     when (resource) {
                         is Resource.Loading -> {
-                            showAllComponents(false)
-                            showProfileProgressBar.visibility = View.VISIBLE
-                            showProfilePhotoProgressBar.visibility = View.VISIBLE
+                            //TODO shimmer
                         }
                         is Resource.Success -> {
-                            showProfileProgressBar.visibility = View.GONE
-                            showProfilePhotoProgressBar.visibility = View.VISIBLE
-                            showAllComponents(true)
+                            //TODO shimmer
+
                             fullNameTV.text =
                                 if (resource.data.name == "") "Full Name" else resource.data.name
                             nicknameTV.text =
@@ -110,15 +102,14 @@ class ShowProfileFragment : Fragment() {
                                     Observer<Resource<Bitmap>> { imgResource ->
                                         when (imgResource) {
                                             is Resource.Loading -> {
-                                                showProfilePhotoProgressBar.visibility =
-                                                    View.VISIBLE
+                                                //TODO shimmer
                                             }
                                             is Resource.Success -> {
-                                                showProfilePhotoProgressBar.visibility = View.GONE
+                                                //TODO shimmer
                                                 photoIV.setImageBitmap(imgResource.data)
                                             }
                                             is Resource.Failure -> {
-                                                showProfilePhotoProgressBar.visibility = View.GONE
+                                                //TODO shimmer
                                                 Toast.makeText(
                                                     context,
                                                     "Error loading the photo. Try later",
@@ -135,9 +126,7 @@ class ShowProfileFragment : Fragment() {
                             }
                         }
                         is Resource.Failure -> {
-                            showAllComponents(false)
-                            showProfileProgressBar.visibility = View.GONE
-                            showProfilePhotoProgressBar.visibility = View.GONE
+                            //TODO shimmer
                             Toast.makeText(
                                 context,
                                 getString(R.string.error_occur),
@@ -151,12 +140,10 @@ class ShowProfileFragment : Fragment() {
                 .observe(viewLifecycleOwner, Observer<Resource<User>> { resource ->
                     when (resource) {
                         is Resource.Loading -> {
-                            showAllComponents(false)
-                            showProfileProgressBar.visibility = View.VISIBLE
+                            //TODO shimmer
                         }
                         is Resource.Success -> {
-                            showProfileProgressBar.visibility = View.GONE
-                            showAllComponents(true)
+                            //TODO shimmer
 
                             fullNameTV.text =
                                 if (resource.data.name == "") "Full Name" else resource.data.name
@@ -175,15 +162,14 @@ class ShowProfileFragment : Fragment() {
                                     Observer<Resource<Bitmap>> { resPhotoDB ->
                                         when (resPhotoDB) {
                                             is Resource.Loading -> {
-                                                showProfilePhotoProgressBar.visibility =
-                                                    View.VISIBLE
+                                                //TODO shimmer
                                             }
                                             is Resource.Success -> {
-                                                showProfilePhotoProgressBar.visibility = View.GONE
+                                                //TODO shimmer
                                                 photoIV.setImageBitmap(resPhotoDB.data)
                                             }
                                             is Resource.Failure -> {
-                                                showProfilePhotoProgressBar.visibility = View.GONE
+                                                //TODO shimmer
                                                 Toast.makeText(
                                                     context,
                                                     "Error in loading the new photo",
@@ -200,8 +186,7 @@ class ShowProfileFragment : Fragment() {
                             }
                         }
                         is Resource.Failure -> {
-                            showAllComponents(false)
-                            showProfileProgressBar.visibility = View.GONE
+                            //TODO shimmer
                             Toast.makeText(
                                 context,
                                 getString(R.string.error_occur),

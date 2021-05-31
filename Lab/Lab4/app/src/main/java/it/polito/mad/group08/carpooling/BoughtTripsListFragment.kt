@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -21,7 +20,6 @@ class BoughtTripsListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TripAdapter
     private lateinit var emptyTextView: TextView
-    private lateinit var boughtTripsProgressBar: ProgressBar
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -45,7 +43,6 @@ class BoughtTripsListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_bought_trips_list, container, false)
         emptyTextView = view.findViewById(R.id.emptyTextView)
         recyclerView = view.findViewById(R.id.boughtTripListRecyclerView)
-        boughtTripsProgressBar = view.findViewById(R.id.boughtTripsProgressBar)
 
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
@@ -71,10 +68,10 @@ class BoughtTripsListFragment : Fragment() {
                 // update UI
                 when (resource) {
                     is Resource.Loading -> {
-                        boughtTripsProgressBar.visibility = View.VISIBLE
+                        //TODO shimmer
                     }
                     is Resource.Success -> {
-                        boughtTripsProgressBar.visibility = View.GONE
+                        //TODO shimmer
 
                         if (resource.data.isEmpty()) {
                             recyclerView.visibility = View.GONE
@@ -95,7 +92,7 @@ class BoughtTripsListFragment : Fragment() {
                         recyclerView.adapter = adapter
                     }
                     is Resource.Failure -> {
-                        boughtTripsProgressBar.visibility = View.GONE
+                        //TODO shimmer
                         emptyTextView.text = getString(R.string.error_occur)
                     }
                 }

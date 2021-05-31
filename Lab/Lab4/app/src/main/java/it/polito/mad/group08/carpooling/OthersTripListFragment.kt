@@ -39,7 +39,6 @@ const val TRIP_LIST_IS_PARENT = "TRIP_LIST_IS_PARENT"
 const val OTHER_TRIP_LIST_IS_PARENT = "OTHER_TRIP_LIST_IS_PARENT" // Other, booked, interested
 
 class OthersTripListFragment : Fragment() {
-    //private lateinit var othersProgressBar: ProgressBar
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TripAdapter
     private lateinit var emptyTextView: TextView
@@ -71,7 +70,6 @@ class OthersTripListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_others_trip_list, container, false)
-        //othersProgressBar = view.findViewById(R.id.othersProgressBar)
         emptyTextView = view.findViewById(R.id.emptyTextView)
         recyclerView = view.findViewById(R.id.othersTripListRecyclerView)
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container)
@@ -104,10 +102,10 @@ class OthersTripListFragment : Fragment() {
                 // update UI
                 when (resource) {
                     is Resource.Loading -> {
-                        //othersProgressBar.visibility = View.VISIBLE
+                        //TODO shimmer
                     }
                     is Resource.Success -> {
-                        //othersProgressBar.visibility = View.GONE
+                        //TODO shimmer
 
                         if (resource.data.isEmpty()) {
                             recyclerView.visibility = View.GONE
@@ -134,7 +132,6 @@ class OthersTripListFragment : Fragment() {
                         recyclerView.adapter = adapter
                     }
                     is Resource.Failure -> {
-                        //othersProgressBar.visibility = View.GONE
                         shimmerFrameLayout.stopShimmer()
                         shimmerFrameLayout.visibility = View.GONE
                         emptyTextView.text = getString(R.string.error_occur)
@@ -322,7 +319,6 @@ class TripAdapter(
 
             if (model.bitmaps[trip.id] == null) {
                 if (trip.carPhotoPath != null && trip.carPhotoPath != "") {
-                    //carPhotoItemProgressBar.visibility = View.VISIBLE
 
                     when (itemView.context.resources.configuration.orientation) {
                         Configuration.ORIENTATION_PORTRAIT -> {
@@ -342,7 +338,6 @@ class TripAdapter(
                         when (itemView.context.resources.configuration.orientation) {
                             Configuration.ORIENTATION_PORTRAIT -> {
                                 itemView.findViewById<ShimmerFrameLayout>(R.id.shimmer).hideShimmer()
-                                //carPhotoItemProgressBar.visibility = View.GONE
                                 itemView.findViewById<ImageView>(R.id.carPhoto)
                                     .setImageBitmap(model.bitmaps[trip.id])
                             }
