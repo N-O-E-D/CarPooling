@@ -491,7 +491,7 @@ class TripEditFragment : Fragment() {
                 } else
                     model.addOrReplaceTrip(trip)
 
-                findNavController().navigate(R.id.action_tripEditFragment_to_tripListFragment)
+                findNavController().popBackStack()
 
                 true
             }

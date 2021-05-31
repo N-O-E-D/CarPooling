@@ -36,7 +36,7 @@ class BoughtTripsListFragment : Fragment() {
         }
     }
 
-    //TODO Should I need to re-define onBack? Is it Top View?
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

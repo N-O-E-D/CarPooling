@@ -318,7 +318,6 @@ class TripAdapter(
 
 
 
-            //TODO If time move in Shared
             if (model.bitmaps[trip.id] == null) {
                 if (trip.carPhotoPath != null && trip.carPhotoPath != "") {
                     //carPhotoItemProgressBar.visibility = View.VISIBLE
@@ -363,7 +362,6 @@ class TripAdapter(
                     }
                 }
             }
-            //TODO ends here
 
             card.setOnClickListener {
                 clickListener(CARD_CLICKED, trip, bindingAdapterPosition)

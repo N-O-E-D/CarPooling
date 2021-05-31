@@ -810,7 +810,6 @@ class InterestedUserAdapter(
             targetTrip: Trip,
             navController: NavController
         ) {
-            //TODO loading while download the photo
             userImage.setImageResource(R.drawable.photo_default)
             val storage = Firebase.storage
             val storageRef = storage.reference
@@ -826,12 +825,11 @@ class InterestedUserAdapter(
                             userImage.setImageBitmap(imageBitmap)
                         }
                     }.addOnFailureListener {
-                        // Handle any errors
+                        Toast.makeText(itemView.context, "AAA", Toast.LENGTH_LONG).show()
                     }
             }.addOnFailureListener {
-                // Uh-oh, an error occurred!
+                Toast.makeText(itemView.context, "AAA", Toast.LENGTH_LONG).show()
             }
-            //TODO ends here
 
             userImage.setOnClickListener {
                 model.setOtherUser(u.email)
