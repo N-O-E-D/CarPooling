@@ -796,10 +796,11 @@ class InterestedUserAdapter(
                             userImage.setImageBitmap(imageBitmap)
                         }
                     }.addOnFailureListener {
-                        Toast.makeText(itemView.context, "AAA", Toast.LENGTH_LONG).show()
+                        Toast.makeText(itemView.context, "Error in downloading photo", Toast.LENGTH_LONG).show()
                     }
             }.addOnFailureListener {
-                Toast.makeText(itemView.context, "AAA", Toast.LENGTH_LONG).show()
+                imageProfileShimmer.hideShimmer()
+                //Toast.makeText(itemView.context, "AAA", Toast.LENGTH_LONG).show()
             }
 
             userImage.setOnClickListener {

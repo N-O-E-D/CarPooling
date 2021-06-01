@@ -113,7 +113,10 @@ class EditProfileFragment : Fragment() {
             } else {
                 val userPhoto = model.getUserPhoto().value
                         if(userPhoto is Resource.Success){
-                            photoIV.setImageBitmap(userPhoto.data)
+                            if (userPhoto.data != null) {
+                                println(userPhoto)
+                                photoIV.setImageBitmap(userPhoto.data)
+                            }
                         }
             }
         }

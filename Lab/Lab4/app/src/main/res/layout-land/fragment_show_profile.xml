@@ -95,21 +95,31 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.33" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/photoImage"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerProfile"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/imageViewBackground"
-        android:contentDescription="@string/photo"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/verticalGuideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/photo_default"
-        app:civ_border_color="#FF000000"/>
+        app:shimmer_auto_start="false"
+        android:background="@color/imageViewBackground">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/photoImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/imageViewBackground"
+            android:contentDescription="@string/photo"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp"
+            android:src="@drawable/photo_default"
+            app:civ_border_color="#FF000000" />
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <!--<ImageView
         android:id="@+id/photoImage"
