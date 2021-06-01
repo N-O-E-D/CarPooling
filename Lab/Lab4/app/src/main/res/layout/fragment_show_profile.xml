@@ -115,6 +115,7 @@
             android:paddingTop="16dp"
             android:paddingRight="16dp"
             android:paddingBottom="16dp"
+            android:layout_gravity="center"
             android:src="@drawable/photo_default"
             app:civ_border_color="#FF000000" />
 
