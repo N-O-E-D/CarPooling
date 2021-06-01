@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TripListFragment"
-    android:background="@color/constraintLayoutBackground">
+    android:background="?attr/backgroundColor">
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmer_view_container"

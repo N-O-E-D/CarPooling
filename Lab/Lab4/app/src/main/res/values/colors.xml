@@ -14,7 +14,8 @@
 
     <!-- Activity main  -->
     <color name="ratingBar">#f8d568</color>
-    <color name="constraintLayoutBackground">#F5F5F5</color>
+    <color name="lightGrey">#F5F5F5</color>
+    <color name="lightBlack">#222222</color>
     <color name="imageViewBackground">#DCDCDC</color>
     <color name="imageButtonBackground">#00FFFFFF</color>
 

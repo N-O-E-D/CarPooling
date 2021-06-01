@@ -45,6 +45,11 @@ class OthersTripListFragment : Fragment() {
     private lateinit var shimmerFrameLayout: ShimmerFrameLayout
     private val model: SharedViewModel by activityViewModels()
 
+    override fun onResume() {
+        super.onResume()
+        shimmerFrameLayout.startShimmer()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
@@ -79,7 +84,7 @@ class OthersTripListFragment : Fragment() {
                 recyclerView.layoutManager = LinearLayoutManager(context)
             }
             Configuration.ORIENTATION_LANDSCAPE -> {
-                recyclerView.layoutManager = GridLayoutManager(context, 3)
+                recyclerView.layoutManager = GridLayoutManager(context, 2)
             }
         }
 
@@ -313,11 +318,9 @@ class TripAdapter(
             if (model.bitmaps[trip.id] == null) {
                 if (trip.carPhotoPath != null && trip.carPhotoPath != "") {
 
-                    when (itemView.context.resources.configuration.orientation) {
-                        Configuration.ORIENTATION_PORTRAIT -> {
-                            itemView.findViewById<ShimmerFrameLayout>(R.id.shimmer).startShimmer()
-                        }
-                    }
+                    itemView.findViewById<ShimmerFrameLayout>(R.id.shimmer).startShimmer()
+
+
                     MainScope().launch {
                         val size = withContext(Dispatchers.IO) {
                             model.downloadMetadataPhoto(trip.carPhotoPath!!).sizeBytes
@@ -328,29 +331,16 @@ class TripAdapter(
 
                         model.bitmaps[trip.id] = bitmap
 
-                        when (itemView.context.resources.configuration.orientation) {
-                            Configuration.ORIENTATION_PORTRAIT -> {
-                                itemView.findViewById<ShimmerFrameLayout>(R.id.shimmer).hideShimmer()
-                                itemView.findViewById<ImageView>(R.id.carPhoto)
-                                    .setImageBitmap(model.bitmaps[trip.id])
-                            }
-                        }
+                        itemView.findViewById<ShimmerFrameLayout>(R.id.shimmer).hideShimmer()
+                        itemView.findViewById<ImageView>(R.id.carPhoto).setImageBitmap(model.bitmaps[trip.id])
+
                     }
                 } else {
-                    when (itemView.context.resources.configuration.orientation) {
-                        Configuration.ORIENTATION_PORTRAIT -> {
-                            itemView.findViewById<ShimmerFrameLayout>(R.id.shimmer).hideShimmer()
-                        }
-                    }
+                    itemView.findViewById<ShimmerFrameLayout>(R.id.shimmer).hideShimmer()
                 }
             } else {
-                when (itemView.context.resources.configuration.orientation) {
-                    Configuration.ORIENTATION_PORTRAIT -> {
-                        itemView.findViewById<ShimmerFrameLayout>(R.id.shimmer).hideShimmer()
-                        itemView.findViewById<ImageView>(R.id.carPhoto)
-                            .setImageBitmap(model.bitmaps[trip.id])
-                    }
-                }
+                itemView.findViewById<ShimmerFrameLayout>(R.id.shimmer).hideShimmer()
+                itemView.findViewById<ImageView>(R.id.carPhoto).setImageBitmap(model.bitmaps[trip.id])
             }
 
             card.setOnClickListener {
