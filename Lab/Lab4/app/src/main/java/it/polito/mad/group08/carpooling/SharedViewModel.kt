@@ -43,6 +43,16 @@ class SharedViewModel : ViewModel() {
         return position
     }
 
+    private var geoPoints: MutableList<Coordinate> = mutableListOf()
+
+    fun setGeoPoints(gp: MutableList<Coordinate>){
+        geoPoints = gp
+    }
+
+    fun getGeoPoints(): List<Coordinate>{
+        return geoPoints
+    }
+
     // TripListFragment
     private val myTrips: MutableLiveData<Resource<List<Trip>>> by lazy {
         MutableLiveData<Resource<List<Trip>>>().also {

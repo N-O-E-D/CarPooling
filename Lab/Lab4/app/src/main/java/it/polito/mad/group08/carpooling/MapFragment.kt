@@ -17,27 +17,24 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     //TODO geopoints
     override fun onResume() {
         super.onResume()
-        if(this::map.isInitialized)
+        if (this::map.isInitialized)
             map.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        if(this::map.isInitialized)
-        map.onPause()
+        if (this::map.isInitialized)
+            map.onPause()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val position = model.getPosition().value!!
-        val tmpTrip = model.getMyTrips().value
-        if(tmpTrip is Resource.Success){
-            val geoPoints = tmpTrip.data[position].geoPoints
-            val items = ArrayList<OverlayItem> ()
-            map = view.findViewById(R.id.mapFullScreen)
-            GeoMap.customizeMap(map, view, context)
-            GeoMap.drawPath(map, geoPoints.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, items)
-        }
+        val geoPoints = model.getGeoPoints()
+        val items = ArrayList<OverlayItem>()
+        map = view.findViewById(R.id.mapFullScreen)
+        GeoMap.customizeMap(map, view, context)
+        GeoMap.drawPath(map, geoPoints.map { elem -> GeoPoint(elem.latitude, elem.longitude) }.toMutableList(), context, items)
+
     }
 }
