@@ -98,14 +98,15 @@ class ShowProfileFragment : Fragment() {
                             model.getOtherUserPhoto()
                                 .observe(
                                     viewLifecycleOwner,
-                                    Observer<Resource<Bitmap>> { imgResource ->
+                                    Observer<Resource<Bitmap?>> { imgResource ->
                                         when (imgResource) {
                                             is Resource.Loading -> {
                                                 shimmer.startShimmer()
                                             }
                                             is Resource.Success -> {
                                                 shimmer.hideShimmer()
-                                                photoIV.setImageBitmap(imgResource.data)
+                                                if (imgResource.data != null)
+                                                    photoIV.setImageBitmap(imgResource.data)
                                             }
                                             is Resource.Failure -> {
                                                 Toast.makeText(
@@ -155,14 +156,15 @@ class ShowProfileFragment : Fragment() {
                             model.getUserPhoto()
                                 .observe(
                                     viewLifecycleOwner,
-                                    Observer<Resource<Bitmap>> { resPhotoDB ->
+                                    Observer<Resource<Bitmap?>> { resPhotoDB ->
                                         when (resPhotoDB) {
                                             is Resource.Loading -> {
                                                 shimmer.startShimmer()
                                             }
                                             is Resource.Success -> {
                                                 shimmer.hideShimmer()
-                                                photoIV.setImageBitmap(resPhotoDB.data)
+                                                if(resPhotoDB.data != null)
+                                                    photoIV.setImageBitmap(resPhotoDB.data)
                                             }
                                             is Resource.Failure -> {
                                                 Toast.makeText(

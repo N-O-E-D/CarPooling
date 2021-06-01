@@ -396,7 +396,7 @@ class SharedViewModel : ViewModel() {
             it.postValue(Resource.Loading())
         }
 
-    private val userPhoto = MutableLiveData<Resource<Bitmap>>()
+    private val userPhoto = MutableLiveData<Resource<Bitmap?>>()
         .also {
             it.postValue(Resource.Loading())
         }
@@ -461,7 +461,7 @@ class SharedViewModel : ViewModel() {
         return user
     }
 
-    fun getUserPhoto(): LiveData<Resource<Bitmap>> {
+    fun getUserPhoto(): LiveData<Resource<Bitmap?>> {
         return userPhoto
     }
 
@@ -470,7 +470,7 @@ class SharedViewModel : ViewModel() {
         .also {
             it.postValue(Resource.Loading())
         }
-    private val otherUserPhoto = MutableLiveData<Resource<Bitmap>>()
+    private val otherUserPhoto = MutableLiveData<Resource<Bitmap?>>()
         .also {
             it.postValue(Resource.Loading())
         }
@@ -505,9 +505,9 @@ class SharedViewModel : ViewModel() {
             }.addOnFailureListener {
                 // User has not a picture yet
                 if (!currentUser)
-                    otherUserPhoto.postValue(Resource.Failure(Exception("No_Storage_For_New_User")))
+                    otherUserPhoto.postValue(Resource.Success(null))
                 else
-                    userPhoto.postValue(Resource.Failure(Exception("No_Storage_For_New_User")))
+                    userPhoto.postValue(Resource.Success(null))
             }
     }
 
@@ -558,7 +558,7 @@ class SharedViewModel : ViewModel() {
         return otherUser
     }
 
-    fun getOtherUserPhoto(): LiveData<Resource<Bitmap>> {
+    fun getOtherUserPhoto(): LiveData<Resource<Bitmap?>> {
         return otherUserPhoto
     }
 
