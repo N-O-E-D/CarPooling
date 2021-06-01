@@ -237,7 +237,7 @@ class ShowProfileFragment : Fragment() {
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         MainScope().launch {
             val reviews = withContext(Dispatchers.IO) {
-                model.getReviews(model.auth.currentUser!!.email!!, isDriverRating)
+                model.getReviews(emailTV.text.toString(), isDriverRating)
             }
 
             Log.d("ABCDE", reviews.toString())
