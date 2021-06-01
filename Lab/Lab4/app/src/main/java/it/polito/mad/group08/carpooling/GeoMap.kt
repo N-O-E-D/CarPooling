@@ -117,14 +117,14 @@ class GeoMap {
 
             map.overlays.add(object : Overlay() {
                 override fun onSingleTapConfirmed(e: MotionEvent, mapView: MapView): Boolean {
-                    Log.d("ABCDE", "ONSINGLETAP")
+
                     val projection = mapView.projection
                     val geoPoint = projection.fromPixels(
                         e.x.toInt(),
                         e.y.toInt()
                     ) as GeoPoint
 
-                    Log.d("ABCDE", "$geoPoint")
+
 
                     geoPoints.add(geoPoint)
 

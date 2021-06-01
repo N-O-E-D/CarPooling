@@ -14,7 +14,6 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     private val model: SharedViewModel by activityViewModels()
     private lateinit var map: MapView
 
-    //TODO geopoints
     override fun onResume() {
         super.onResume()
         if (this::map.isInitialized)

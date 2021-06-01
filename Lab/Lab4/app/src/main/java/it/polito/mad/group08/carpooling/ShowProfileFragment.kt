@@ -193,7 +193,7 @@ class ShowProfileFragment : Fragment() {
 
         ratingBarAsDriver.setOnTouchListener(View.OnTouchListener { v, event ->
             if (event.action == MotionEvent.ACTION_UP) {
-                Log.d("ABABABA", "Click su driver rating bar")
+
                 initDialog(v, true)
             }
             return@OnTouchListener true
@@ -201,7 +201,7 @@ class ShowProfileFragment : Fragment() {
 
         ratingBarAsPassenger.setOnTouchListener(View.OnTouchListener { v, event ->
             if (event.action == MotionEvent.ACTION_UP) {
-                Log.d("ABABABA", "Click su driver rating bar")
+
                 initDialog(v, false)
             }
             return@OnTouchListener true

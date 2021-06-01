@@ -63,6 +63,7 @@ class SharedViewModel : ViewModel() {
     }
 
     private suspend fun loadMyTrips() {
+
         try {
             withContext(Dispatchers.IO) {
                 //Return loading at beginning (while DB not finish)
@@ -324,7 +325,7 @@ class SharedViewModel : ViewModel() {
                                             if (tmp != null)
                                                 tmpBookedTrips.add(tmp)
                                         }
-                                        Log.d("ABCDE", tmpBookedTrips.toString())
+
                                         myBookedTrips.postValue(Resource.Success(tmpBookedTrips))
                                     }
                             }

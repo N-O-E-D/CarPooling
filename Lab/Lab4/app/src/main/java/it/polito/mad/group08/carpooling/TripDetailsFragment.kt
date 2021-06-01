@@ -394,7 +394,7 @@ class TripDetailsFragment : Fragment() {
             when(event.action){
                 MotionEvent.ACTION_DOWN -> {
                     if(currentTrip != null){
-                        Log.d("AAAA", "$currentTrip")
+
                         model.setGeoPoints(currentTrip?.geoPoints!!)
                         findNavController().navigate(R.id.action_tripDetailsFragment_to_mapFragment)
                     }
@@ -537,8 +537,8 @@ class TripDetailsFragment : Fragment() {
                                     //
                                 }
                                 is Resource.Success -> {
-                                    Log.d("AAAA", "$parentPosition")
-                                    Log.d("AAAA", "${resource.data.size}")
+
+
                                     if (parentPosition >= resource.data.size || ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))) {
                                         activity?.onBackPressed()
                                     }else{

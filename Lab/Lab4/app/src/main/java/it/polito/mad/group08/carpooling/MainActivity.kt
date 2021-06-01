@@ -14,6 +14,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -57,8 +59,11 @@ class MainActivity : AppCompatActivity(), ShowProfileFragment.InfoManager {
             drawerLayout.closeDrawers()
         }
 
-        navigationView.getMenu().findItem(R.id.logout).setOnMenuItemClickListener { menuItem ->
+        navigationView.menu.findItem(R.id.logout).setOnMenuItemClickListener { menuItem ->
             Firebase.auth.signOut()
+            GoogleSignIn.getClient(this, GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.token_id))
+                .build()).signOut()
             navController.navigate(R.id.loginFragment)
             drawerLayout.closeDrawers()
             true}
