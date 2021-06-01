@@ -50,7 +50,7 @@ class TripsOfInterestListFragment : Fragment() {
                 recyclerView.layoutManager = LinearLayoutManager(context)
             }
             Configuration.ORIENTATION_LANDSCAPE -> {
-                recyclerView.layoutManager = GridLayoutManager(context, 3)
+                recyclerView.layoutManager = GridLayoutManager(context, 2)
             }
             else -> recyclerView.layoutManager = LinearLayoutManager(context)
         }

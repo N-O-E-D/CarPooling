@@ -20,7 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="45sp"
             app:titleTextColor="@android:color/white"
-            android:background="?attr/colorPrimary">
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/Theme.CarPooling2">
         </androidx.appcompat.widget.Toolbar>
 
         <androidx.fragment.app.FragmentContainerView
