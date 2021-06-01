@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Move-me</string>
+
+    <string name="login_message">Leave the stress to us, \n travel without worries</string>
+
     <string name="edit">Edit</string>
     <string name="photo">Photo</string>
     <string name="change_photo">Change photo</string>
