@@ -104,7 +104,8 @@
                 app:layout_constraintStart_toStartOf="@+id/tripRecyclerView"
                 app:layout_constraintTop_toBottomOf="@+id/tripRecyclerView"
                 app:strokeColor="#4CAF50"
-                app:strokeWidth="2dp" />
+                app:strokeWidth="2dp"
+                android:textColor="?attr/colorSecondary"/>
 
             <TextView
                 android:id="@+id/estimatedDuration"
@@ -169,7 +170,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/interestedUserRecyclerView"
                 app:strokeColor="#4CAF50"
-                app:strokeWidth="2dp" />
+                app:strokeWidth="2dp"
+                android:textColor="?attr/colorSecondary"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/interestedUserRecyclerView"

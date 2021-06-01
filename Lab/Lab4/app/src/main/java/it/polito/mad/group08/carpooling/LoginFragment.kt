@@ -146,7 +146,7 @@ class LoginFragment : Fragment() {
                     Snackbar.make(requireView(), "Error in signin up. Please try later", Snackbar.LENGTH_SHORT).show()
                 }
             }.addOnFailureListener {
-                Snackbar.make(requireView(), "Error in signin up. Please try later", Snackbar.LENGTH_SHORT).show()
+                //Snackbar.make(requireView(), "Error in signin up. Please try later", Snackbar.LENGTH_SHORT).show()
             }
         }
     }

@@ -21,6 +21,7 @@ class TripsOfInterestListFragment : Fragment() {
     private lateinit var adapter: TripAdapter
     private lateinit var emptyTextView: TextView
     private lateinit var shimmerFrameLayout: ShimmerFrameLayout
+    private lateinit var shimmerFrameLayout2: ShimmerFrameLayout
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -50,6 +51,7 @@ class TripsOfInterestListFragment : Fragment() {
                 recyclerView.layoutManager = LinearLayoutManager(context)
             }
             Configuration.ORIENTATION_LANDSCAPE -> {
+                shimmerFrameLayout2 = view.findViewById(R.id.shimmer_view_container2)
                 recyclerView.layoutManager = GridLayoutManager(context, 2)
             }
             else -> recyclerView.layoutManager = LinearLayoutManager(context)
@@ -70,6 +72,11 @@ class TripsOfInterestListFragment : Fragment() {
                 when (resource) {
                     is Resource.Loading -> {
                         shimmerFrameLayout.startShimmer()
+                        when (resources.configuration.orientation) {
+                            Configuration.ORIENTATION_LANDSCAPE -> {
+                                shimmerFrameLayout2.startShimmer()
+                            }
+                        }
                     }
                     is Resource.Success -> {
 
@@ -79,6 +86,13 @@ class TripsOfInterestListFragment : Fragment() {
                         } else {
                             recyclerView.visibility = View.VISIBLE
                             emptyTextView.visibility = View.GONE
+                        }
+
+                        when (resources.configuration.orientation) {
+                            Configuration.ORIENTATION_LANDSCAPE -> {
+                                shimmerFrameLayout2.hideShimmer()
+                                shimmerFrameLayout2.visibility = View.GONE
+                            }
                         }
 
                         shimmerFrameLayout.hideShimmer()
@@ -98,6 +112,13 @@ class TripsOfInterestListFragment : Fragment() {
                         recyclerView.adapter = adapter
                     }
                     is Resource.Failure -> {
+
+                        when (resources.configuration.orientation) {
+                            Configuration.ORIENTATION_LANDSCAPE -> {
+                                shimmerFrameLayout2.hideShimmer()
+                                shimmerFrameLayout2.visibility = View.GONE
+                            }
+                        }
                         shimmerFrameLayout.hideShimmer()
                         shimmerFrameLayout.visibility = View.GONE
                         emptyTextView.text = getString(R.string.error_occur)

@@ -566,7 +566,7 @@ class SharedViewModel : ViewModel() {
         // User shows his interest in the trip.
         /*val myself =
             User(email = auth.currentUser!!.email!!, name = auth.currentUser!!.displayName!!)*/
-        return tripToCheck.interestedUsers.find { it.email == auth.currentUser!!.email } != null
+        return tripToCheck.interestedUsers.find { it.email == auth.currentUser!!.email && !it.isAccepted } != null
     }
 
     fun userIsAccepted(tripToCheck: Trip): Boolean {

@@ -233,12 +233,26 @@ class ShowProfileFragment : Fragment() {
             .setView(dialogView)
             .show()
         val recyclerView = dialogFilter.findViewById<RecyclerView>(R.id.recycleReviews)
+        val reviewTV = dialogFilter.findViewById<TextView>(R.id.reviewsTV)
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         MainScope().launch {
             val reviews = withContext(Dispatchers.IO) {
-                model.getReviews(emailTV.text.toString(), isDriverRating)
+                model.getReviews(model.auth.currentUser!!.email!!, isDriverRating)
             }
-            recyclerView.adapter = ReviewAdapter(reviews)
+
+            Log.d("ABCDE", reviews.toString())
+            if (reviews.isEmpty()) {
+                if (reviewTV != null) {
+                    reviewTV.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
+                }
+            } else {
+                if (reviewTV != null) {
+                    reviewTV.visibility = View.GONE
+                }
+                recyclerView.visibility = View.VISIBLE
+                recyclerView.adapter = ReviewAdapter(reviews)
+            }
         }
     }
 }

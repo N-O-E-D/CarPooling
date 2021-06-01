@@ -103,10 +103,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/show_hide"
+                android:textColor="?attr/colorSecondary"
                 app:layout_constraintEnd_toEndOf="@+id/tripRecyclerView"
                 app:layout_constraintStart_toStartOf="@+id/tripRecyclerView"
                 app:layout_constraintTop_toBottomOf="@+id/tripRecyclerView"
-                app:strokeColor="#4CAF50"
+                app:strokeColor="?attr/colorSecondary"
                 app:strokeWidth="2dp" />
 
             <TextView
@@ -187,8 +188,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/interestedUserRecyclerView"
-                app:strokeColor="#4CAF50"
-                app:strokeWidth="2dp" />
+                app:strokeColor="?attr/colorSecondary"
+                app:strokeWidth="2dp"
+                android:textColor="?attr/colorSecondary"/>
 
             <org.osmdroid.views.MapView
                 android:id="@+id/mapDetails"

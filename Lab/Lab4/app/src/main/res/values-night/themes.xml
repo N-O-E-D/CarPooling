@@ -28,7 +28,6 @@
         <item name="cardBackgroundColor">@color/lighterBlack</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <item name="colorPrimaryDark">@color/white</item>
         <!-- Customize your theme here. -->
     </style>
 

@@ -32,6 +32,7 @@ class TripListFragment : Fragment() {
     private lateinit var emptyTextView: TextView
     private lateinit var addFab: FloatingActionButton
     private lateinit var shimmerFrameLayout: ShimmerFrameLayout
+    private lateinit var shimmerFrameLayout2: ShimmerFrameLayout
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -77,6 +78,7 @@ class TripListFragment : Fragment() {
                 recyclerView.layoutManager = LinearLayoutManager(context)
             }
             Configuration.ORIENTATION_LANDSCAPE -> {
+                shimmerFrameLayout2 = view.findViewById(R.id.shimmer_view_container2)
                 recyclerView.layoutManager = GridLayoutManager(context, 2)
             }
         }
@@ -111,6 +113,11 @@ class TripListFragment : Fragment() {
                     is Resource.Loading -> {
                         shimmerFrameLayout.startShimmer()
                         addFab.visibility = View.GONE
+                        when (resources.configuration.orientation) {
+                            Configuration.ORIENTATION_LANDSCAPE -> {
+                                shimmerFrameLayout2.startShimmer()
+                            }
+                        }
                     }
                     is Resource.Success -> {
                         addFab.visibility = View.VISIBLE
@@ -125,6 +132,13 @@ class TripListFragment : Fragment() {
 
                         shimmerFrameLayout.hideShimmer()
                         shimmerFrameLayout.visibility = View.GONE
+
+                        when (resources.configuration.orientation) {
+                            Configuration.ORIENTATION_LANDSCAPE -> {
+                                shimmerFrameLayout2.hideShimmer()
+                                shimmerFrameLayout2.visibility = View.GONE
+                            }
+                        }
 
                         adapter = TripAdapter(
                             resource.data,
@@ -143,6 +157,12 @@ class TripListFragment : Fragment() {
                     is Resource.Failure -> {
                         shimmerFrameLayout.hideShimmer()
                         shimmerFrameLayout.visibility = View.GONE
+                        when (resources.configuration.orientation) {
+                            Configuration.ORIENTATION_LANDSCAPE -> {
+                                shimmerFrameLayout2.hideShimmer()
+                                shimmerFrameLayout2.visibility = View.GONE
+                            }
+                        }
                         emptyTextView.text = getString(R.string.error_occur)
                     }
                 }

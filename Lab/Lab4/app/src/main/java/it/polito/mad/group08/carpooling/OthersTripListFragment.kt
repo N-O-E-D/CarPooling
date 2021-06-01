@@ -43,6 +43,7 @@ class OthersTripListFragment : Fragment() {
     private lateinit var adapter: TripAdapter
     private lateinit var emptyTextView: TextView
     private lateinit var shimmerFrameLayout: ShimmerFrameLayout
+    private lateinit var shimmerFrameLayout2: ShimmerFrameLayout
     private val model: SharedViewModel by activityViewModels()
 
     override fun onResume() {
@@ -84,6 +85,7 @@ class OthersTripListFragment : Fragment() {
                 recyclerView.layoutManager = LinearLayoutManager(context)
             }
             Configuration.ORIENTATION_LANDSCAPE -> {
+                shimmerFrameLayout2 = view.findViewById(R.id.shimmer_view_container2)
                 recyclerView.layoutManager = GridLayoutManager(context, 2)
             }
         }
@@ -102,7 +104,12 @@ class OthersTripListFragment : Fragment() {
                 when (resource) {
                     is Resource.Loading -> {
                         shimmerFrameLayout.startShimmer()
-                    }
+                        when (resources.configuration.orientation) {
+                                Configuration.ORIENTATION_LANDSCAPE -> {
+                                    shimmerFrameLayout2.startShimmer()
+                                }
+                            }
+                        }
                     is Resource.Success -> {
 
                         if (resource.data.isEmpty()) {
@@ -115,6 +122,14 @@ class OthersTripListFragment : Fragment() {
 
                         shimmerFrameLayout.hideShimmer()
                         shimmerFrameLayout.visibility = View.GONE
+
+                        when (resources.configuration.orientation) {
+                            Configuration.ORIENTATION_LANDSCAPE -> {
+                                shimmerFrameLayout2.hideShimmer()
+                                shimmerFrameLayout2.visibility = View.GONE
+                            }
+                        }
+
 
                         adapter = TripAdapter(
                             resource.data,
@@ -130,6 +145,12 @@ class OthersTripListFragment : Fragment() {
                         recyclerView.adapter = adapter
                     }
                     is Resource.Failure -> {
+                        when (resources.configuration.orientation) {
+                            Configuration.ORIENTATION_LANDSCAPE -> {
+                                shimmerFrameLayout2.hideShimmer()
+                                shimmerFrameLayout2.visibility = View.GONE
+                            }
+                        }
                         shimmerFrameLayout.stopShimmer()
                         shimmerFrameLayout.visibility = View.GONE
                         emptyTextView.text = getString(R.string.error_occur)
@@ -308,7 +329,7 @@ class TripAdapter(
             departureTimestamp.text = trip.checkPoints[0].timestamp
             arrivalTimestamp.text = trip.checkPoints[trip.checkPoints.size - 1].timestamp
 
-            if (parent == OTHER_TRIP_LIST_IS_PARENT)
+            if (parent == OTHER_TRIP_LIST_IS_PARENT) // Also INTERESTED and BOUGHT
                 cardButton.text = itemView.context.getString(R.string.trip_show_interest)
             else
                 cardButton.text = itemView.context.getString(R.string.edit)
