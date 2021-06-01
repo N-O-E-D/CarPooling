@@ -1,12 +1,9 @@
 package it.polito.mad.group08.carpooling
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,22 +12,18 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 const val RC_SIGN_IN = 0
 
@@ -150,10 +143,10 @@ class LoginFragment : Fragment() {
                         (activity as? ShowProfileFragment.InfoManager)?.updatePhoto(imageBitmap)
                     }
                 }.addOnFailureListener {
-                    // Handle any errors
+                    Snackbar.make(requireView(), "Error in signin up. Please try later", Snackbar.LENGTH_SHORT).show()
                 }
             }.addOnFailureListener {
-                // Uh-oh, an error occurred!
+                Snackbar.make(requireView(), "Error in signin up. Please try later", Snackbar.LENGTH_SHORT).show()
             }
         }
     }

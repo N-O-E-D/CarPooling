@@ -14,20 +14,20 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.CarPooling2" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
+    <!--<style name="Theme.CarPooling2" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        &lt;!&ndash; Primary brand color. &ndash;&gt;
         <item name="android:windowFullscreen">true</item>
         <item name="colorPrimary">#202040</item>
         <item name="colorPrimaryVariant">#202060</item>
         <item name="colorOnPrimary">#FFFFFF</item>
-        <!-- Secondary brand color. -->
+        &lt;!&ndash; Secondary brand color. &ndash;&gt;
         <item name="colorSecondary">#E16428</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
         <item name="backgroundColor">@color/lightBlack</item>
-        <!-- Status bar color. -->
+        &lt;!&ndash; Status bar color. &ndash;&gt;
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
-    </style>
+        &lt;!&ndash; Customize your theme here. &ndash;&gt;
+    </style>-->
 
 </resources>
