@@ -323,7 +323,7 @@ class TripEditFragment : Fragment() {
                 val geoPointsCoord = trip.geoPoints
                 for(geoPoint in geoPointsCoord){
                     geoPoints.add(GeoPoint(geoPoint.latitude, geoPoint.longitude))
-                    Log.d("ABCDE", "$geoPoint")
+
                 }
                 itemsGeoPoint = ArrayList<OverlayItem>()
                 GeoMap.drawPath(map, geoPointsCoord.map { elem -> GeoPoint(elem.latitude,elem.longitude) }.toMutableList(), context, itemsGeoPoint)

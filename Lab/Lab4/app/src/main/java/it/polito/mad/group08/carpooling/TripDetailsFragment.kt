@@ -392,7 +392,13 @@ class TripDetailsFragment : Fragment() {
 
         map.setOnTouchListener { v, event ->
             when(event.action){
-                MotionEvent.ACTION_DOWN -> findNavController().navigate(R.id.action_tripDetailsFragment_to_mapFragment)
+                MotionEvent.ACTION_DOWN -> {
+                    if(currentTrip != null){
+
+                        model.setGeoPoints(currentTrip?.geoPoints!!)
+                        findNavController().navigate(R.id.action_tripDetailsFragment_to_mapFragment)
+                    }
+                }
             }
             map.onTouchEvent(event)
         }
@@ -416,8 +422,8 @@ class TripDetailsFragment : Fragment() {
 
                                 }
                                 is Resource.Success -> {
-
-                                    setTripInformation(resource.data[parentPosition])
+                                    currentTrip = resource.data[parentPosition]
+                                    setTripInformation(currentTrip!!)
                                     account_button.visibility = View.GONE
                                     MainScope().launch {
                                         driverRate.rating = withContext(Dispatchers.IO){
@@ -531,8 +537,8 @@ class TripDetailsFragment : Fragment() {
                                     //
                                 }
                                 is Resource.Success -> {
-                                    Log.d("AAAA", "$parentPosition")
-                                    Log.d("AAAA", "${resource.data.size}")
+
+
                                     if (parentPosition >= resource.data.size || ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))) {
                                         activity?.onBackPressed()
                                     }else{
