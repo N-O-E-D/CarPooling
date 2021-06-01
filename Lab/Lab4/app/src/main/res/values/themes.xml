@@ -26,9 +26,10 @@
         <item name="colorSecondary">#3cb09b</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
-        <item name="backgroundColor">@color/lightBlack</item>
+        <item name="backgroundColor">@color/lightGrey</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+
         <!-- Customize your theme here. -->
     </style>
 </resources>
