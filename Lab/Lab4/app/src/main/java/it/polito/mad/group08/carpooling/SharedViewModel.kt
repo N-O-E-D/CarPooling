@@ -465,6 +465,9 @@ class SharedViewModel : ViewModel() {
         }
 
     fun downloadUserPhoto(email: String, currentUser: Boolean) {
+        if(!currentUser) {
+            otherUserPhoto.postValue(Resource.Loading())
+        }
         val storage = Firebase.storage
         val storageRef = storage.reference
         val testRef = storageRef.child(email)
@@ -517,6 +520,7 @@ class SharedViewModel : ViewModel() {
 
     fun setOtherUser(email: String) {
         otherUser.postValue(Resource.Loading())
+        otherUserPhoto.postValue(Resource.Loading())
         try {
             db.collection("users")
                 .document(email)

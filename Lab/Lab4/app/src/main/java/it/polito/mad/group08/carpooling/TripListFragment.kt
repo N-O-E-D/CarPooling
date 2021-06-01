@@ -84,11 +84,6 @@ class TripListFragment : Fragment() {
         return view
     }
 
-    override fun onResume() {
-        super.onResume()
-        shimmerFrameLayout.startShimmer()
-    }
-
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -114,11 +109,10 @@ class TripListFragment : Fragment() {
                 // update UI
                 when (resource) {
                     is Resource.Loading -> {
-                        //TODO shimmer
+                        shimmerFrameLayout.startShimmer()
                         addFab.visibility = View.GONE
                     }
                     is Resource.Success -> {
-                        //TODO shimmer
                         addFab.visibility = View.VISIBLE
 
                         if (resource.data.isEmpty()) {
@@ -149,7 +143,6 @@ class TripListFragment : Fragment() {
                     is Resource.Failure -> {
                         shimmerFrameLayout.hideShimmer()
                         shimmerFrameLayout.visibility = View.GONE
-                        //TODO shimmer
                         emptyTextView.text = getString(R.string.error_occur)
                     }
                 }

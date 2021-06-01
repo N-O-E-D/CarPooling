@@ -24,6 +24,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -207,7 +208,11 @@ class TripDetailsFragment : Fragment() {
         )
         availableSeats.text = getString(R.string.available_seats_msg, trip.availableSeats)
         seatPrice.text = getString(R.string.seat_price_msg, trip.seatPrice.toString())
-        description.text = trip.description
+        if(trip.description == "")
+            description.visibility = View.GONE
+        else
+            description.text = trip.description
+
 
         // FAB (FOR USER != OWNER)
         if (trip.driverEmail != model.auth.currentUser!!.email) {
@@ -407,11 +412,10 @@ class TripDetailsFragment : Fragment() {
                             // POPULATE VIEW WITH DATA
                             when (resource) {
                                 is Resource.Loading -> {
-                                    //TODO shimmer
+                                    //
 
                                 }
                                 is Resource.Success -> {
-                                    //TODO shimmer
 
                                     setTripInformation(resource.data[parentPosition])
                                     account_button.visibility = View.GONE
@@ -423,7 +427,6 @@ class TripDetailsFragment : Fragment() {
                                     showInterestFab.hide()
                                 }
                                 is Resource.Failure -> {
-                                    //TODO shimmer
 
                                     Toast.makeText(
                                         context,
@@ -444,13 +447,11 @@ class TripDetailsFragment : Fragment() {
                             // POPULATE VIEW WITH DATA
                             when (resource) {
                                 is Resource.Loading -> {
-                                    //TODO shimmer
+                                    //
                                 }
                                 is Resource.Success -> {
                                     if ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))
                                         activity?.onBackPressed()
-
-                                    //TODO shimmer
 
                                     currentTrip = resource.data[parentPosition]
                                     setTripInformation(resource.data[parentPosition])
@@ -470,7 +471,6 @@ class TripDetailsFragment : Fragment() {
                                     interestedUsersShowHideButton.visibility = View.GONE
                                 }
                                 is Resource.Failure -> {
-                                    //TODO shimmer
 
                                     Toast.makeText(
                                         context,
@@ -489,13 +489,12 @@ class TripDetailsFragment : Fragment() {
                             // update UI
                             when (resource) {
                                 is Resource.Loading -> {
-                                    //TODO shimmer
+                                    //
                                 }
                                 is Resource.Success -> {
                                     if (parentPosition >= resource.data.size || ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))) {
                                         activity?.onBackPressed()
                                     }else {
-                                        //TODO shimmer
 
                                         currentTrip = resource.data[parentPosition]
                                         setTripInformation(resource.data[parentPosition])
@@ -511,7 +510,6 @@ class TripDetailsFragment : Fragment() {
                                     }
                                 }
                                 is Resource.Failure -> {
-                                    //TODO shimmer
 
                                     Toast.makeText(
                                         context,
@@ -530,7 +528,7 @@ class TripDetailsFragment : Fragment() {
                             // update UI
                             when (resource) {
                                 is Resource.Loading -> {
-                                    //TODO shimmer
+                                    //
                                 }
                                 is Resource.Success -> {
                                     Log.d("AAAA", "$parentPosition")
@@ -538,7 +536,6 @@ class TripDetailsFragment : Fragment() {
                                     if (parentPosition >= resource.data.size || ((currentTrip != null) && (resource.data[parentPosition].id != currentTrip!!.id))) {
                                         activity?.onBackPressed()
                                     }else{
-                                        //TODO shimmer
 
                                         currentTrip = resource.data[parentPosition]
                                         setTripInformation(resource.data[parentPosition])
@@ -553,7 +550,6 @@ class TripDetailsFragment : Fragment() {
                                     }
                                 }
                                 is Resource.Failure -> {
-                                    //TODO shimmer
 
                                     Toast.makeText(
                                         context,
@@ -610,22 +606,6 @@ class TripDetailsFragment : Fragment() {
         }
     }
 
-    private fun showAllComponents(showHide: Boolean) {
-        carPhotoPath.visibility = if (showHide) View.VISIBLE else View.GONE
-        carDescription.visibility = if (showHide) View.VISIBLE else View.GONE
-        driverName.visibility = if (showHide) View.VISIBLE else View.GONE
-        driverRate.visibility = if (showHide) View.VISIBLE else View.GONE
-        intermediateTripsRecyclerView.visibility = if (showHide) View.VISIBLE else View.GONE
-        estimatedDuration.visibility = if (showHide) View.VISIBLE else View.GONE
-        availableSeats.visibility = if (showHide) View.VISIBLE else View.GONE
-        seatPrice.visibility = if (showHide) View.VISIBLE else View.GONE
-        description.visibility = if (showHide) View.VISIBLE else View.GONE
-        intermediateTripsShowHideButton.visibility = if (showHide) View.VISIBLE else View.GONE
-        showInterestFab.visibility = if (showHide) View.VISIBLE else View.GONE
-        interestedUsersRecyclerView.visibility = if (showHide) View.VISIBLE else View.GONE
-        interestedUsersShowHideButton.visibility = if (showHide) View.VISIBLE else View.GONE
-    }
-
     private fun showAlertDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.delete_trip_title))
@@ -645,10 +625,9 @@ class TripDetailsFragment : Fragment() {
                         .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
                             when (resource) {
                                 is Resource.Loading -> {
-                                    //TODO shimmer
+                                    //
                                 }
                                 is Resource.Success -> {
-                                    //TODO shimmer
 
                                     resource.data[parentPosition].interestedUsers.forEach { user ->
                                         if (user.isAccepted) {
@@ -663,7 +642,6 @@ class TripDetailsFragment : Fragment() {
                                     }
                                 }
                                 is Resource.Failure -> {
-                                    //TODO shimmer
 
                                     Toast.makeText(
                                         context,
@@ -786,6 +764,7 @@ class InterestedUserAdapter(
         private val acceptButton = v.findViewById<ImageButton>(R.id.acceptUserButton)
         private val rejectButton = v.findViewById<ImageButton>(R.id.rejectUserButton)
         private val reviewButton = v.findViewById<Button>(R.id.reviewButton)
+        private val imageProfileShimmer = v.findViewById<ShimmerFrameLayout>(R.id.shimmerImageProfile)
 
         fun bind(
             u: User,
@@ -795,6 +774,7 @@ class InterestedUserAdapter(
             navController: NavController
         ) {
             userImage.setImageResource(R.drawable.photo_default)
+            imageProfileShimmer.startShimmer()
             val storage = Firebase.storage
             val storageRef = storage.reference
             val testRef = storageRef.child(u.email)
@@ -804,6 +784,7 @@ class InterestedUserAdapter(
                 testRef
                     .getBytes(ONE_MEGABYTE)
                     .addOnSuccessListener {
+                        imageProfileShimmer.hideShimmer()
                         val imageBitmap = BitmapFactory.decodeByteArray(it, 0, size.toInt())
                         if (imageBitmap != null) {
                             userImage.setImageBitmap(imageBitmap)

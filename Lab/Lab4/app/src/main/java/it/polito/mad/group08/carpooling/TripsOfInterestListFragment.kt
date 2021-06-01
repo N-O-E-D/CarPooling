@@ -14,11 +14,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.shimmer.ShimmerFrameLayout
 
 class TripsOfInterestListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TripAdapter
     private lateinit var emptyTextView: TextView
+    private lateinit var shimmerFrameLayout: ShimmerFrameLayout
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -41,6 +43,7 @@ class TripsOfInterestListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_trips_of_interest_list, container, false)
         emptyTextView = view.findViewById(R.id.emptyTextView)
         recyclerView = view.findViewById(R.id.interestedTripListRecyclerView)
+        shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container)
 
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
@@ -66,10 +69,9 @@ class TripsOfInterestListFragment : Fragment() {
                 // update UI
                 when (resource) {
                     is Resource.Loading -> {
-                        //TODO shimmer
+                        shimmerFrameLayout.startShimmer()
                     }
                     is Resource.Success -> {
-                        //TODO shimmer
 
                         if (resource.data.isEmpty()) {
                             recyclerView.visibility = View.GONE
@@ -78,6 +80,9 @@ class TripsOfInterestListFragment : Fragment() {
                             recyclerView.visibility = View.VISIBLE
                             emptyTextView.visibility = View.GONE
                         }
+
+                        shimmerFrameLayout.hideShimmer()
+                        shimmerFrameLayout.visibility = View.GONE
 
                         adapter = TripAdapter(
                             resource.data,
@@ -93,7 +98,8 @@ class TripsOfInterestListFragment : Fragment() {
                         recyclerView.adapter = adapter
                     }
                     is Resource.Failure -> {
-                        //TODO shimmer
+                        shimmerFrameLayout.hideShimmer()
+                        shimmerFrameLayout.visibility = View.GONE
                         emptyTextView.text = getString(R.string.error_occur)
                     }
                 }

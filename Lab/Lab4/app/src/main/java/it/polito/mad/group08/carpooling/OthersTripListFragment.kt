@@ -88,12 +88,6 @@ class OthersTripListFragment : Fragment() {
         return view
     }
 
-    override fun onResume() {
-        super.onResume()
-        shimmerFrameLayout.startShimmer()
-    }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // DECOUPLE DATA FROM UI
@@ -102,10 +96,9 @@ class OthersTripListFragment : Fragment() {
                 // update UI
                 when (resource) {
                     is Resource.Loading -> {
-                        //TODO shimmer
+                        shimmerFrameLayout.startShimmer()
                     }
                     is Resource.Success -> {
-                        //TODO shimmer
 
                         if (resource.data.isEmpty()) {
                             recyclerView.visibility = View.GONE

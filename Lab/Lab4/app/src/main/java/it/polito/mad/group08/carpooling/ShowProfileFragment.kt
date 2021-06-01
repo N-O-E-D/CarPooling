@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -36,6 +37,7 @@ class ShowProfileFragment : Fragment() {
     private lateinit var phoneNumberTV: TextView
     private lateinit var ratingBarAsDriver : RatingBar
     private lateinit var ratingBarAsPassenger : RatingBar
+    private lateinit var shimmer : ShimmerFrameLayout
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -71,16 +73,15 @@ class ShowProfileFragment : Fragment() {
         phoneNumberTV = view.findViewById(R.id.phonenumberTV)
         ratingBarAsDriver = view.findViewById(R.id.ratingAsDriver)
         ratingBarAsPassenger = view.findViewById(R.id.ratingAsPassenger)
+        shimmer = view.findViewById(R.id.shimmerProfile)
 
         if (arguments?.getString("parent") == TRIP_DETAILS_IS_PARENT) { // Other user
             model.getOtherUser()
                 .observe(viewLifecycleOwner, Observer<Resource<User>> { resource ->
                     when (resource) {
                         is Resource.Loading -> {
-                            //TODO shimmer
                         }
                         is Resource.Success -> {
-                            //TODO shimmer
 
                             fullNameTV.text =
                                 if (resource.data.name == "") "Full Name" else resource.data.name
@@ -94,22 +95,19 @@ class ShowProfileFragment : Fragment() {
                             phoneNumberIcon.visibility = View.GONE
                             phoneNumberTV.visibility = View.GONE
 
-                            //TODO Benedetto: There is a graphical 'bug' if I see User1 then User2
-                            // The same below. Maybe some time for upload the photo?
                             model.getOtherUserPhoto()
                                 .observe(
                                     viewLifecycleOwner,
                                     Observer<Resource<Bitmap>> { imgResource ->
                                         when (imgResource) {
                                             is Resource.Loading -> {
-                                                //TODO shimmer
+                                                shimmer.startShimmer()
                                             }
                                             is Resource.Success -> {
-                                                //TODO shimmer
+                                                shimmer.hideShimmer()
                                                 photoIV.setImageBitmap(imgResource.data)
                                             }
                                             is Resource.Failure -> {
-                                                //TODO shimmer
                                                 Toast.makeText(
                                                     context,
                                                     "Error loading the photo. Try later",
@@ -126,7 +124,6 @@ class ShowProfileFragment : Fragment() {
                             }
                         }
                         is Resource.Failure -> {
-                            //TODO shimmer
                             Toast.makeText(
                                 context,
                                 getString(R.string.error_occur),
@@ -140,10 +137,9 @@ class ShowProfileFragment : Fragment() {
                 .observe(viewLifecycleOwner, Observer<Resource<User>> { resource ->
                     when (resource) {
                         is Resource.Loading -> {
-                            //TODO shimmer
+                            //
                         }
                         is Resource.Success -> {
-                            //TODO shimmer
 
                             fullNameTV.text =
                                 if (resource.data.name == "") "Full Name" else resource.data.name
@@ -162,14 +158,13 @@ class ShowProfileFragment : Fragment() {
                                     Observer<Resource<Bitmap>> { resPhotoDB ->
                                         when (resPhotoDB) {
                                             is Resource.Loading -> {
-                                                //TODO shimmer
+                                                shimmer.startShimmer()
                                             }
                                             is Resource.Success -> {
-                                                //TODO shimmer
+                                                shimmer.hideShimmer()
                                                 photoIV.setImageBitmap(resPhotoDB.data)
                                             }
                                             is Resource.Failure -> {
-                                                //TODO shimmer
                                                 Toast.makeText(
                                                     context,
                                                     "Error in loading the new photo",
@@ -186,7 +181,6 @@ class ShowProfileFragment : Fragment() {
                             }
                         }
                         is Resource.Failure -> {
-                            //TODO shimmer
                             Toast.makeText(
                                 context,
                                 getString(R.string.error_occur),
@@ -212,23 +206,6 @@ class ShowProfileFragment : Fragment() {
             }
             return@OnTouchListener true
         })
-    }
-
-    private fun showAllComponents(showHide: Boolean) {
-        fullNameIcon.visibility = if (showHide) View.VISIBLE else View.GONE
-        nicknameIcon.visibility = if (showHide) View.VISIBLE else View.GONE
-        emailIcon.visibility = if (showHide) View.VISIBLE else View.GONE
-        locationIcon.visibility = if (showHide) View.VISIBLE else View.GONE
-        phoneNumberIcon.visibility = if (showHide) View.VISIBLE else View.GONE
-
-        fullNameTV.visibility = if (showHide) View.VISIBLE else View.GONE
-        nicknameTV.visibility = if (showHide) View.VISIBLE else View.GONE
-        emailTV.visibility = if (showHide) View.VISIBLE else View.GONE
-        locationTV.visibility = if (showHide) View.VISIBLE else View.GONE
-        phoneNumberTV.visibility = if (showHide) View.VISIBLE else View.GONE
-
-        ratingBarAsPassenger.visibility = if (showHide) View.VISIBLE else View.GONE
-        ratingBarAsDriver.visibility = if (showHide) View.VISIBLE else View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
