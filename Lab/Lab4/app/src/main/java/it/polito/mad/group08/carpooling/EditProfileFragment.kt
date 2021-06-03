@@ -1,6 +1,5 @@
 package it.polito.mad.group08.carpooling
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -23,11 +22,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -38,28 +35,19 @@ private const val OPEN_CAMERA_REQUEST_CODE = 1
 private const val OPEN_GALLERY_REQUEST_CODE = 2
 
 class EditProfileFragment : Fragment() {
-
     private lateinit var photoIV: ImageView
     private lateinit var changePhotoIB: ImageButton
     private lateinit var fullNameET: TextInputEditText
     private lateinit var nicknameET: TextInputEditText
     private lateinit var emailET: TextInputEditText
     private lateinit var locationET: TextInputEditText
-    private lateinit var phonenumberET: TextInputEditText
-
-    private lateinit var fullNameET_layout: TextInputLayout
-    private lateinit var nicknameET_layout: TextInputLayout
-    private lateinit var emailET_layout: TextInputLayout
-    private lateinit var locationET_layout: TextInputLayout
-    private lateinit var phonenumberET_layout: TextInputLayout
-
+    private lateinit var phoneNumberET: TextInputEditText
 
     private lateinit var photoURI: Uri
     private var currentPhotoPath: String = ""
     private var bitmap: Bitmap? = null  //Temporary Photo before user click "save"
     private var tmpRatingBar: Float = 0f
 
-    //private lateinit var user: User
     private val model: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -67,12 +55,9 @@ class EditProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         setHasOptionsMenu(true)
-
         return inflater.inflate(R.layout.fragment_edit_profile, container, false)
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,13 +68,7 @@ class EditProfileFragment : Fragment() {
         nicknameET = view.findViewById(R.id.nicknameET)
         emailET = view.findViewById(R.id.emailET)
         locationET = view.findViewById(R.id.locationET)
-        phonenumberET = view.findViewById(R.id.phonenumberET)
-
-        fullNameET_layout = view.findViewById(R.id.fullNameET_layout)
-        nicknameET_layout = view.findViewById(R.id.nicknameET_layout)
-        emailET_layout = view.findViewById(R.id.emailET_layout)
-        locationET_layout = view.findViewById(R.id.locationET_layout)
-        phonenumberET_layout = view.findViewById(R.id.phonenumberET_layout)
+        phoneNumberET = view.findViewById(R.id.phonenumberET)
 
         changePhotoIB.setOnClickListener {
             registerForContextMenu(it)
@@ -97,14 +76,15 @@ class EditProfileFragment : Fragment() {
             unregisterForContextMenu(it)
         }
 
-
-       val user = model.getUser().value
-        if(user is Resource.Success){
+        // to reach this code, you already downloaded user info in ShowProfileUser
+        // so it's heavier and useless to observer
+        val user = model.getUser().value
+        if (user is Resource.Success) {
             fullNameET.setText(user.data.name)
             nicknameET.setText(user.data.nickname)
             emailET.setText(user.data.email)
             locationET.setText(user.data.location)
-            phonenumberET.setText(user.data.phone_number)
+            phoneNumberET.setText(user.data.phone_number)
 
             tmpRatingBar = user.data.rating
 
@@ -112,12 +92,12 @@ class EditProfileFragment : Fragment() {
                 photoIV.setImageBitmap(bitmap)
             } else {
                 val userPhoto = model.getUserPhoto().value
-                        if(userPhoto is Resource.Success){
-                            if (userPhoto.data != null) {
-                                println(userPhoto)
-                                photoIV.setImageBitmap(userPhoto.data)
-                            }
-                        }
+                if (userPhoto is Resource.Success) {
+                    if (userPhoto.data != null) {
+                        println(userPhoto)
+                        photoIV.setImageBitmap(userPhoto.data)
+                    }
+                }
             }
         }
     }
@@ -146,7 +126,6 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun dispatchTakePictureIntent() {
-
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             // Ensure that there's a camera activity to handle the intent
             takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
@@ -187,7 +166,6 @@ class EditProfileFragment : Fragment() {
         }
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.save_menu, menu)
@@ -195,7 +173,6 @@ class EditProfileFragment : Fragment() {
 
 
     // listeners for the save button
-    @SuppressLint("WrongThread")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.saveButton -> {
@@ -212,24 +189,34 @@ class EditProfileFragment : Fragment() {
                         nickname = nicknameET.text.toString(),
                         email = emailET.text.toString(),
                         location = locationET.text.toString(),
-                        phone_number = phonenumberET.text.toString(),
+                        phone_number = phoneNumberET.text.toString(),
                         rating = tmpRatingBar
                     )
                 )
 
-                model.getStatusAddorReplace().observe(viewLifecycleOwner, Observer {
-                    when(it) {
-                        is Resource.Success -> {
-                            Snackbar.make(requireView(), getString(R.string.changes_applied_successfully), Snackbar.LENGTH_SHORT).show()
-                            findNavController().popBackStack()
+                model.getStatusAddorReplace()
+                    .observe(viewLifecycleOwner, {
+                        when (it) {
+                            is Resource.Success -> {
+                                Snackbar.make(
+                                    requireView(),
+                                    getString(R.string.changes_applied_successfully),
+                                    Snackbar.LENGTH_SHORT
+                                ).show()
+                                findNavController().popBackStack()
+                            }
+                            is Resource.Failure -> {
+                                Snackbar.make(
+                                    requireView(),
+                                    getString(R.string.error_occur),
+                                    Snackbar.LENGTH_SHORT
+                                ).show()
+                                findNavController().popBackStack()
+                            }
+                            is Resource.Loading -> {
+                            }
                         }
-                        is Resource.Failure -> {
-                            Snackbar.make(requireView(), getString(R.string.error_occur), Snackbar.LENGTH_SHORT).show()
-                            findNavController().popBackStack()
-                        }
-                        is Resource.Loading -> {}
-                    }
-                })
+                    })
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -244,7 +231,6 @@ class EditProfileFragment : Fragment() {
         super.onCreateContextMenu(menu, v, menuInfo)
         requireActivity().menuInflater.inflate(R.menu.floating_menu, menu)
     }
-
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -306,7 +292,6 @@ class EditProfileFragment : Fragment() {
             matrix, true
         )
     }
-
 
     // if the camera rotates automatically the picture taken, it will adjust it properly
     private fun rotateAndSet(imageBitmap: Bitmap) {
