@@ -2,7 +2,6 @@ package it.polito.mad.group08.carpooling
 
 import android.content.Context
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ScrollView
@@ -15,7 +14,7 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
-import java.util.ArrayList
+import java.util.*
 
 
 class GeoMap {

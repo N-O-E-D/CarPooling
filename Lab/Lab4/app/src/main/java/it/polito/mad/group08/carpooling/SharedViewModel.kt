@@ -2,7 +2,6 @@ package it.polito.mad.group08.carpooling
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,8 +18,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import kotlin.collections.set
-import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.overlay.OverlayItem
 
 const val ONE_MEGABYTE: Long = 1024 * 1024
 

@@ -14,7 +14,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,11 +44,11 @@ class TripListFragment : Fragment() {
             model.setPosition(position!!)
             navController.navigate(
                 R.id.action_tripListFragment_to_tripDetailsFragment,
-                bundleOf("parent" to "TRIPS")
+                bundleOf("parent" to MY_TRIP_LIST_IS_PARENT)
             )
         } else if (mode == FAB_CLICKED) {
             model.getMyTrips()
-                .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
+                .observe(viewLifecycleOwner, { resource ->
                     when (resource) {
                         is Resource.Success -> {
                             model.setPosition(resource.data.size)
@@ -107,7 +106,7 @@ class TripListFragment : Fragment() {
 
         // DECOUPLE DATA FROM UI
         model.getMyTrips()
-            .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
+            .observe(viewLifecycleOwner, { resource ->
                 // update UI
                 when (resource) {
                     is Resource.Loading -> {
@@ -125,6 +124,7 @@ class TripListFragment : Fragment() {
                         if (resource.data.isEmpty()) {
                             recyclerView.visibility = View.GONE
                             emptyTextView.visibility = View.VISIBLE
+                            emptyTextView.text = getString(R.string.no_trips)
                         } else {
                             recyclerView.visibility = View.VISIBLE
                             emptyTextView.visibility = View.GONE
@@ -143,7 +143,7 @@ class TripListFragment : Fragment() {
                         adapter = TripAdapter(
                             resource.data,
                             model,
-                            TRIP_LIST_IS_PARENT
+                            MY_TRIP_LIST_IS_PARENT
                         ) { mode: Int, tripItem: Trip, position: Int? ->
                             navigationClickListener(
                                 mode,
@@ -163,6 +163,7 @@ class TripListFragment : Fragment() {
                                 shimmerFrameLayout2.visibility = View.GONE
                             }
                         }
+                        emptyTextView.visibility = View.VISIBLE
                         emptyTextView.text = getString(R.string.error_occur)
                     }
                 }

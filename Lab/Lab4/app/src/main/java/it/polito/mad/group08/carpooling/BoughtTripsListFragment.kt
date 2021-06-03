@@ -2,7 +2,6 @@ package it.polito.mad.group08.carpooling
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,8 +35,6 @@ class BoughtTripsListFragment : Fragment() {
             )
         }
     }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,6 +82,7 @@ class BoughtTripsListFragment : Fragment() {
                         if (resource.data.isEmpty()) {
                             recyclerView.visibility = View.GONE
                             emptyTextView.visibility = View.VISIBLE
+                            emptyTextView.text = getString(R.string.no_trips)
                         } else {
                             recyclerView.visibility = View.VISIBLE
                             emptyTextView.visibility = View.GONE
@@ -100,7 +98,7 @@ class BoughtTripsListFragment : Fragment() {
                         shimmerFrameLayout.hideShimmer()
                         shimmerFrameLayout.visibility = View.GONE
 
-                        adapter = TripAdapter( resource.data, model, OTHER_TRIP_LIST_IS_PARENT) {
+                        adapter = TripAdapter( resource.data, model, OTHERS_TRIP_LIST_IS_PARENT) {
                                 mode: Int, tripItem: Trip, position: Int? ->
                                     navigationClickListener(
                                         mode,
@@ -119,6 +117,7 @@ class BoughtTripsListFragment : Fragment() {
                         }
                         shimmerFrameLayout.hideShimmer()
                         shimmerFrameLayout.visibility = View.GONE
+                        emptyTextView.visibility = View.VISIBLE
                         emptyTextView.text = getString(R.string.error_occur)
                     }
                 }

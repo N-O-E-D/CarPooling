@@ -36,7 +36,6 @@ class TripsOfInterestListFragment : Fragment() {
         }
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -83,6 +82,7 @@ class TripsOfInterestListFragment : Fragment() {
                         if (resource.data.isEmpty()) {
                             recyclerView.visibility = View.GONE
                             emptyTextView.visibility = View.VISIBLE
+                            emptyTextView.text = getString(R.string.no_trips)
                         } else {
                             recyclerView.visibility = View.VISIBLE
                             emptyTextView.visibility = View.GONE
@@ -101,7 +101,7 @@ class TripsOfInterestListFragment : Fragment() {
                         adapter = TripAdapter(
                             resource.data,
                             model,
-                            OTHER_TRIP_LIST_IS_PARENT
+                            OTHERS_TRIP_LIST_IS_PARENT
                         ) { mode: Int, tripItem: Trip, position: Int? ->
                             navigationClickListener(
                                 mode,
@@ -121,6 +121,7 @@ class TripsOfInterestListFragment : Fragment() {
                         }
                         shimmerFrameLayout.hideShimmer()
                         shimmerFrameLayout.visibility = View.GONE
+                        emptyTextView.visibility = View.VISIBLE
                         emptyTextView.text = getString(R.string.error_occur)
                     }
                 }

@@ -7,7 +7,6 @@ import android.icu.text.NumberFormat
 import android.icu.util.Currency
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.EditText
@@ -19,7 +18,6 @@ import androidx.cardview.widget.CardView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,10 +31,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
-
-//used for TripAdapter (Edit vs interest button)
-const val TRIP_LIST_IS_PARENT = "TRIP_LIST_IS_PARENT"
-const val OTHER_TRIP_LIST_IS_PARENT = "OTHER_TRIP_LIST_IS_PARENT" // Other, booked, interested
 
 class OthersTripListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
@@ -66,7 +60,7 @@ class OthersTripListFragment : Fragment() {
             model.setPosition(position!!)
             navController.navigate(
                 R.id.action_othersTripListFragment_to_tripDetailsFragment,
-                bundleOf("parent" to "OTHERS_TRIPS")
+                bundleOf("parent" to OTHERS_TRIP_LIST_IS_PARENT)
             )
         }
     }
@@ -99,22 +93,23 @@ class OthersTripListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // DECOUPLE DATA FROM UI
         model.getOthersTrips()
-            .observe(viewLifecycleOwner, Observer<Resource<List<Trip>>> { resource ->
+            .observe(viewLifecycleOwner, { resource ->
                 // update UI
                 when (resource) {
                     is Resource.Loading -> {
                         shimmerFrameLayout.startShimmer()
                         when (resources.configuration.orientation) {
-                                Configuration.ORIENTATION_LANDSCAPE -> {
-                                    shimmerFrameLayout2.startShimmer()
-                                }
+                            Configuration.ORIENTATION_LANDSCAPE -> {
+                                shimmerFrameLayout2.startShimmer()
                             }
                         }
+                    }
                     is Resource.Success -> {
 
                         if (resource.data.isEmpty()) {
                             recyclerView.visibility = View.GONE
                             emptyTextView.visibility = View.VISIBLE
+                            emptyTextView.text = getString(R.string.no_trips)
                         } else {
                             recyclerView.visibility = View.VISIBLE
                             emptyTextView.visibility = View.GONE
@@ -130,11 +125,10 @@ class OthersTripListFragment : Fragment() {
                             }
                         }
 
-
                         adapter = TripAdapter(
                             resource.data,
                             model,
-                            OTHER_TRIP_LIST_IS_PARENT
+                            OTHERS_TRIP_LIST_IS_PARENT
                         ) { mode: Int, tripItem: Trip, position: Int? ->
                             navigationClickListener(
                                 mode,
@@ -153,6 +147,7 @@ class OthersTripListFragment : Fragment() {
                         }
                         shimmerFrameLayout.stopShimmer()
                         shimmerFrameLayout.visibility = View.GONE
+                        emptyTextView.visibility = View.VISIBLE
                         emptyTextView.text = getString(R.string.error_occur)
                     }
                 }
@@ -329,12 +324,10 @@ class TripAdapter(
             departureTimestamp.text = trip.checkPoints[0].timestamp
             arrivalTimestamp.text = trip.checkPoints[trip.checkPoints.size - 1].timestamp
 
-            if (parent == OTHER_TRIP_LIST_IS_PARENT) // Also INTERESTED and BOUGHT
+            if (parent == OTHERS_TRIP_LIST_IS_PARENT) // Also INTERESTED and BOUGHT
                 cardButton.text = itemView.context.getString(R.string.trip_show_interest)
             else
                 cardButton.text = itemView.context.getString(R.string.edit)
-
-
 
             if (model.bitmaps[trip.id] == null) {
                 if (trip.carPhotoPath != null && trip.carPhotoPath != "") {
@@ -353,7 +346,8 @@ class TripAdapter(
                         model.bitmaps[trip.id] = bitmap
 
                         itemView.findViewById<ShimmerFrameLayout>(R.id.shimmer).hideShimmer()
-                        itemView.findViewById<ImageView>(R.id.carPhoto).setImageBitmap(model.bitmaps[trip.id])
+                        itemView.findViewById<ImageView>(R.id.carPhoto)
+                            .setImageBitmap(model.bitmaps[trip.id])
 
                     }
                 } else {
@@ -361,14 +355,15 @@ class TripAdapter(
                 }
             } else {
                 itemView.findViewById<ShimmerFrameLayout>(R.id.shimmer).hideShimmer()
-                itemView.findViewById<ImageView>(R.id.carPhoto).setImageBitmap(model.bitmaps[trip.id])
+                itemView.findViewById<ImageView>(R.id.carPhoto)
+                    .setImageBitmap(model.bitmaps[trip.id])
             }
 
             card.setOnClickListener {
                 clickListener(CARD_CLICKED, trip, bindingAdapterPosition)
             }
 
-            if (parent == TRIP_LIST_IS_PARENT) { //EDIT BUTTON
+            if (parent == MY_TRIP_LIST_IS_PARENT) { //EDIT BUTTON
                 cardButton.setOnClickListener {
                     clickListener(CARD_BUTTON_CLICKED, trip, bindingAdapterPosition)
                 }
