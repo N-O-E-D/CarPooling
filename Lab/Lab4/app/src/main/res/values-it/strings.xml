@@ -15,6 +15,8 @@
     <string name="openCamera">Apri fotocamera</string>
     <string name="save">Salva</string>
     <string name="phone_number">Cellulare</string>
+    <string name="driver_rating">Recenzioni da guidatore</string>
+    <string name="passenger_rating">Recenzioni da passeggero</string>
 
     <string name="car_photo">Foto Macchina</string>
     <string name="car_name">Nome Macchina</string>
@@ -65,7 +67,7 @@
     <string name="trip_edited_successfully">Viaggio modificato!</string>
     <string name="trip_removed_successfully">Viaggio eliminato!</string>
     <string name="trip_show_interest">Mostra interesse</string>
-    <string name="trip_remove_interest">Rimuovi interest</string>
+    <string name="trip_remove_interest">Rimuovi interesse</string>
     <string name="trip_already_booked">Già Prenotato!</string>
     <string name="trip_no_seats">Nessun posto</string>
 

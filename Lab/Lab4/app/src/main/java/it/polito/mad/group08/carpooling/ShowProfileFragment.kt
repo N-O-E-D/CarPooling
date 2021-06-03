@@ -4,12 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,9 +33,9 @@ class ShowProfileFragment : Fragment() {
     private lateinit var locationTV: TextView
     private lateinit var phoneNumberIcon: ImageView
     private lateinit var phoneNumberTV: TextView
-    private lateinit var ratingBarAsDriver : RatingBar
-    private lateinit var ratingBarAsPassenger : RatingBar
-    private lateinit var shimmer : ShimmerFrameLayout
+    private lateinit var ratingBarAsDriver: RatingBar
+    private lateinit var ratingBarAsPassenger: RatingBar
+    private lateinit var shimmer: ShimmerFrameLayout
 
     private val model: SharedViewModel by activityViewModels()
 
@@ -51,7 +49,6 @@ class ShowProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         setHasOptionsMenu(true)
         return inflater.inflate(R.layout.fragment_show_profile, container, false)
     }
@@ -77,12 +74,11 @@ class ShowProfileFragment : Fragment() {
 
         if (arguments?.getString("parent") == TRIP_DETAILS_IS_PARENT) { // Other user
             model.getOtherUser()
-                .observe(viewLifecycleOwner, Observer<Resource<User>> { resource ->
+                .observe(viewLifecycleOwner, { resource ->
                     when (resource) {
                         is Resource.Loading -> {
                         }
                         is Resource.Success -> {
-
                             fullNameTV.text =
                                 if (resource.data.name == "") "Full Name" else resource.data.name
                             nicknameTV.text =
@@ -97,8 +93,7 @@ class ShowProfileFragment : Fragment() {
 
                             model.getOtherUserPhoto()
                                 .observe(
-                                    viewLifecycleOwner,
-                                    Observer<Resource<Bitmap?>> { imgResource ->
+                                    viewLifecycleOwner, { imgResource ->
                                         when (imgResource) {
                                             is Resource.Loading -> {
                                                 shimmer.startShimmer()
@@ -119,8 +114,10 @@ class ShowProfileFragment : Fragment() {
                                     })
                             MainScope().launch {
                                 withContext(Dispatchers.IO) {
-                                    ratingBarAsDriver.rating = model.calculateRating(resource.data.email, true)
-                                    ratingBarAsPassenger.rating = model.calculateRating(resource.data.email, false)
+                                    ratingBarAsDriver.rating =
+                                        model.calculateRating(resource.data.email, true)
+                                    ratingBarAsPassenger.rating =
+                                        model.calculateRating(resource.data.email, false)
                                 }
                             }
                         }
@@ -135,10 +132,9 @@ class ShowProfileFragment : Fragment() {
                 })
         } else { //Show profile or return from edit
             model.getUser()
-                .observe(viewLifecycleOwner, Observer<Resource<User>> { resource ->
+                .observe(viewLifecycleOwner, { resource ->
                     when (resource) {
                         is Resource.Loading -> {
-                            //
                         }
                         is Resource.Success -> {
 
@@ -155,21 +151,20 @@ class ShowProfileFragment : Fragment() {
 
                             model.getUserPhoto()
                                 .observe(
-                                    viewLifecycleOwner,
-                                    Observer<Resource<Bitmap?>> { resPhotoDB ->
+                                    viewLifecycleOwner, { resPhotoDB ->
                                         when (resPhotoDB) {
                                             is Resource.Loading -> {
                                                 shimmer.startShimmer()
                                             }
                                             is Resource.Success -> {
                                                 shimmer.hideShimmer()
-                                                if(resPhotoDB.data != null)
+                                                if (resPhotoDB.data != null)
                                                     photoIV.setImageBitmap(resPhotoDB.data)
                                             }
                                             is Resource.Failure -> {
                                                 Toast.makeText(
                                                     context,
-                                                    "Error in loading the new photo",
+                                                    "Error in loading the photo",
                                                     Toast.LENGTH_SHORT
                                                 ).show()
                                             }
@@ -177,8 +172,14 @@ class ShowProfileFragment : Fragment() {
                                     })
                             MainScope().launch {
                                 withContext(Dispatchers.IO) {
-                                    ratingBarAsDriver.rating = model.calculateRating(model.auth.currentUser!!.email!!, true)
-                                    ratingBarAsPassenger.rating = model.calculateRating(model.auth.currentUser!!.email!!, false)
+                                    ratingBarAsDriver.rating = model.calculateRating(
+                                        model.auth.currentUser!!.email!!,
+                                        true
+                                    )
+                                    ratingBarAsPassenger.rating = model.calculateRating(
+                                        model.auth.currentUser!!.email!!,
+                                        false
+                                    )
                                 }
                             }
                         }
@@ -240,7 +241,6 @@ class ShowProfileFragment : Fragment() {
                 model.getReviews(emailTV.text.toString(), isDriverRating)
             }
 
-            Log.d("ABCDE", reviews.toString())
             if (reviews.isEmpty()) {
                 if (reviewTV != null) {
                     reviewTV.visibility = View.VISIBLE
@@ -257,7 +257,8 @@ class ShowProfileFragment : Fragment() {
     }
 }
 
-class ReviewAdapter(private val items: MutableList<Review>) : RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder>() {
+class ReviewAdapter(private val items: MutableList<Review>) :
+    RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder>() {
 
     class ReviewViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val ratingBar = v.findViewById<RatingBar>(R.id.rating)
@@ -267,7 +268,7 @@ class ReviewAdapter(private val items: MutableList<Review>) : RecyclerView.Adapt
 
         fun bind(review: Review) {
             ratingBar.rating = review.rating.toFloat()
-            if(review.text == "")
+            if (review.text == "")
                 textReview.visibility = View.GONE
             else
                 textReview.text = review.text

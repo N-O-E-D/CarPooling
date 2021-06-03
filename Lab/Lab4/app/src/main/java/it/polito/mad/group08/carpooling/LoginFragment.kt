@@ -18,7 +18,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
@@ -41,7 +40,6 @@ class LoginFragment : Fragment() {
             .requestEmail()
             .build()
 
-
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
         // Initialize Firebase Auth
@@ -52,7 +50,6 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
@@ -100,7 +97,6 @@ class LoginFragment : Fragment() {
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
-
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
@@ -129,25 +125,37 @@ class LoginFragment : Fragment() {
                 auth.currentUser!!.displayName!!,
                 auth.currentUser!!.email!!
             )
+
             findNavController().navigate(R.id.action_loginFragment_to_othersTripListFragment)
+
             val storage = Firebase.storage
             val storageRef = storage.reference
             val testRef = storageRef.child(auth.currentUser!!.email!!)
-            testRef.metadata.addOnSuccessListener { metadata ->
-                val size = metadata.sizeBytes
-                val ONE_MEGABYTE: Long = 1024 * 1024
-                testRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
-                    val imageBitmap = BitmapFactory.decodeByteArray(it, 0, size.toInt())
-                    if (imageBitmap != null) {
-                        model.setUserBitmap(imageBitmap)
-                        (activity as? ShowProfileFragment.InfoManager)?.updatePhoto(imageBitmap)
-                    }
+            testRef.metadata
+                .addOnSuccessListener { metadata ->
+                    val size = metadata.sizeBytes
+                    val ONE_MEGABYTE: Long = 1024 * 1024
+                    testRef.getBytes(ONE_MEGABYTE)
+                        .addOnSuccessListener {
+                            val imageBitmap = BitmapFactory.decodeByteArray(it, 0, size.toInt())
+                            if (imageBitmap != null) {
+                                model.setUserBitmap(imageBitmap)
+                                (activity as? ShowProfileFragment.InfoManager)?.updatePhoto(imageBitmap)
+                            }
+                        }.addOnFailureListener {
+                            Toast.makeText(
+                                requireContext(),
+                                "Error in downloading user photo.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                 }.addOnFailureListener {
-                    Snackbar.make(requireView(), "Error in signin up. Please try later", Snackbar.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Error in downloading user photo.",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
-            }.addOnFailureListener {
-                //Snackbar.make(requireView(), "Error in signin up. Please try later", Snackbar.LENGTH_SHORT).show()
-            }
         }
     }
 }
