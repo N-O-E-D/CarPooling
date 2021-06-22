@@ -150,11 +150,11 @@ class LoginFragment : Fragment() {
                             ).show()
                         }
                 }.addOnFailureListener {
-                    Toast.makeText(
+                    /*Toast.makeText(
                         requireContext(),
                         "Error in downloading user photo.",
                         Toast.LENGTH_LONG
-                    ).show()
+                    ).show()*/
                 }
         }
     }

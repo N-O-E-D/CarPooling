@@ -66,10 +66,10 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:hint="@string/driver_name"
         app:endIconMode="clear_text"
-        app:layout_constraintBottom_toTopOf="@+id/driverRate"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/carGuideline"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -80,22 +80,6 @@
             android:inputType="textAutoCorrect|textPersonName|textCapWords" />
 
     </com.google.android.material.textfield.TextInputLayout>
-
-    <RatingBar
-        android:id="@+id/driverRate"
-        style="?android:attr/ratingBarStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:numStars="5"
-        android:progressTint="@color/ratingBar"
-        android:rating="4"
-        android:secondaryProgressTint="@color/ratingBar"
-        android:stepSize="0.5"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/carGuideline"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:targetApi="lollipop" />
 
     <ScrollView
         android:id="@+id/scrollView"

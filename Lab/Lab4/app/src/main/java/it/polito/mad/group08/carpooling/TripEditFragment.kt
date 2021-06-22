@@ -58,7 +58,6 @@ class TripEditFragment : Fragment() {
     private lateinit var informationsET: EditText
     private lateinit var carPhotoET: ImageView
     private lateinit var changeCarPhotoET: ImageButton
-    private lateinit var ratingBar: RatingBar
     private lateinit var button_stop: Button
 
     private lateinit var recyclerView: RecyclerView
@@ -266,7 +265,6 @@ class TripEditFragment : Fragment() {
         informationsET = view.findViewById(R.id.tripDescriptionET)
         carPhotoET = view.findViewById(R.id.carPhoto)
         changeCarPhotoET = view.findViewById(R.id.imageButton)
-        ratingBar = view.findViewById(R.id.driverRate)
         button_stop = view.findViewById(R.id.new_stop)
         recyclerView = view.findViewById(R.id.tripRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -308,7 +306,6 @@ class TripEditFragment : Fragment() {
                 seatPriceET.setText(trip.seatPrice.toString())
                 availableSeatsET.setText(trip.availableSeats.toString())
                 informationsET.setText(trip.description)
-                ratingBar.rating = trip.driverRate
 
                 for (item in trip.checkPoints) {
                     tmp_checkpoints.add(CheckPoint(item.location, item.timestamp))

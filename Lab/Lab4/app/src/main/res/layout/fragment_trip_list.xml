@@ -22,9 +22,13 @@
             android:orientation="vertical">
 
             <include layout="@layout/placeholder" />
+
             <include layout="@layout/placeholder" />
+
             <include layout="@layout/placeholder" />
+
             <include layout="@layout/placeholder" />
+
             <include layout="@layout/placeholder" />
         </LinearLayout>
 
@@ -44,12 +48,13 @@
         android:id="@+id/emptyTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:gravity="center"
-        android:textSize="24sp"
         android:text="@string/no_trips"
-        android:visibility="gone"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:textColor="#FF001A" />
+        android:textColor="#FF001A"
+        android:textSize="24sp"
+        android:visibility="gone" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_fab"

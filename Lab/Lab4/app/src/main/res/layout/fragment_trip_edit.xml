@@ -61,7 +61,8 @@
                     android:id="@+id/carNameET"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textAutoCorrect" />
+                    android:inputType="textAutoCorrect"
+                    android:nextFocusDown="@id/driverNameET" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -77,7 +78,7 @@
                 android:layout_marginRight="16dp"
                 android:hint="@string/driver_name"
                 app:endIconMode="clear_text"
-                app:layout_constraintEnd_toStartOf="@+id/driverRate"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/carNameET_layout">
 
@@ -85,26 +86,10 @@
                     android:id="@+id/driverNameET"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textAutoCorrect|textPersonName|textCapWords" />
+                    android:inputType="textAutoCorrect|textPersonName|textCapWords"
+                    android:nextFocusDown="@id/availableSeatsET" />
 
             </com.google.android.material.textfield.TextInputLayout>
-
-            <RatingBar
-                android:id="@+id/driverRate"
-                style="?android:attr/ratingBarStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:numStars="5"
-                android:progressTint="@color/ratingBar"
-                android:rating="4"
-                android:secondaryProgressTint="@color/ratingBar"
-                android:stepSize="0.5"
-                app:layout_constraintBottom_toBottomOf="@+id/driverNameET_layout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/driverNameET_layout"
-                tools:targetApi="lollipop" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/tripRecyclerView"
@@ -150,7 +135,8 @@
                     android:id="@+id/availableSeatsET"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:nextFocusDown="@id/seatPriceET" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -174,7 +160,8 @@
                     android:id="@+id/seatPriceET"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal" />
+                    android:inputType="numberDecimal"
+                    android:nextFocusDown="@id/tripDescriptionET" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

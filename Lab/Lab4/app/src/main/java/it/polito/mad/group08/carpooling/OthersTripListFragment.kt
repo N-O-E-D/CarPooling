@@ -38,6 +38,9 @@ class OthersTripListFragment : Fragment() {
     private lateinit var emptyTextView: TextView
     private lateinit var shimmerFrameLayout: ShimmerFrameLayout
     private lateinit var shimmerFrameLayout2: ShimmerFrameLayout
+    private var first_time = true
+    private var old_trip_list = mutableListOf<Trip>()
+
     private val model: SharedViewModel by activityViewModels()
 
     override fun onResume() {
@@ -73,6 +76,7 @@ class OthersTripListFragment : Fragment() {
         emptyTextView = view.findViewById(R.id.emptyTextView)
         recyclerView = view.findViewById(R.id.othersTripListRecyclerView)
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container)
+        first_time = true
 
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
@@ -125,18 +129,66 @@ class OthersTripListFragment : Fragment() {
                             }
                         }
 
-                        adapter = TripAdapter(
-                            resource.data,
-                            model,
-                            OTHERS_TRIP_LIST_IS_PARENT
-                        ) { mode: Int, tripItem: Trip, position: Int? ->
-                            navigationClickListener(
-                                mode,
-                                tripItem,
-                                position
-                            )
+                        if (first_time) {
+                            old_trip_list = resource.data.toMutableList()
+                            adapter = TripAdapter(
+                                resource.data.toMutableList(),
+                                model,
+                                OTHERS_TRIP_LIST_IS_PARENT
+                            ) { mode: Int, tripItem: Trip, position: Int? ->
+                                navigationClickListener(
+                                    mode,
+                                    tripItem,
+                                    position
+                                )
+                            }
+                            recyclerView.adapter = adapter
+                            first_time = false
+                        } else {
+                            val new_trip_list = resource.data
+                            if ((old_trip_list.size - 1) == new_trip_list.size) { // Trip Delete
+                                var index = -1
+                                for (i in 0 until old_trip_list.size - 1) {
+                                    if (old_trip_list[i] != new_trip_list[i]) {
+                                        index = i
+                                        break
+                                    } else if (i == old_trip_list.size - 2) {
+                                        index = old_trip_list.size - 1
+                                    }
+                                }
+                                old_trip_list = resource.data.toMutableList()
+                                if(index == -1)
+                                    index = 0
+                                adapter.onItemDeleted(index)
+                            } else if (old_trip_list.size == new_trip_list.size) { // Trip Edited
+                                var index = -1
+                                for (i in 0 until new_trip_list.size - 1) {
+                                    if(old_trip_list[i] != new_trip_list[i]) {
+                                        index = i
+                                        break
+                                    }
+                                }
+                                old_trip_list = resource.data.toMutableList()
+                                if (index != -1)
+                                    adapter.onItemChange(new_trip_list[index], index)
+                            } else if ((old_trip_list.size + 1) == new_trip_list.size) { // Trip Added
+                                var index = -1
+                                for (i in 0 until new_trip_list.size - 1) {
+                                    if (old_trip_list[i] != new_trip_list[i]) {
+                                        index = i
+                                        break
+                                    } else if (i == new_trip_list.size - 2) {
+                                        index = new_trip_list.size - 1
+                                    }
+                                }
+
+                                if(index == -1)
+                                    index = new_trip_list.size - 1
+                                old_trip_list = resource.data.toMutableList()
+                                adapter.onItemAdded(new_trip_list[index], index)
+                            }
                         }
-                        recyclerView.adapter = adapter
+
                     }
                     is Resource.Failure -> {
                         when (resources.configuration.orientation) {
@@ -299,7 +351,7 @@ class OthersTripListFragment : Fragment() {
 }
 
 class TripAdapter(
-    private val tripsAdapter: List<Trip>,
+    private val tripsAdapter: MutableList<Trip>,
     private val model: SharedViewModel,
     private val parent: String,
     private val clickListener: (Int, Trip, Int?) -> Unit
@@ -422,5 +474,22 @@ class TripAdapter(
         super.onViewRecycled(holder)
         holder.unbind()
     }
+
+    fun onItemChange(tripEdited: Trip, position: Int) {
+        tripsAdapter[position] = tripEdited
+        notifyItemChanged(position)
+    }
+
+    fun onItemDeleted(position: Int) {
+        tripsAdapter.removeAt(position)
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position, tripsAdapter.size - 1)
+    }
+
+    fun onItemAdded(tripAdded: Trip, position: Int) {
+        tripsAdapter.add(position, tripAdded)
+        notifyItemInserted(position)
+    }
+
 }
 
