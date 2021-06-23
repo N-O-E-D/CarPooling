@@ -162,7 +162,7 @@ class OthersTripListFragment : Fragment() {
                                 adapter.onItemDeleted(index)
                             } else if (old_trip_list.size == new_trip_list.size) { // Trip Edited
                                 var index = -1
-                                for (i in 0 until new_trip_list.size - 1) {
+                                for (i in new_trip_list.indices) {
                                     if(old_trip_list[i] != new_trip_list[i]) {
                                         index = i
                                         break
