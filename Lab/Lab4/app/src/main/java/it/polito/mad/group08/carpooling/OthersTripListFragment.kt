@@ -169,8 +169,9 @@ class OthersTripListFragment : Fragment() {
                                     }
                                 }
                                 old_trip_list = resource.data.toMutableList()
-                                if (index != -1)
-                                    adapter.onItemChange(new_trip_list[index], index)
+                                if (index == -1)
+                                    index = 0
+                                adapter.onItemChange(new_trip_list[index], index)
                             } else if ((old_trip_list.size + 1) == new_trip_list.size) { // Trip Added
                                 var index = -1
                                 for (i in 0 until new_trip_list.size - 1) {
