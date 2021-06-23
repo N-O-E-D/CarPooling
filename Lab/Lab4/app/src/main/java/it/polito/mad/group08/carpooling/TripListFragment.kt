@@ -198,6 +198,8 @@ class TripListFragment : Fragment() {
                                     }
                                 }
                                 old_trip_list = resource.data.toMutableList()
+                                if(index == -1)
+                                    index = 0
                                 adapter.onItemAdded(new_trip_list[index], index)
                             }
                         }
