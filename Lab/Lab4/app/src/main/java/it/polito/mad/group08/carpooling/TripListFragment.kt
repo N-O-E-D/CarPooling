@@ -177,13 +177,15 @@ class TripListFragment : Fragment() {
                                 adapter.onItemDeleted(index)
                             } else if (old_trip_list.size == new_trip_list.size) { // Trip Edited
                                 var index = -1
-                                for (i in 0..old_trip_list.size) {
+                                for (i in 0 until new_trip_list.size - 1) {
                                     if(old_trip_list[i] != new_trip_list[i]) {
                                         index = i
                                         break
                                     }
                                 }
                                 old_trip_list = resource.data.toMutableList()
+                                if(index == -1)
+                                    index = 0
                                 adapter.onItemChange(new_trip_list[index], index)
                             } else if ((old_trip_list.size + 1) == new_trip_list.size) { // Trip Added
                                 var index = -1
