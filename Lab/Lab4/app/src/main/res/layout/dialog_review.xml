@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:gravity="center"
-            android:text="Lascia una recensione"
+            android:text="Leave a review"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
         <RatingBar
@@ -38,7 +38,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
-            android:hint="Commento (Opzionale)"
+            android:hint="Comment (Optional)"
             app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText

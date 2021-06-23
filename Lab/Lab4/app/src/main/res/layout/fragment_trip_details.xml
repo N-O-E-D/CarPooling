@@ -224,7 +224,7 @@
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:background="@drawable/rounded_corner"
-        android:text="Lascia Una Recensione"
+        android:text="Leave a review"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/write_review_fab"
         app:layout_constraintEnd_toStartOf="@+id/write_review_fab"

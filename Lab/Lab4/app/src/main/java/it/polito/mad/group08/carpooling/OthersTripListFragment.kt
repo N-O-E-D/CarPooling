@@ -324,6 +324,7 @@ class OthersTripListFragment : Fragment() {
         val dialogView = inflater.inflate(R.layout.dialog_filter, null)
         return when (item.itemId) {
             R.id.searchButton -> {
+                first_time = true
                 val dialogFilter = MaterialAlertDialogBuilder(requireContext())
                     .setView(dialogView)
                     .setNegativeButton(getString(R.string.reset_filters)) { _, _ ->
