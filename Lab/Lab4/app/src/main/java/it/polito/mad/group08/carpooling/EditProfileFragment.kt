@@ -194,6 +194,11 @@ class EditProfileFragment : Fragment() {
                     )
                 )
 
+                (activity as? ShowProfileFragment.InfoManager)?.updateTexts(
+                    fullNameET.text.toString(),
+                    emailET.text.toString()
+                )
+
                 model.getStatusAddorReplace()
                     .observe(viewLifecycleOwner, {
                         when (it) {
